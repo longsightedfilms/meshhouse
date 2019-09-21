@@ -1,29 +1,36 @@
-# refilmer-desktop
+# Meshhouse
 
-## Project setup
+<p align="center">
+    <a href="#">
+        <img src="https://raw.githubusercontent.com/longsightedfilms/meshhouse/dev/src/assets/logo_full.svg" width="200" />
+    </a>
+</p>
+
+> Open-source program for catalogizing 3d models. Built on Vue and Electron.
+
+## Features
+
+> TODO
+
+## Releases
+
+Currently you need to build application.
+
+## Build
+
+Build for Windows (x64)
 ```
-npm install
+npm run electron:build:win
+```
+Build for MacOS (not tested)
+```
+npm run electron:build:mac
+```
+Build for Linux (not tested)
+```
+npm run electron:build:linux
 ```
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+### License
 
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+Code released under [Mozilla Public License 2.0](https://github.com/longsightedfilms/meshhouse/blob/dev/LICENSE)
