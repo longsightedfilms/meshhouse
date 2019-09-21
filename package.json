@@ -17,6 +17,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
+    "release": "vue-cli-service electron:build --publish always",
     "electron:build": "vue-cli-service electron:build",
     "electron:build:win": "vue-cli-service electron:build --windows",
     "electron:build:mac": "vue-cli-service electron:build --macos",
