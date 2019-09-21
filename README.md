@@ -1,9 +1,8 @@
-# Meshhouse
-
 <p align="center">
-    <a href="#">
-        <img src="https://raw.githubusercontent.com/longsightedfilms/meshhouse/dev/src/assets/logo_full.svg?sanitize=true" width="600" />
-    </a>
+    <a href="#"><img src="https://raw.githubusercontent.com/longsightedfilms/meshhouse/dev/src/assets/logo_full.svg?sanitize=true" width="600" /></a>
+</p>
+<p align="center">
+    <a href="#"><img alt="GitHub" src="https://img.shields.io/github/license/longsightedfilms/meshhouse?style=for-the-badge"></a>
 </p>
 
 > Open-source program for catalogizing 3d models. Built on Vue and Electron.

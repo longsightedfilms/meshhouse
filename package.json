@@ -1,8 +1,8 @@
 {
-  "name": "meshhouse-desktop",
-  "version": "1.0.0",
+  "name": "meshhouse",
+  "version": "0.1.0",
   "description": "Open-source 3d models catalogizer",
-  "homepage": "https://github.com/longsightedfilms/MeshHouse-desktop",
+  "homepage": "https://github.com/longsightedfilms/meshhouse",
   "license": "MPL-2.0",
   "author": {
     "name": "Maxim Makarov",
@@ -10,9 +10,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/longsightedfilms/MeshHouse-desktop.git"
+    "url": "https://github.com/longsightedfilms/meshhouse.git"
   },
-  "private": true,
+  "private": false,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
