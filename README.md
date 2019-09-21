@@ -2,7 +2,7 @@
 
 <p align="center">
     <a href="#">
-        <img src="https://raw.githubusercontent.com/longsightedfilms/meshhouse/dev/src/assets/logo_full.svg" width="200" />
+        <img src="https://raw.githubusercontent.com/longsightedfilms/meshhouse/dev/src/assets/logo_full.svg?sanitize=true" width="600" />
     </a>
 </p>
 
