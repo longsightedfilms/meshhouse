@@ -3,6 +3,7 @@ export default {
         add: "Добавить",
         addCatalog: "Добавить новый каталог",
         cancel: "Отмена",
-        save: "Сохранить"
+        close: "Закрыть",
+        save: "Сохранить",
     }
 }

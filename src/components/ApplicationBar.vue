@@ -6,28 +6,85 @@
     dark
   >
     <v-toolbar-title>
-      <v-img src="@/assets/logo_text.svg"/>
+      <v-img src="@/assets/logo_text.svg" />
     </v-toolbar-title>
-    <div class="flex-grow-1"></div>
+    <div class="flex-grow-1" />
 
     <v-menu
       left
       bottom
+      :close-on-content-click="false"
+      nudge-bottom="14"
+      offset-y
     >
       <template v-slot:activator="{ on }">
-        <v-btn icon v-on="on">
+        <v-btn
+          icon
+          v-on="on"
+        >
           <v-icon>mdi-download</v-icon>
         </v-btn>
       </template>
 
-      <v-list>
-        <v-list-item
-          v-for="n in 5"
-          :key="n"
-          @click="() => {}"
+      <v-list two-line>
+        <v-sheet
+          v-for="(item, index) in $store.state.downloads"
+          :key="index"
+          class="mx-2"
+          :class="{'mb-2': index != ($store.state.downloads.length - 1) }"
+          color="grey darken-2"
         >
-          <v-list-item-title>Option {{ n }}</v-list-item-title>
-        </v-list-item>
+          <v-list-item>
+            <v-list-item-avatar>
+              <v-avatar color="primary">
+                <img :src="item.img">
+              </v-avatar>
+            </v-list-item-avatar>
+
+            <v-list-item-content>
+              <v-list-item-title>{{ item.title }}</v-list-item-title>
+              <v-list-item-subtitle v-if="item.status.finished">
+                Downloads not implemented
+              </v-list-item-subtitle>
+              <v-list-item-subtitle v-else>
+                <v-progress-linear
+                  color="light-blue"
+                  height="12"
+                  :value="item.status.percentage"
+                  rounded
+                  striped
+                >
+                  <template v-slot="{ value }">
+                    <strong class="caption">
+                      {{ Math.ceil(value) }}%
+                    </strong>
+                  </template>
+                </v-progress-linear>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+            
+            <v-list-item-action>
+              <v-btn-toggle rounded>
+                <v-btn 
+                  :disabled="!item.status.finished"
+                  @click="$openItem(item.path)"
+                >
+                  <v-icon color="grey lighten-1">
+                    mdi-folder
+                  </v-icon>
+                </v-btn>
+                <v-btn 
+                  :disabled="!item.status.finished"
+                  color="error darken-4"
+                >
+                  <v-icon color="grey lighten-1">
+                    mdi-close
+                  </v-icon>
+                </v-btn>
+              </v-btn-toggle>
+            </v-list-item-action>
+          </v-list-item>
+        </v-sheet>
       </v-list>
     </v-menu>
 
@@ -38,14 +95,14 @@
     >
       <template v-slot:activator="{ on }">
         <v-btn
-          v-on="on"
           icon
+          v-on="on"
         >
           <v-icon>mdi-settings</v-icon>
         </v-btn>
       </template>
 
-      <modal-settings/>
+      <modal-settings />
     </v-dialog>
 
     <v-dialog
@@ -55,14 +112,14 @@
     >
       <template v-slot:activator="{ on }">
         <v-btn
-          v-on="on"
           icon
+          v-on="on"
         >
           <v-icon>mdi-help-circle</v-icon>
         </v-btn>
       </template>
 
-      <modal-about/>
+      <modal-about />
     </v-dialog>
   </v-app-bar>
 </template>

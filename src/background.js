@@ -1,10 +1,9 @@
+/* eslint-disable no-undef */
 'use strict'
 
 import path from 'path'
 import { app, protocol, BrowserWindow } from 'electron'
-import {
-  createProtocol
-} from 'vue-cli-plugin-electron-builder/lib'
+import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const ElectronStore = require('electron-store')
@@ -18,7 +17,7 @@ let appWin
 let createdAppProtocol = false
 
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
+protocol.registerSchemesAsPrivileged([{scheme: 'meshhouse', privileges: { secure: true, standard: true } }])
 
 function createWindow(winVar, devPath, prodPath, options) {
   // Create the browser window.
@@ -31,11 +30,11 @@ function createWindow(winVar, devPath, prodPath, options) {
     if (!process.env.IS_TEST) winVar.webContents.openDevTools()
   } else {
     if (!createdAppProtocol) {
-      createProtocol('app')
+      createProtocol('meshhouse')
       createdAppProtocol = true
     }
     // Load the index.html when not in development
-    winVar.loadURL(`app://./${prodPath}`)
+    winVar.loadURL(`meshhouse://./${prodPath}`)
   }
 
   winVar.on('close', () => {

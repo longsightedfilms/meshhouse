@@ -8,6 +8,26 @@ export default new Vuex.Store({
     databases: [
       { title: 'MeshHouse', url: 'meshhouse', path: '', color: 'primary' }
     ],
+    downloads: [
+      {
+        img: "https://vuetifyjs.com/apple-touch-icon-180x180.png",
+        title: "Downloads not implemented",
+        path: "H:\\TES.Long-Sighted Films\\Mods\\Defenders of Skyrim\\Assets\\Characters\\LoL\\Ahri\\Ahri Ears.max",
+        status: {
+          finished: true,
+          percentage: 100
+        }
+      },
+      {
+        img: "https://vuetifyjs.com/apple-touch-icon-180x180.png",
+        title: "Ahri Ears (3ds Max)",
+        path: "H:\\TES.Long-Sighted Films\\Mods\\Defenders of Skyrim\\Assets\\Characters\\LoL\\Ahri\\Ahri Ears.max",
+        status: {
+          finished: false,
+          percentage: 30
+        }
+      }
+    ],
     pageTitle: "",
     pageData: [],
     aboutModalOpened: false,

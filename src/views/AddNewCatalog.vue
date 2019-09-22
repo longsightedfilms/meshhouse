@@ -8,7 +8,9 @@
         >
           <v-list-item three-line>
             <v-list-item-content>
-              <div class="overline">Добавить новый каталог</div>
+              <div class="overline">
+                Добавить новый каталог
+              </div>
               <v-text-field
                 v-model="title"
                 :rules="[rules.required]"
@@ -22,7 +24,9 @@
               size="80"
               :color="color"
             >
-              <p class="white--text ma-0">{{ title.substr(0,1)}}</p>
+              <p class="white--text ma-0">
+                {{ title.substr(0,1) }}
+              </p>
             </v-list-item-avatar>
           </v-list-item>
           <v-card-text>
@@ -37,9 +41,9 @@
             <v-file-input
               label="Укажите путь к корневой папке с моделями"
               :rules="[rules.file]"
-              @change="(file) => { path = file != undefined ? file.path : '' }"
               solo
               webkitdirectory
+              @change="(file) => { path = file != undefined ? file.path : '' }"
             >
               <template v-slot:selection="{ file }">
                 {{ file.path }}
@@ -47,7 +51,7 @@
             </v-file-input>
           </v-card-text>
           <v-card-actions>
-            <div class="flex-grow-1"></div>
+            <div class="flex-grow-1" />
             <v-btn
               color="primary"
               type="submit"

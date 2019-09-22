@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import fs from 'fs'
 import path from 'path'
 import { remote, shell } from 'electron'
@@ -130,7 +131,8 @@ export default {
       return recursive(folder, [ filterByModels ])
     }
 
-    Vue.prototype.$openItem = function(file, ext) {
+    Vue.prototype.$openItem = function(file) {
+      let ext = path.extname(file)
       if (getParameterByExtension(ext, 'useSystemAssociation')) {
         shell.openItem(path.normalize(file))
       } else {

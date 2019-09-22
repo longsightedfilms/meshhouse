@@ -9,7 +9,12 @@
     </ul>
     <div>
       <p>Testing buttons:</p>
-      <v-btn color="primary" @click="runApp">Run 3ds Max test scene</v-btn>
+      <v-btn
+        color="primary"
+        @click="runApp"
+      >
+        Run 3ds Max test scene
+      </v-btn>
     </div>
   </div>
 </template>
@@ -48,17 +53,6 @@ export default {
       return os + remote.process.getSystemVersion()
     }
   },
-  methods: {
-    runApp() {
-      let max = this.$dccGetConfig().adsk_3dsmax
-
-      if(max.useSystemAssociation === true) {
-        shell.openItem(path.join(this.returnDocsPath, path.normalize("\\3dsmax\\scenes\\Studio_scene_share.max")))
-      } else {
-        spawn(max.customPath, [ path.join(this.returnDocsPath, path.normalize("\\3dsmax\\scenes\\Studio_scene_share.max")) ])
-      }
-    }
-  },
   mounted: function() {
     const router = this.$router
     const notifierObject = {
@@ -74,6 +68,17 @@ export default {
       router.push('/')
       remote.getCurrentWindow().show();
     });
-  }
+  },
+  methods: {
+    runApp() {
+      let max = this.$dccGetConfig().adsk_3dsmax
+
+      if(max.useSystemAssociation === true) {
+        shell.openItem(path.join(this.returnDocsPath, path.normalize("\\3dsmax\\scenes\\Studio_scene_share.max")))
+      } else {
+        spawn(max.customPath, [ path.join(this.returnDocsPath, path.normalize("\\3dsmax\\scenes\\Studio_scene_share.max")) ])
+      }
+    }
+  },
 }
 </script>

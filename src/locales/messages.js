@@ -3,5 +3,5 @@ import ru from './ru/index'
 
 export default {
     en: en,
-    ru: ru
+    ru: ru,
 }

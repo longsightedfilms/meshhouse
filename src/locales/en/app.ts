@@ -3,6 +3,7 @@ export default {
         add: "Add",
         addCatalog: "Add new catalog",
         cancel: "Cancel",
-        save: "Save"
+        close: "Close",
+        save: "Save",
     }
 }
