@@ -1,8 +1,8 @@
 export default {
     datatable: {
-        title: "Title",
         filetype: "Type of file",
-        path: "Full path to file"
+        title: "Title",
+        path: "Full path to file",
     },
     open: "Open",
     openFolder: "Open folder with model",

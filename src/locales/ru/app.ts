@@ -5,5 +5,5 @@ export default {
         cancel: "Отмена",
         close: "Закрыть",
         save: "Сохранить",
-    }
+    },
 }

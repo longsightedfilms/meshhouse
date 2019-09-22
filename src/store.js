@@ -34,6 +34,12 @@ export default new Vuex.Store({
     settingModalOpened: false
   },
   mutations: {
+    clearDownloadsList(state) {
+      state.downloads = []
+    },
+    deleteItemFromDownloadsList(state, index) {
+      state.downloads.splice(index, 1)
+    },
     setApplicationDatabases(state, payload) {
       state.databases = payload
     },

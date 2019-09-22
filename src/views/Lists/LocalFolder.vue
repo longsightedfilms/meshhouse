@@ -48,11 +48,17 @@
           >
             <template v-slot:activator="{ on }">
               <v-btn
-                class="text-none text-left d-inline-block"
+                class="text-none text-left d-inline-block btn-avatar"
                 block
                 text
                 v-on="on"
               >
+                <v-avatar
+                  size="24"
+                  tile
+                >
+                  <img :src="returnExtensionIcon(item.extension)">
+                </v-avatar>
                 {{ item.name }}
               </v-btn>
             </template>
@@ -92,16 +98,50 @@ import path from 'path'
 import { remote } from 'electron'
 import { getCollection, initDB, getDB } from 'lokijs-promise'
 
+import iconMax from '@/assets/icons/max.svg'
+import iconMaya from '@/assets/icons/maya.svg'
+import iconBlender from '@/assets/icons/blender.svg'
+import iconC4D from '@/assets/icons/cinema4d.svg'
+import iconHoudini from '@/assets/icons/houdini.svg'
+import iconModo from '@/assets/icons/modo.svg'
+
 const modelsExtensions = {
-  ".max": "3ds Max Scene",
-  ".ma": "Maya ASCII Scene",
-  ".mb": "Maya Binary Scene",
-  ".blend": "Blender Scene",
-  ".c4d": "Cinema 4D Scene", 
-  ".hip": "Houdini Scene",
-  ".hiplc": "Houdini Scene",
-  ".hipnc": "Houdini Scene",
-  ".lxo": "Modo Scene"
+  ".max": {
+    title: "3ds Max Scene",
+    icon: iconMax
+  },
+  ".ma": {
+    title: "Maya ASCII Scene",
+    icon: iconMaya
+  },
+  ".mb": {
+    title: "Maya Binary Scene",
+    icon: iconMaya
+  },
+  ".blend": {
+    title: "Blender Scene",
+    icon: iconBlender
+  },
+  ".c4d": {
+    title: "Cinema 4D Scene",
+    icon: iconC4D
+  },
+  ".hip": {
+    title: "Houdini Scene",
+    icon: iconHoudini
+  },
+  ".hiplc": {
+    title: "Houdini Scene",
+    icon: iconHoudini
+  },
+  ".hipnc": {
+    title: "Houdini Scene",
+    icon: iconHoudini
+  },
+  ".lxo": {
+    title: "Modo Scene",
+    icon: iconModo
+  },
 }
 
 export default {
@@ -119,7 +159,10 @@ export default {
   },
   methods: {
     returnHumanLikeExt: function(extension) {
-      return modelsExtensions[extension]
+      return modelsExtensions[extension].title
+    },
+    returnExtensionIcon: function(extension) {
+      return modelsExtensions[extension].icon
     },
     reindexModels() {
       initDB(path.join(remote.app.getPath('userData'), "/databases/" + this.$route.params.database + ".db"), 1000)
@@ -150,4 +193,9 @@ export default {
 .v-btn.text-left
   .v-btn__content
     justify-content: flex-start
+.v-btn.btn-avatar
+  .v-btn__content
+    .v-avatar
+      margin-right: 1rem
+      margin-left: -1rem
 </style>

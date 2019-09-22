@@ -26,7 +26,10 @@
         </v-btn>
       </template>
 
-      <v-list two-line>
+      <v-list
+        width="540"
+        two-line
+      >
         <v-sheet
           v-for="(item, index) in $store.state.downloads"
           :key="index"
@@ -76,6 +79,7 @@
                 <v-btn 
                   :disabled="!item.status.finished"
                   color="error darken-4"
+                  @click="$store.commit('deleteItemFromDownloadsList', index)"
                 >
                   <v-icon color="grey lighten-1">
                     mdi-close
