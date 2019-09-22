@@ -2,9 +2,9 @@ import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
 import store from './store'
-import i18n from './i18n'
 import ModelsDB from './plugins/models-db/index.js'
 import Vuebar from 'vuebar'
+import { i18n } from './plugins/vuetify'
 
 import vuetify from './plugins/vuetify'
 

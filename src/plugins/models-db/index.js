@@ -99,7 +99,7 @@ export default {
     }
 
     Vue.prototype.$settingsSet = function (setting) {
-      settings.set(...setting)
+      settings.set(...setting) // ['setting', variable]
     }
 
     Vue.prototype.$dccSet = function (setting) {

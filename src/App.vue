@@ -27,7 +27,9 @@
                 width="48"
                 height="48"
               >
-                <p class="white--text ma-0">{{ item.title.substr(0,1)}}</p>
+                <p class="white--text ma-0">
+                  {{ item.title.substr(0,1) }}
+                </p>
               </v-avatar>
             </v-list-item>
           </template>
@@ -47,11 +49,13 @@
                 width="48"
                 height="48"
               >
-                <v-icon class="white--text">mdi-plus</v-icon>
+                <v-icon class="white--text">
+                  mdi-plus
+                </v-icon>
               </v-avatar>
             </v-list-item>
           </template>
-          <span>Добавить новый каталог</span>
+          <span>{{ $t('app.buttons.addCatalog') }}</span>
         </v-tooltip>
       </v-list>
     </v-navigation-drawer>
@@ -62,14 +66,6 @@
         <div>
           <div style="max-height: calc(100vh - 64px)">
             <v-container>
-              <ul>
-                <li>
-                  <router-link to="/">Home</router-link>
-                </li>
-                <li>
-                  <router-link to="/about">About</router-link>
-                </li>
-              </ul>
               <router-view />
             </v-container>
           </div>
@@ -91,10 +87,8 @@ body
   height: 100%
 ::-webkit-scrollbar
   display: none
-
-.container
+.container, .v-input__control
   box-sizing: border-box
-
 </style>
 
 <script>
@@ -107,6 +101,7 @@ export default {
     ApplicationBar
   },
   mounted() {
+    this.$i18n.locale = this.$settingsGet('language')
     setPromiseLibrary(global.Promise)
 
     let lastOpened = this.$settingsGet('applicationWindow.lastOpened')

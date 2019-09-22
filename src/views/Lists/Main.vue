@@ -1,6 +1,6 @@
 <template>
   <div>
-    <local-folder v-if="$route.params.database != 'meshhouse'"/>
+    <local-folder v-if="$route.params.database != 'meshhouse'" />
   </div>
 </template>
 
@@ -12,13 +12,13 @@ import { getCollection, initDB } from 'lokijs-promise'
 
 export default {
   name: "DatabaseListItems",
+  components: {
+    LocalFolder
+  },
   data() {
     return {
       isReady: false
     }
-  },
-  components: {
-    LocalFolder
   },
   async mounted() {
     initDB(path.join(remote.app.getPath('userData'), "/databases/" + this.$route.params.database + ".db"), 1000)

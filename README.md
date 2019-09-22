@@ -5,6 +5,7 @@
     <a href="https://github.com/longsightedfilms/meshhouse/releases"><img alt="GitHub release (latest by date)" src="https://img.shields.io/github/v/release/longsightedfilms/meshhouse?style=for-the-badge"></a>
     <a href="https://github.com/longsightedfilms/meshhouse/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/longsightedfilms/meshhouse/total?style=for-the-badge"></a>
     <a href="https://travis-ci.org/longsightedfilms/meshhouse"><img alt="Travis CI" src="https://img.shields.io/travis/longsightedfilms/meshhouse?style=for-the-badge"></a>
+    <a href="#"><img alt="Codacy branch grade" src="https://img.shields.io/codacy/grade/8cab34754cd04f4186700e485ba74db9/dev?style=for-the-badge"></a>
     <a href="https://github.com/longsightedfilms/meshhouse/blob/dev/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/longsightedfilms/meshhouse?style=for-the-badge"></a>
 </p>
 

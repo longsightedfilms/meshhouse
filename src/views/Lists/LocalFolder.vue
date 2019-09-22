@@ -1,77 +1,90 @@
 <template>
-  <v-card>
-    <v-card-title>
-      {{ $store.state.databases.find(db => db.url == $route.params.database).title }}
-      <div class="flex-grow-1"></div>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            @click="reindexModels"
-            color="primary"
-            class="mr-2"
-            :loading="inProgress"
-            :disabled="inProgress"
-            v-on="on"
-            fab
-          >
-            <v-icon>mdi-refresh</v-icon>
-          </v-btn>
-        </template>
-        <span>Переиндексировать каталог</span>
-      </v-tooltip>
-      <v-text-field
-        v-model="search"
-        append-icon="mda-search"
-        label="Поиск"
-        solo
-        single-line
-        hide-details
-      ></v-text-field>
-    </v-card-title>
-    <v-data-table
-      :headers="headers"
-      :items="$store.state.pageData"
-      :items-per-page="50"
-      :footer-props="{
-        'items-per-page-options': [10, 25, 50, 100, -1]
-      }"
-      :search="search"
-      sort-by="name"
-    >
-      <template v-slot:item.name="{ item }">
-        <v-menu absolute right>
+  <div class="py-4">
+    <v-card>
+      <v-card-title>
+        {{ $store.state.databases.find(db => db.url == $route.params.database).title }}
+        <div class="flex-grow-1" />
+        <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-btn
-              class="text-none text-left d-inline-block"
-              block
-              text
+              color="primary"
+              class="mr-2"
+              height="48"
+              :loading="inProgress"
+              :disabled="inProgress"
+              @click="reindexModels"
               v-on="on"
             >
-              {{ item.name }}
+              <v-icon>
+                mdi-refresh
+              </v-icon>
             </v-btn>
           </template>
+          <span>{{ $t('lists.local.reindex') }}</span>
+        </v-tooltip>
+        <v-text-field
+          v-model="search"
+          append-icon="mda-search"
+          :label="$t('search')"
+          solo
+          single-line
+          hide-details
+        />
+      </v-card-title>
+      <v-data-table
+        :headers="headers"
+        :items="$store.state.pageData"
+        :items-per-page="50"
+        :footer-props="{
+          'items-per-page-options': [10, 25, 50, 100, -1]
+        }"
+        :search="search"
+        sort-by="name"
+      >
+        <template v-slot:item.name="{ item }">
+          <v-menu
+            absolute
+            right
+          >
+            <template v-slot:activator="{ on }">
+              <v-btn
+                class="text-none text-left d-inline-block"
+                block
+                text
+                v-on="on"
+              >
+                {{ item.name }}
+              </v-btn>
+            </template>
 
-          <v-list>
-            <v-list-item @click="$openItem(item.path, item.extension)">
-              <v-list-item-title>Открыть файл</v-list-item-title>
-            </v-list-item>
-            <v-list-item @click="$openFolder(item.path)">
-              <v-list-item-title>Открыть папку с моделью</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-        
-      </template>
+            <v-list>
+              <v-list-item @click="$openItem(item.path, item.extension)">
+                <v-list-item-title>{{ $t('lists.local.open') }}</v-list-item-title>
+              </v-list-item>
+              <v-list-item @click="$openFolder(item.path)">
+                <v-list-item-title>{{ $t('lists.local.openFolder') }}</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </template>
 
-      <template v-slot:item.extension="{ item }">
-        <p class="ma-0">{{ returnHumanLikeExt(item.extension) }}</p>
-      </template>
+        <template v-slot:item.extension="{ item }">
+          <p class="ma-0">
+            {{ returnHumanLikeExt(item.extension) }}
+          </p>
+        </template>
 
-      <template v-slot:item.path="{ item }">
-        <p class="ma-0">{{ item.path }}</p>
-      </template>
-    </v-data-table>
-  </v-card>
+        <template v-slot:item.path="{ item }">
+          <p class="ma-0">
+            {{ item.path }}
+          </p>
+        </template>
+      </v-data-table>
+      <p class="text-right pa-4 font-italic">
+        {{ $t('presence.basic') }}
+      </p>
+    </v-card>
+  </div>
 </template>
 
 <script>
@@ -89,7 +102,7 @@ const modelsExtensions = {
   ".hiplc": "Houdini Scene",
   ".hipnc": "Houdini Scene",
   ".lxo": "Modo Scene"
-  }
+}
 
 export default {
   name: "LocalFolder",
@@ -98,9 +111,9 @@ export default {
       inProgress: false,
       search: "",
       headers: [
-        { text: 'Название', align: 'left', width: '300', value: 'name'},
-        { text: 'Тип файла', width: '160', value: 'extension' },
-        { text: 'Полный путь к файлу', value: 'path' }
+        { text: this.$t('lists.local.datatable.title'), align: 'left', width: '300', value: 'name'},
+        { text: this.$t('lists.local.datatable.filetype'), width: '160', value: 'extension' },
+        { text: this.$t('lists.local.datatable.path'), value: 'path' }
       ],
     }
   },
