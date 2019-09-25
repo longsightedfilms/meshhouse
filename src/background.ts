@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 'use strict'
 
+declare const __static: string
+
 import path from 'path'
 import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
@@ -11,15 +13,30 @@ const settings = new ElectronStore({
   name: "settings"
 })
 
+let applicationOptions = {
+  width: settings.get('applicationWindow.width') || 1024,
+  height: settings.get('applicationWindow.height') || 768,
+  minWidth: 800,
+  minHeight: 600,
+  icon: path.join(__static, 'icon.png'),
+  frame: true,
+  show: false,
+  resizable: true,
+  webPreferences: {
+    nodeIntegration: true
+  }
+}
+
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let appWin
-let createdAppProtocol = false
+let appWin: any = null
+let createdAppProtocol: boolean = false
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([{scheme: 'meshhouse', privileges: { secure: true, standard: true } }])
 
-function createWindow(winVar, devPath, prodPath, options) {
+function createWindow(winVar: any, devPath: string, prodPath: string, options: object) {
   // Create the browser window.
   winVar = new BrowserWindow(options)
   winVar.setMenu(null)
@@ -64,7 +81,7 @@ app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (appWin === null) {
-    createWindow()
+    createWindow(appWin, 'app', 'index.html', applicationOptions)
   }
 })
 
@@ -72,23 +89,7 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
-  let windowWidth = settings.get('applicationWindow.width') || 1024
-  let windowHeight = settings.get('applicationWindow.height') || 768
-
-  // Create auth window
-  createWindow(appWin, 'app', 'index.html', {
-    width: windowWidth,
-    height: windowHeight,
-    minWidth: 800,
-    minHeight: 600,
-    icon: path.join(__static, 'icon.png'),
-    frame: true,
-    show: false,
-    resizable: true,
-    webPreferences: {
-      nodeIntegration: true
-    }
-  })
+  createWindow(appWin, 'app', 'index.html', applicationOptions)
 })
 
 // Exit cleanly on request from parent process in development mode.

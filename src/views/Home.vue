@@ -1,12 +1,14 @@
 <template>
-  <div>
-    <p>asdasdasd</p>
-    {{ $route.path }}
+  <div class="home">
+    <p>Test</p>
   </div>
 </template>
 
-<script>
-export default {
-  name: "MainPage"
-};
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+
+@Component({})
+
+export default class Home extends Vue {}
 </script>

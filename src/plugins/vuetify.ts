@@ -1,6 +1,8 @@
 import Vue from 'vue'
-import Vuetify from 'vuetify/lib'
+import Vuetify from 'vuetify'
 import VueI18n from 'vue-i18n'
+
+import 'vuetify/dist/vuetify.min.css'
 
 import messages from '../locales/messages'
 
@@ -15,7 +17,7 @@ export const i18n = new VueI18n({
 
 export default new Vuetify({
   lang: {
-    t: (key, ...params) => i18n.t(key, params),
+    t: (key: string, ...params: any) => i18n.t(key, params),
   },
   icons: {
     iconfont: 'mdi'

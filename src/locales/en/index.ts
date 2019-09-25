@@ -1,8 +1,8 @@
-import vuetify from 'vuetify/src/locale/en.ts'
-import app from './app.ts'
-import settings from './modals/settings.ts'
-import about from './modals/about.ts'
-import local from './lists/local.ts'
+import vuetify from 'vuetify/src/locale/en'
+import app from './app'
+import settings from './modals/settings'
+import about from './modals/about'
+import local from './lists/local'
 
 export default {
     $vuetify: vuetify,

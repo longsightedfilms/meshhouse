@@ -29,10 +29,10 @@ const router = new Router({
   ]
 })
 
-router.afterEach((to, from) => {
+/*router.afterEach((to, from) => {
   Vue.nextTick(() => {
     router.app.$root.$settingsSet(['applicationWindow.lastOpened', to.path])
   })
-})
+})*/
 
 export default router
