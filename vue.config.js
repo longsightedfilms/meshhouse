@@ -1,4 +1,9 @@
 module.exports = {
+  configureWebpack: {
+    resolve: {
+      mainFields: ['module', 'main']
+    }
+  },
   pluginOptions: {
     i18n: {
       locale: 'en',

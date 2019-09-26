@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 'use strict'
 
 declare const __static: string
@@ -23,7 +22,8 @@ let applicationOptions = {
   show: false,
   resizable: true,
   webPreferences: {
-    nodeIntegration: true
+    nodeIntegration: true,
+    webSecurity: false
   }
 }
 

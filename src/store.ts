@@ -28,6 +28,7 @@ export default new Vuex.Store({
         }
       }
     ],
+    pageLoaded: false,
     pageTitle: "",
     pageData: [],
     aboutModalOpened: false,
@@ -42,6 +43,9 @@ export default new Vuex.Store({
     },
     setApplicationDatabases(state, payload) {
       state.databases = payload
+    },
+    setPageStatus(state, bool) {
+      state.pageLoaded = bool
     },
     setPageTitle(state, payload) {
       state.pageTitle = payload

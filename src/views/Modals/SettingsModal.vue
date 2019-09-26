@@ -35,13 +35,13 @@
                   v-model="dcc_form.adsk_3dsmax.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
-                  hint="Если переключатель находится в правом положении, то при открытии файлов будет использоваться системная ассоциация для *.max файлов"
+                  :hint="$t('settings.dcc.hint', { extension: '*.max' })"
                   inset
                   persistent-hint
                 />
                 <v-file-input
                   v-if="!dcc_form.adsk_3dsmax.useSystemAssociation"
-                  label="Укажите путь к исполняемому файлу"
+                  :label="$t('settings.dcc.exePath')"
                   :hint="returnCurrentPathText(dcc_form.adsk_3dsmax.customPath)"
                   class="mt-4"
                   persistent-hint
@@ -66,13 +66,13 @@
                   v-model="dcc_form.adsk_maya.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
-                  hint="Если переключатель находится в правом положении, то при открытии файлов будет использоваться системная ассоциация для *.ma и *.mb файлов"
+                  :hint="$t('settings.dcc.hint', { extension: '*.ma, *.mb' })"
                   inset
                   persistent-hint
                 />
                 <v-file-input
                   v-if="!dcc_form.adsk_maya.useSystemAssociation"
-                  label="Укажите путь к исполняемому файлу"
+                  :label="$t('settings.dcc.exePath')"
                   :hint="returnCurrentPathText(dcc_form.adsk_maya.customPath)"
                   class="mt-4"
                   persistent-hint
@@ -97,13 +97,13 @@
                   v-model="dcc_form.blender.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
-                  hint="Если переключатель находится в правом положении, то при открытии файлов будет использоваться системная ассоциация для *.blend файлов"
+                  :hint="$t('settings.dcc.hint', { extension: '*.blend' })"
                   inset
                   persistent-hint
                 />
                 <v-file-input
                   v-if="!dcc_form.blender.useSystemAssociation"
-                  label="Укажите путь к исполняемому файлу"
+                  :label="$t('settings.dcc.exePath')"
                   :hint="returnCurrentPathText(dcc_form.blender.customPath)"
                   class="mt-4"
                   persistent-hint
@@ -128,13 +128,13 @@
                   v-model="dcc_form.cinema4d.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
-                  hint="Если переключатель находится в правом положении, то при открытии файлов будет использоваться системная ассоциация для *.c4d файлов"
+                  :hint="$t('settings.dcc.hint', { extension: '*.c4d' })"
                   inset
                   persistent-hint
                 />
                 <v-file-input
                   v-if="!dcc_form.cinema4d.useSystemAssociation"
-                  label="Укажите путь к исполняемому файлу"
+                  :label="$t('settings.dcc.exePath')"
                   :hint="returnCurrentPathText(dcc_form.cinema4d.customPath)"
                   class="mt-4"
                   persistent-hint
@@ -159,13 +159,13 @@
                   v-model="dcc_form.houdini.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
-                  hint="Если переключатель находится в правом положении, то при открытии файлов будет использоваться системная ассоциация для *.hip файлов"
+                  :hint="$t('settings.dcc.hint', { extension: '*.hip, *.hiplc, *.hipnc' })"
                   inset
                   persistent-hint
                 />
                 <v-file-input
                   v-if="!dcc_form.houdini.useSystemAssociation"
-                  label="Укажите путь к исполняемому файлу"
+                  :label="$t('settings.dcc.exePath')"
                   :hint="returnCurrentPathText(dcc_form.houdini.customPath)"
                   class="mt-4"
                   persistent-hint
@@ -190,13 +190,13 @@
                   v-model="dcc_form.modo.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
-                  hint="Если переключатель находится в правом положении, то при открытии файлов будет использоваться системная ассоциация для *.lxo файлов"
+                  :hint="$t('settings.dcc.hint', { extension: '*.lxo' })"
                   inset
                   persistent-hint
                 />
                 <v-file-input
                   v-if="!dcc_form.modo.useSystemAssociation"
-                  label="Укажите путь к исполняемому файлу"
+                  :label="$t('settings.dcc.exePath')"
                   :hint="returnCurrentPathText(dcc_form.modo.customPath)"
                   class="mt-4"
                   persistent-hint

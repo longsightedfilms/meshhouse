@@ -6,3 +6,7 @@ declare module '*.vue' {
 declare module 'vuebar' {
   import Vuebar from 'vuebar'
 }
+
+declare module 'lokijs-promise'
+declare module '*.svg'
+declare module 'uniqid'

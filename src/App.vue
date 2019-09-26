@@ -77,6 +77,7 @@
 
 <style lang="sass">
 @import 'sass/vuebar'
+@import 'sass/vuetify'
 
 html
   overflow-y: auto !important

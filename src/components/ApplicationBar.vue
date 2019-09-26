@@ -8,6 +8,14 @@
     <v-toolbar-title>
       <v-img src="@/assets/logo_text.svg" />
     </v-toolbar-title>
+
+    <v-progress-linear
+      :active="!$store.state.pageLoaded"
+      :indeterminate="!$store.state.pageLoaded"
+      absolute
+      bottom
+      color="primary accent-4"
+    />
     <div class="flex-grow-1" />
 
     <v-menu

@@ -5,17 +5,64 @@ import { remote, shell } from 'electron'
 import { spawn } from 'child_process'
 import { transliterate as tr, slugify } from 'transliteration'
 import store from '../../store'
-
+// Import icons
+import iconMax from '@/assets/icons/max.svg'
+import iconMaya from '@/assets/icons/maya.svg'
+import iconBlender from '@/assets/icons/blender.svg'
+import iconC4D from '@/assets/icons/cinema4d.svg'
+import iconHoudini from '@/assets/icons/houdini.svg'
+import iconModo from '@/assets/icons/modo.svg'
+// Initializing storages
 const recursive = require('recursive-readdir')
 const ElectronStore = require('electron-store')
 const settings = new ElectronStore({name: "settings"})
 const databases = new ElectronStore({name: "databases"})
 const dcc = new ElectronStore({name: "dcc-config"})
+// Typings
+type Extension = ".max" | ".ma" | ".mb" | ".blend" | ".c4d" | ".hip" | ".hiplc" | ".hipnc" | ".lxo"
+type Extensions = { [extension in Extension]: object }
 
-const modelsExtensions = [".max", ".ma", ".mb", ".blend", ".c4d", ".hip", ".hiplc", ".hipnc", ".lxo"]
+const modelsExtensions: Extensions = {
+  ".max": {
+    title: "3ds Max Scene",
+    icon: iconMax
+  },
+  ".ma": {
+    title: "Maya ASCII Scene",
+    icon: iconMaya
+  },
+  ".mb": {
+    title: "Maya Binary Scene",
+    icon: iconMaya
+  },
+  ".blend": {
+    title: "Blender Scene",
+    icon: iconBlender
+  },
+  ".c4d": {
+    title: "Cinema 4D Scene",
+    icon: iconC4D
+  },
+  ".hip": {
+    title: "Houdini Scene",
+    icon: iconHoudini
+  },
+  ".hiplc": {
+    title: "Houdini Scene",
+    icon: iconHoudini
+  },
+  ".hipnc": {
+    title: "Houdini Scene",
+    icon: iconHoudini
+  },
+  ".lxo": {
+    title: "Modo Scene",
+    icon: iconModo
+  },
+}
 
 function filterByModels(file: string, stats: any) {
-  return !stats.isDirectory() && !modelsExtensions.includes(path.extname(file))
+  return !stats.isDirectory() && !modelsExtensions.hasOwnProperty(path.extname(file))
 }
 
 function getParameterByExtension(extension: string, param: string) {
@@ -121,6 +168,17 @@ export default {
     Vue.prototype.$stringToSlug = function(str: string) {
       return slugify(str)
     }
+
+    Vue.prototype.$returnItemCategory = function(category: string) {
+      return category || this.$t('lists.local.noCategory')
+    }
+
+    Vue.prototype.$returnHumanLikeExtension = function(extension: string) {
+      return modelsExtensions[extension].title
+    },
+    Vue.prototype.$returnExtensionIcon = function(extension: string) {
+      return modelsExtensions[extension].icon
+    },
 
     Vue.prototype.$addDatabase = function(db: any) {
       let list = databases.get('databases')

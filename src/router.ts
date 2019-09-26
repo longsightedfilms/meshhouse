@@ -1,6 +1,6 @@
-/* eslint-disable no-unused-vars */
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from './store'
 
 Vue.use(Router)
 
@@ -24,15 +24,21 @@ const router = new Router({
     {
       path: '/db/:database',
       name: 'DatabaseListItems',
-      component: () => import(/* webpackChunkName: "DatabaseListItems" */ './views/Lists/Main.vue')
+      component: () => import(/* webpackChunkName: "DatabaseListItems" */ './views/Catalog/Main.vue')
     }
   ]
 })
 
-/*router.afterEach((to, from) => {
+router.beforeEach((to, from, next) => {
+  store.commit('setPageStatus', false)
+  next()
+})
+
+router.afterEach((to, from) => {
+  store.commit('setPageStatus', true)
   Vue.nextTick(() => {
     router.app.$root.$settingsSet(['applicationWindow.lastOpened', to.path])
   })
-})*/
+})
 
 export default router
