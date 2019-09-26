@@ -5,5 +5,6 @@ export default {
         cancel: "Cancel",
         close: "Close",
         save: "Save",
+        show: "Show",
     },
 }

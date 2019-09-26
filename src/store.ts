@@ -6,7 +6,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     databases: [
-      { title: 'MeshHouse', url: 'meshhouse', path: '', color: 'primary' }
+      { title: 'MeshHouse', url: 'meshhouse', path: '', color: 'primary', view: 'rich' }
     ],
     downloads: [
       {
@@ -31,7 +31,10 @@ export default new Vuex.Store({
     pageLoaded: false,
     pageTitle: "",
     pageData: [],
+    properties: {},
+    imageRandomizer: 0,
     aboutModalOpened: false,
+    editPropertiesModalOpened: false,
     settingModalOpened: false
   },
   mutations: {
@@ -40,6 +43,9 @@ export default new Vuex.Store({
     },
     deleteItemFromDownloadsList(state, index) {
       state.downloads.splice(index, 1)
+    },
+    incrementImageRandomizer(state) {
+      state.imageRandomizer++
     },
     setApplicationDatabases(state, payload) {
       state.databases = payload
@@ -53,8 +59,14 @@ export default new Vuex.Store({
     setPageData(state, payload) {
       state.pageData = payload
     },
+    setProperties(state, payload) {
+      state.properties = payload
+    },
     setAboutProgramModal(state) {
       state.aboutModalOpened = !state.aboutModalOpened
+    },
+    setEditPropsModal(state, payload) {
+      state.editPropertiesModalOpened = payload
     },
     setSettingsModal(state) {
       state.settingModalOpened = !state.settingModalOpened

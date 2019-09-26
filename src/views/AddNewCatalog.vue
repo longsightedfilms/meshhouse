@@ -1,22 +1,25 @@
 <template>
   <v-row>
-    <v-col>
+    <v-col cols="12">
+      <h1 class="display-1">
+        {{ $t('addCatalog.formTitle') }}
+      </h1>
+    </v-col>
+    <v-col cols="12">
       <v-card>
         <v-form 
           ref="form"
           @submit.prevent="submitNewCatalog"
         >
-          <v-list-item three-line>
+          <v-list-item>
             <v-list-item-content>
-              <div class="overline">
-                Добавить новый каталог
-              </div>
               <v-text-field
-                v-model="title"
-                :rules="[rules.required]"
-                placeholder="Новый каталог"
+                :value="title"
+                :rules="[(value) => !!value || this.$t('addCatalog.formTitleHint')]"
+                :placeholder="$t('addCatalog.formPlaceholder')"
                 class="headline"
                 type="text"
+                @change="v => title = v"
               />
             </v-list-item-content>
 
@@ -30,17 +33,92 @@
             </v-list-item-avatar>
           </v-list-item>
           <v-card-text>
-            <p>Выберите цвет подложки каталога:</p>
-            <v-color-picker
-              v-model="color"
-              class="mb-4"
-              mode="rgba"
-              hide-inputs
-              show-swatches
-            />
+            <v-container
+              class="pa-0"
+              fluid
+            >
+              <v-row>
+                <v-col cols="3">
+                  <p class="title">
+                    {{ $t('addCatalog.formColorPicker') }}
+                  </p>
+                  <v-color-picker
+                    v-model="color"
+                    class="mb-4"
+                    mode="rgba"
+                    hide-inputs
+                    show-swatches
+                  />
+                </v-col>
+                <v-col cols="9">
+                  <p class="title">
+                    {{ $t('addCatalog.formView') }}
+                  </p>
+                  <v-item-group
+                    :value="view"
+                    mandatory
+                    @change="v => view = v"
+                  >
+                    <v-row>
+                      <v-col class="py-0">
+                        <v-item v-slot:default="{ active, toggle }">
+                          <div>
+                            <v-card
+                              :color="active ? 'primary' : ''"
+                              class="d-flex align-center"
+                              :class="active ? 'elevation-16': ''"
+                              dark
+                              height="330"
+                              @click="toggle"
+                            >
+                              <v-scroll-y-transition>
+                                <div class="display-3 flex-grow-1 text-center">
+                                  <v-icon size="256">
+                                    mdi-view-grid
+                                  </v-icon>
+                                </div>
+                              </v-scroll-y-transition>
+                            </v-card>
+                            <p class="title text-center mt-4 mb-0">
+                              {{ $t('addCatalog.formViewHint.grid') }}
+                            </p>
+                          </div>
+                        </v-item>
+                      </v-col>
+                      <v-col class="py-0">
+                        <v-item v-slot:default="{ active, toggle }">
+                          <div>
+                            <v-card
+                              :color="active ? 'primary' : ''"
+                              class="d-flex align-center"
+                              :class="active ? 'elevation-16': ''"
+                              dark
+                              height="330"
+                              @click="toggle"
+                            >
+                              <v-scroll-y-transition>
+                                <div class="display-3 flex-grow-1 text-center">
+                                  <v-icon size="256">
+                                    mdi-view-headline
+                                  </v-icon>
+                                </div>
+                              </v-scroll-y-transition>
+                            </v-card>
+                            <p class="title text-center mt-4 mb-0">
+                              {{ $t('addCatalog.formViewHint.basic') }}
+                            </p>
+                          </div>
+                        </v-item>
+                      </v-col>
+                    </v-row>
+                  </v-item-group>
+                </v-col>
+              </v-row>
+            </v-container>
+
             <v-file-input
-              label="Укажите путь к корневой папке с моделями"
-              :rules="[rules.file]"
+              :label="$t('addCatalog.formFolder')"
+              :rules="[(value) => !!value.path || this.$t('addCatalog.formFolder')]"
               solo
               webkitdirectory
               @change="(file) => { path = file != undefined ? file.path : '' }"
@@ -57,7 +135,7 @@
               type="submit"
               :loading="inProgress"
             >
-              Добавить
+              {{ $t('app.buttons.add') }}
             </v-btn>
           </v-card-actions>
         </v-form>
@@ -68,83 +146,81 @@
         right
         vertical
       >
-        Каталог успешно добавлен
+        {{ $t('addCatalog.formSuccess') }}
         <v-btn
           color="primary"
           text
           @click="$router.push('/db/' + url)"
         >
-          Перейти
+          {{ $t('app.buttons.show') }}
         </v-btn>
         <v-btn
           color="pink"
           text
           @click="snackbar = false"
         >
-          Закрыть
+          {{ $t('app.buttons.close') }}
         </v-btn>
       </v-snackbar>
     </v-col>
   </v-row>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
 import path from 'path'
 import fs from 'fs'
 import { remote } from 'electron'
 import { getCollection, initDB } from 'lokijs-promise'
+import { IDatabase } from '@/plugins/models-db/interfaces'
 
-export default {
-  name: "AddNewCatalog",
-  data() {
-    return {
-      snackbar: false,
-      inProgress: false,
-      title: "",
-      color: "",
-      path: "",
-      url: "",
-      rules: {
-        required: value => !!value || 'Введите название каталога',
-        file: value => !!value.path || 'Выберите путь к каталогу с моделями'
+@Component({})
+
+export default class AddNewCatalog extends Vue {
+  snackbar: boolean = false
+  inProgress: boolean = false
+  title: string = ""
+  color: string = ""
+  path: string = ""
+  view: number = 0
+  url: string = ""
+
+  viewString: string[] = ["grid", "basic"]
+
+  async startingIndexFolder(catalog: IDatabase): Promise<any> {
+    let models = await getCollection("models")
+
+    this.$indexFolderRecursive(this.path).then((files: string[]) => {
+      files.forEach((file: string) => {
+        models.insert({ name: path.parse(file).name, extension: path.parse(file).ext, path: file })
+      })
+      this.$addDatabase(catalog)
+    })
+  }
+
+  submitNewCatalog() {
+    if(this.$refs.form.validate()) {
+      this.inProgress = true
+
+      const catalog = {
+        title: this.title,
+        color: this.color,
+        url: this.$stringToSlug(this.title),
+        path: this.path,
+        view: this.viewString[this.view]
       }
-    }
-  },
-  methods: {
-    submitNewCatalog() {
-      if(this.$refs.form.validate()) {
-        this.inProgress = true
+      this.url = catalog.url
 
-        const catalog = {
-          title: this.title,
-          color: this.color,
-          url: this.$stringToSlug(this.title),
-          path: this.path
-        }
-
-        this.url = catalog.url
-
-        let directory = path.join(remote.app.getPath('userData'), "/databases/")
-        if (!fs.existsSync(directory)){
-          fs.mkdirSync(directory)
-        }
-
-        initDB(path.join(directory, catalog.url + ".db"), 1000)
-        this.startingIndexFolder(catalog).then(() => {
-          this.snackbar = true
-          this.inProgress = false
-        })
+      let directory = path.join(remote.app.getPath('userData'), "/databases/")
+      if (!fs.existsSync(directory)){
+        fs.mkdirSync(directory)
       }
-    },
 
-    startingIndexFolder: async function(catalog) {
-      let models = await getCollection("models")
-
-      this.$indexFolderRecursive(this.path).then((files) => {
-        files.forEach((file) => {
-          models.insert({ name: path.parse(file).name, extension: path.parse(file).ext, path: file })
-        })
-        this.$addDatabase(catalog)
+      initDB(path.join(directory, catalog.url + ".db"), 1000)
+      this.startingIndexFolder(catalog).then(() => {
+        this.snackbar = true
+        this.inProgress = false
       })
     }
   }

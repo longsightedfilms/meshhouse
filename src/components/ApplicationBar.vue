@@ -136,15 +136,18 @@
   </v-app-bar>
 </template>
 
-<script>
-import ModalAbout from '../views/Modals/AboutProgramModal'
-import ModalSettings from '../views/Modals/SettingsModal'
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import ModalAbout from '@/views/Modals/AboutProgramModal'
+import ModalSettings from '@/views/Modals/SettingsModal'
 
-export default {
-  name: "ApplicationBar",
+@Component({
   components: {
     ModalAbout,
     ModalSettings
   }
-}
+})
+
+export default class ApplicationBar extends Vue {}
 </script>

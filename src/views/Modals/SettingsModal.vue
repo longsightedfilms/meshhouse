@@ -236,55 +236,56 @@
   </v-card>
 </template>
 
-<script>
-import LanguageSelector from '../../components/LanguageSelector'
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import LanguageSelector from '@/components/LanguageSelector'
 
-export default {
-  name: "ModalSettings",
+@Component({
   components: {
     LanguageSelector
-  },
-  data() {
-    return {
-      dcc_form: {
-        adsk_3dsmax: {
-          useSystemAssociation: true,
-          customPath: ""
-        },
-        adsk_maya: {
-          useSystemAssociation: true,
-          customPath: ''
-        },
-        blender: {
-          useSystemAssociation: true,
-          customPath: ''
-        },
-        cinema4d: {
-          useSystemAssociation: true,
-          customPath: ''
-        },
-        houdini: {
-          useSystemAssociation: true,
-          customPath: ''
-        },
-        modo: {
-          useSystemAssociation: true,
-          customPath: ''
-        }
-      }
+  }
+})
+
+export default class ModalSettings extends Vue {
+  dcc_form: object =  {
+    adsk_3dsmax: {
+      useSystemAssociation: true,
+      customPath: ""
+    },
+    adsk_maya: {
+      useSystemAssociation: true,
+      customPath: ''
+    },
+    blender: {
+      useSystemAssociation: true,
+      customPath: ''
+    },
+    cinema4d: {
+      useSystemAssociation: true,
+      customPath: ''
+    },
+    houdini: {
+      useSystemAssociation: true,
+      customPath: ''
+    },
+    modo: {
+      useSystemAssociation: true,
+      customPath: ''
     }
-  },
+  }
+
   mounted() {
     this.dcc_form = this.$dccGetConfig()
-  },
-  methods: {
-    saveSettingToFile: function() {
-      this.$dccSetConfig(this.dcc_form)
-      this.$store.commit('setSettingsModal')
-    },
-    returnCurrentPathText(path) {
-      return this.$t('settings.currentPath') + path
-    }
+  }
+
+  saveSettingToFile(): void {
+    this.$dccSetConfig(this.dcc_form)
+    this.$store.commit('setSettingsModal')
+  }
+
+  returnCurrentPathText(path: string): string {
+    return this.$t('settings.currentPath') + path
   }
 }
 </script>

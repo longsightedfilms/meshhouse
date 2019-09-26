@@ -5,6 +5,7 @@ import { remote, shell } from 'electron'
 import { spawn } from 'child_process'
 import { transliterate as tr, slugify } from 'transliteration'
 import store from '../../store'
+import { IExtension, IDatabase } from '@/plugins/models-db/interfaces'
 // Import icons
 import iconMax from '@/assets/icons/max.svg'
 import iconMaya from '@/assets/icons/maya.svg'
@@ -18,11 +19,8 @@ const ElectronStore = require('electron-store')
 const settings = new ElectronStore({name: "settings"})
 const databases = new ElectronStore({name: "databases"})
 const dcc = new ElectronStore({name: "dcc-config"})
-// Typings
-type Extension = ".max" | ".ma" | ".mb" | ".blend" | ".c4d" | ".hip" | ".hiplc" | ".hipnc" | ".lxo"
-type Extensions = { [extension in Extension]: object }
 
-const modelsExtensions: Extensions = {
+const modelsExtensions: IExtension = {
   ".max": {
     title: "3ds Max Scene",
     icon: iconMax
@@ -61,11 +59,11 @@ const modelsExtensions: Extensions = {
   },
 }
 
-function filterByModels(file: string, stats: any) {
+function filterByModels(file: string, stats: any): boolean {
   return !stats.isDirectory() && !modelsExtensions.hasOwnProperty(path.extname(file))
 }
 
-function getParameterByExtension(extension: string, param: string) {
+function getParameterByExtension(extension: string, param: string): string {
   switch (extension) {
     case ".max": 
       return dcc.get('adsk_3dsmax.' + param)
@@ -82,6 +80,8 @@ function getParameterByExtension(extension: string, param: string) {
       return dcc.get('houdini.' + param)
     case ".lxo":
       return dcc.get('modo.' + param)
+    default:
+      return ''
   }
 }
 
@@ -92,6 +92,7 @@ if ( !fs.existsSync( path.join(remote.app.getPath('userData'), path.normalize("\
       {
         title: "MeshHouse",
         color: "blue-grey",
+        view: "rich",
         url: "meshhouse",
         path: null
       }
@@ -145,42 +146,43 @@ if ( !fs.existsSync( path.join(remote.app.getPath('userData'), path.normalize("\
 
 export default {
   install(Vue: any) {
-    Vue.prototype.$settingsGet = function (setting: string) {
+    Vue.prototype.$settingsGet = function (setting: string): string {
       return settings.get(setting)
     }
 
-    Vue.prototype.$settingsSet = function (setting: Array<any>) {
-      settings.set(...setting) // ['setting', variable]
+    Vue.prototype.$settingsSet = function (setting: string[]): void {
+      settings.set(...setting)
     }
 
-    Vue.prototype.$dccSet = function (setting: any) {
+    Vue.prototype.$dccSet = function (setting: any): void {
       dcc.set(...setting)
     }
 
-    Vue.prototype.$dccGetConfig = function () {
+    Vue.prototype.$dccGetConfig = function (): object {
       return dcc.store
     }
 
-    Vue.prototype.$dccSetConfig = function (config: string) {
-      return dcc.store = config
+    Vue.prototype.$dccSetConfig = function (config: object): void {
+      dcc.store = config
     }
 
-    Vue.prototype.$stringToSlug = function(str: string) {
+    Vue.prototype.$stringToSlug = function(str: string): string {
       return slugify(str)
     }
 
-    Vue.prototype.$returnItemCategory = function(category: string) {
+    Vue.prototype.$returnItemCategory = function(category: string): string {
       return category || this.$t('lists.local.noCategory')
     }
 
-    Vue.prototype.$returnHumanLikeExtension = function(extension: string) {
+    Vue.prototype.$returnHumanLikeExtension = function(extension: string): string {
       return modelsExtensions[extension].title
-    },
-    Vue.prototype.$returnExtensionIcon = function(extension: string) {
-      return modelsExtensions[extension].icon
-    },
+    }
 
-    Vue.prototype.$addDatabase = function(db: any) {
+    Vue.prototype.$returnExtensionIcon = function(extension: string): any {
+      return modelsExtensions[extension].icon
+    }
+
+    Vue.prototype.$addDatabase = function (db: IDatabase): void {
       let list = databases.get('databases')
       if (list) {
         databases.set('databases', list.concat(db))
@@ -188,11 +190,16 @@ export default {
       store.commit('setApplicationDatabases', databases.get('databases'))
     }
 
-    Vue.prototype.$indexFolderRecursive = function(folder: string) {
+    Vue.prototype.$editDatabase = function (database: string, setting: string, value: string): void {
+      databases.set('databases.' + database + '.' + setting, value)
+      store.commit('setApplicationDatabases', databases.get('databases'))
+    }
+
+    Vue.prototype.$indexFolderRecursive = function(folder: string): Promise<any> {
       return recursive(folder, [ filterByModels ])
     }
 
-    Vue.prototype.$openItem = function(file: string) {
+    Vue.prototype.$openItem = function(file: string): void {
       let ext = path.extname(file)
       if (getParameterByExtension(ext, 'useSystemAssociation')) {
         shell.openItem(path.normalize(file))
@@ -201,7 +208,7 @@ export default {
       }
     }
 
-    Vue.prototype.$openFolder = function(folder: string) {
+    Vue.prototype.$openFolder = function(folder: string): void {
       shell.showItemInFolder(path.normalize(folder))
     }
   }

@@ -109,64 +109,7 @@
         </v-card-actions>
       </v-card>
     </v-col>
-    <v-dialog
-      v-model="dialog"
-      max-width="500"
-    >
-      <v-card>
-        <v-card-title class="headline">
-          {{ $t('lists.local.modal.title') }}
-        </v-card-title>
-        <v-card-text>
-          <v-img
-            :src="forceReloadImage(properties.image)"
-            aspect-ratio="1"
-            class="grey lighten-2 mb-4"
-            max-height="300"
-          />
-          <v-text-field
-            :value="properties.name"
-            :label="$t('lists.local.modal.changeName')"
-            @change="v => properties.name = v"
-          />
-          <v-combobox
-            :value="properties.category"
-            :items="autocompleteTips"
-            :label="$t('lists.local.modal.changeCategory')"
-            @change="v => properties.category = v"
-          />
-          <v-file-input
-            :label="$t('lists.local.modal.changeImage')"
-            @change="changeFile"
-          >
-            <template v-slot:selection="{ file }">
-              {{ file.path }}
-            </template>
-          </v-file-input>
-        </v-card-text>
-
-        <v-card-actions>
-          <div class="flex-grow-1" />
-
-          <v-btn
-            color="primary"
-            :loading="isBusy"
-            :disabled="isBusy"
-            text
-            @click="updateItem()"
-          >
-            {{ $t('app.buttons.save') }}
-          </v-btn>
-          <v-btn
-            color="error"
-            text
-            @click="dialog = false"
-          >
-            {{ $t('app.buttons.cancel') }}
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <edit-properties-modal />
   </v-row>
 </template>
 
@@ -179,47 +122,25 @@ import Jimp from 'jimp'
 import uniqid from 'uniqid'
 import { remote } from 'electron'
 import { getCollection, initDB, getDB } from 'lokijs-promise'
+import EditPropertiesModal from '@/views/Modals/EditPropertiesModal.vue'
+import { IModel } from '@/plugins/models-db/interfaces'
 
-interface Model {
-  name: string,
-  category: string,
-  image: string,
-  extension: string,
-  path: string
-}
-
-@Component({})
+@Component({
+  components: {
+    EditPropertiesModal
+  }
+})
 
 export default class GridPresence extends Vue {
-  imageRand: number = 0
-
-  models: any = null
-  dialog: boolean = false
-  imageChanged: boolean = false
-  isBusy: boolean = false
-
-  uploadImage: string = ''
-  autocompleteTips: string[] = []
-
-  properties: Model = { name: '', category: '', image: '', extension: '', path: '' }
-
   forceReloadImage(image: string) {
-    return image != '' ? image + '?v=' + this.imageRand : image
+    return image != '' ? image + '?v=' + this.$store.state.imageRandomizer : image
   }
 
-  changeFile(file: any) {
-    this.uploadImage = file != undefined ? file.path : ''
-    this.imageChanged = file != undefined
-  }
-
-  async openPropertiesModal(model: Model) {
-    this.imageChanged = false
-    this.dialog = true
-
-    this.models = await getCollection("models")
+  async openPropertiesModal(model: IModel) {
+    let models = await getCollection("models")
 
     let categories: string[] = []
-    let query = this.models.chain().find({}).simplesort('category').data()
+    let query = models.chain().find({}).simplesort('category').data()
 
     query.forEach((item: any) => {
       if (categories.indexOf(item.category) === -1 && item.category != '') {
@@ -227,54 +148,18 @@ export default class GridPresence extends Vue {
       }
     })
 
-    this.autocompleteTips = categories
-
-    this.properties.name = model.name
-    this.properties.category = model.category
-    this.properties.image = model.image
-    this.properties.extension = model.extension
-    this.properties.path = model.path
-  }
-
-  async updateItem() {
-    this.isBusy = true
-
-    this.models = await getCollection("models")
-    let queryModel = this.models.findOne({ path: this.properties.path })
-    let imageName = uniqid('image-') + '.jpg'
-    
-    let imagePath: string = ''
-    if (this.imageChanged === true && this.properties.image != '') {
-      imagePath = path.normalize(this.properties.image)
-    } else {
-      imagePath = path.normalize(path.join(remote.app.getPath('userData'), '\\imagecache\\', imageName))
+    let properties = {
+      autocompleteTips: categories,
+      imageChanged: false,
+      name: model.name,
+      category: model.category,
+      image: model.image,
+      extension: model.extension,
+      path: model.path
     }
 
-    queryModel.name = this.properties.name
-    queryModel.category = this.properties.category
-    queryModel.image = (this.imageChanged === true) ? imagePath : this.properties.image
-
-    // Create thumbnails and save in imagecache folder
-    if(this.imageChanged === true) {
-      fs.access(imagePath, fs.constants.F_OK, (err) => {
-        Jimp.read(this.uploadImage)
-        .then((image: any) => {
-          return image.cover(700, 700).quality(70).writeAsync(imagePath)
-        })
-        .then(() => {
-          this.imageRand++
-          this.models.update(queryModel)
-          this.$store.commit('setPageData', this.models.chain().find({}).simplesort('name').data())
-          this.isBusy = false
-          this.dialog = false
-        })
-      })
-    } else {
-      this.models.update(queryModel)
-      this.$store.commit('setPageData', this.models.chain().find({}).simplesort('name').data())
-      this.isBusy = false
-      this.dialog = false
-    }
+    this.$store.commit('setProperties', properties)
+    this.$store.commit('setEditPropsModal', true)
   }
 }
 </script>

@@ -7,32 +7,33 @@
   />
 </template>
 
-<script>
-export default {
-  name: "LanguageSelector",
-  data() {
-    return {
-      currentLang: '',
-      langs: [
-        {
-          text: "English",
-          value: "en"
-        },
-        {
-          text: "Русский",
-          value: "ru"
-        }
-      ]
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import { ILanguage } from '@/plugins/models-db/interfaces'
+
+@Component({})
+
+export default class LanguageSelector extends Vue {
+  currentLang: string =  ''
+  langs: ILanguage[] = [
+    {
+      text: "English",
+      value: "en"
+    },
+    {
+      text: "Русский",
+      value: "ru"
     }
-  },
+  ]
+
   mounted() {
     this.currentLang = this.$i18n.locale
-  },
-  methods: {
-    onChange(lang) {
-      this.$i18n.locale = lang
-      this.$settingsSet(['language', lang])
-    }
+  }
+
+  onChange(lang: string): void {
+    this.$i18n.locale = lang
+    this.$settingsSet(['language', lang])
   }
 }
 </script>

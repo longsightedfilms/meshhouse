@@ -98,52 +98,6 @@ import path from 'path'
 import { remote } from 'electron'
 import { getCollection, initDB, getDB } from 'lokijs-promise'
 
-import iconMax from '@/assets/icons/max.svg'
-import iconMaya from '@/assets/icons/maya.svg'
-import iconBlender from '@/assets/icons/blender.svg'
-import iconC4D from '@/assets/icons/cinema4d.svg'
-import iconHoudini from '@/assets/icons/houdini.svg'
-import iconModo from '@/assets/icons/modo.svg'
-
-const modelsExtensions = {
-  ".max": {
-    title: "3ds Max Scene",
-    icon: iconMax
-  },
-  ".ma": {
-    title: "Maya ASCII Scene",
-    icon: iconMaya
-  },
-  ".mb": {
-    title: "Maya Binary Scene",
-    icon: iconMaya
-  },
-  ".blend": {
-    title: "Blender Scene",
-    icon: iconBlender
-  },
-  ".c4d": {
-    title: "Cinema 4D Scene",
-    icon: iconC4D
-  },
-  ".hip": {
-    title: "Houdini Scene",
-    icon: iconHoudini
-  },
-  ".hiplc": {
-    title: "Houdini Scene",
-    icon: iconHoudini
-  },
-  ".hipnc": {
-    title: "Houdini Scene",
-    icon: iconHoudini
-  },
-  ".lxo": {
-    title: "Modo Scene",
-    icon: iconModo
-  },
-}
-
 export default {
   name: "LocalFolder",
   data() {
@@ -155,35 +109,6 @@ export default {
         { text: this.$t('lists.local.datatable.filetype'), width: '160', value: 'extension' },
         { text: this.$t('lists.local.datatable.path'), value: 'path' }
       ],
-    }
-  },
-  methods: {
-    returnHumanLikeExt: function(extension) {
-      return modelsExtensions[extension].title
-    },
-    returnExtensionIcon: function(extension) {
-      return modelsExtensions[extension].icon
-    },
-    reindexModels() {
-      initDB(path.join(remote.app.getPath('userData'), "/databases/" + this.$route.params.database + ".db"), 1000)
-      this.reindexModelsCallBack()
-    },
-    reindexModelsCallBack: async function() {
-      this.$store.commit('setPageData', [])
-      
-      let db = await getDB()
-      db.removeCollection('models')
-      let models = await getCollection('models')
-      let directory = this.$store.state.databases.find(base => base.url === this.$route.params.database).path
-
-      this.$indexFolderRecursive(directory).then((files) => {
-        files.forEach((file) => {
-          models.insert({ name: path.parse(file).name, extension: path.parse(file).ext, path: file })
-        })
-        
-        models = models.find({})
-        this.$store.commit('setPageData', models)
-      })
     }
   }
 }

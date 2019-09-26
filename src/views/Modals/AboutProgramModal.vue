@@ -40,33 +40,30 @@
   </v-card>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
 import { shell } from 'electron'
 
-export default {
-  name: "AboutProgramModal",
-  data() {
-    return {
-      githubContributors: [ 'Maxim Makarov' ],
-      githubLink: "https://github.com/longsightedfilms/MeshHouse-desktop"
-    }
-  },
-  computed: {
-    returnContributorsAsText() {
-      let contrib = ''
-      this.githubContributors.forEach((contributor, index) => {
-        contrib += contributor
-        if (index < (this.githubContributors.length - 1)) {
-          contrib += ", "
-        }
-      })
-      return this.$t('about.text_contributors') + contrib
-    }
-  },
-  methods: {
-    openLink: function() {
-      shell.openExternal(this.githubLink)
-    }
+@Component({})
+
+export default class AboutProgramModal extends Vue {
+  githubContributors: string[] = [ 'Maxim Makarov' ]
+  githubLink: string = "https://github.com/longsightedfilms/meshhouse"
+
+  get returnContributorsAsText(): string {
+    let contrib = ''
+    this.githubContributors.forEach((contributor, index) => {
+      contrib += contributor
+      if (index < (this.githubContributors.length - 1)) {
+        contrib += ", "
+      }
+    })
+    return this.$t('about.text_contributors') + contrib
+  }
+
+  openLink(): void {
+    shell.openExternal(this.githubLink)
   }
 }
 </script>
