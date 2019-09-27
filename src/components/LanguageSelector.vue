@@ -15,7 +15,7 @@ import { Language } from '@/plugins/models-db/interfaces'
 @Component({})
 
 export default class LanguageSelector extends Vue {
-  currentLang: string =  ''
+  currentLang =  ''
   langs: Language[] = [
     {
       text: "English",
@@ -27,7 +27,7 @@ export default class LanguageSelector extends Vue {
     }
   ]
 
-  mounted() {
+  mounted(): void {
     this.currentLang = this.$i18n.locale
   }
 

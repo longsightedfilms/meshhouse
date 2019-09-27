@@ -21,7 +21,7 @@
         />
         <v-combobox
           :value="properties.category"
-          :items="properties.autocompleteTips"
+          :items="$store.state.pageCategories"
           :label="$t('lists.local.modal.changeCategory')"
           @change="v => properties.category = v"
         />
@@ -70,33 +70,33 @@ import { getCollection, initDB, getDB } from 'lokijs-promise'
 
 @Component({
   watch: {
-    '$store.state.editPropertiesModalOpened'() {
+    '$store.state.editPropertiesModalOpened'(): void {
       this.properties = this.$store.state.properties
     }
   }
 })
 export default class EditPresenceModal extends Vue {
-  isBusy: boolean = false 
-  uploadImage: string = ''
+  isBusy = false 
+  uploadImage = ''
   properties: any = {}
 
-  forceReloadImage(image: string) {
+  forceReloadImage(image: string): string {
     return image != '' ? image + '?v=' + this.$store.state.imageRandomizer : image
   }
 
-  changeFile(file: any) {
+  changeFile(file: any): void {
     this.uploadImage = file != undefined ? file.path : ''
     this.properties.imageChanged = file != undefined
   }
 
-  async updateItem() {
+  async updateItem(): Promise<any> {
     this.properties.isBusy = true
 
-    let models = await getCollection("models")
-    let queryModel = models.findOne({ path: this.properties.path })
-    let imageName = uniqid('image-') + '.jpg'
+    const models = await getCollection("models")
+    const queryModel = models.findOne({ path: this.properties.path })
+    const imageName = uniqid('image-') + '.jpg'
     
-    let imagePath: string = ''
+    let imagePath = ''
     if (this.properties.imageChanged === true && this.properties.image != '') {
       imagePath = path.normalize(this.properties.image)
     } else {

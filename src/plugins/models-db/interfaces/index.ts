@@ -1,8 +1,8 @@
-export interface Extension {
-    [properties: string]: {
-        title: string;
-        icon: any;
-    };
+export interface DatatableHeader {
+    text: string;
+    align?: string;
+    width?: string | number;
+    value: string;
 }
 export interface Database {
     title: string;
@@ -10,6 +10,12 @@ export interface Database {
     view: string;
     url: string;
     path: string | undefined;
+}
+export interface Extension {
+    [properties: string]: {
+        title: string;
+        icon: '*.svg';
+    };
 }
 export interface Model {
     name: string;

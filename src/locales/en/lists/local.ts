@@ -5,6 +5,8 @@ export default {
         title: "Title",
         path: "Full path to file",
     },
+    delete: "Delete catalog",
+    filterDCCAll: "All",
     modal: {
         changeCategory: "Select model category",
         changeImage: "Select image for thumbnail",

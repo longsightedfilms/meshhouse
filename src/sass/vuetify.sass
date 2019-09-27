@@ -1,3 +1,14 @@
+html
+    overflow-y: auto !important
+    height: 100vh
+    max-height: 100vh
+body
+    overflow: hidden
+    height: 100%
+::-webkit-scrollbar
+    display: none
+.container, .v-input__control
+    box-sizing: border-box
 .v-ul
     display: flex
     flex-direction: column
@@ -25,7 +36,18 @@
         .v-btn__content
             justify-content: flex-start
     &.btn-avatar
+        height: auto!important
         .v-btn__content
             .v-avatar
                 margin-right: 1rem
                 margin-left: -1rem
+.large
+    .v-pagination__navigation
+        height: 3rem
+        width: 3rem
+    .v-pagination__item
+        padding: 0.5rem!important
+        box-sizing: border-box
+        height: 3rem
+        width: 3rem!important
+        font-size: 1.15rem

@@ -78,35 +78,27 @@
 <style lang="sass">
 @import 'sass/vuebar'
 @import 'sass/vuetify'
-
-html
-  overflow-y: auto !important
-  height: 100vh
-  max-height: 100vh
-body
-  overflow: hidden
-  height: 100%
-::-webkit-scrollbar
-  display: none
-.container, .v-input__control
-  box-sizing: border-box
 </style>
 
-<script>
-import ApplicationBar from './components/ApplicationBar'
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
+import ApplicationBar from '@/components/ApplicationBar.vue'
 import { setPromiseLibrary } from 'lokijs-promise'
 
-export default {
-  name: 'App',
+@Component({
   components: {
     ApplicationBar
-  },
-  mounted() {
+  }
+})
+
+export default class App extends Vue {
+  mounted(): void {
     this.$i18n.locale = this.$settingsGet('language')
     setPromiseLibrary(global.Promise)
 
-    let lastOpened = this.$settingsGet('applicationWindow.lastOpened')
+    const lastOpened = this.$settingsGet('applicationWindow.lastOpened')
     this.$router.push(lastOpened)
   }
-};
+}
 </script>

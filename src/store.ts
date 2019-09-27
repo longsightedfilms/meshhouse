@@ -1,5 +1,8 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { i18n } from '@/plugins/vuetify'
+import { getCollection, initDB, getDB } from 'lokijs-promise'
+import { Model } from './plugins/models-db/interfaces'
 
 Vue.use(Vuex)
 
@@ -28,9 +31,53 @@ export default new Vuex.Store({
         }
       }
     ],
-    pageLoaded: false,
-    pageTitle: "",
+    pageCategories: [''],
     pageData: [],
+    pageRawData: [],
+    pageLoadStatus: false,
+    pageTitle: "",
+    pageSceneTypes: [
+      {
+        text: i18n.t('lists.local.filterDCCAll'),
+        value: 'none'
+      },
+      {
+        text: '3ds Max Scene (.max)',
+        value: '.max'
+      },
+      {
+        text: 'Maya ASCII Scene (.ma)',
+        value: '.ma'
+      },
+      {
+        text: 'Maya Binary Scene (.mb)',
+        value: '.mb'
+      },
+      {
+        text: 'Blender Scene (.blend)',
+        value: '.blend'
+      },
+      {
+        text: 'Cinema 4D Scene (.c4d)',
+        value: '.c4d'
+      },
+      {
+        text: 'Houdini Scene (.hip)',
+        value: '.hip'
+      },
+      {
+        text: 'Houdini Scene (.hiplc)',
+        value: '.hiplc'
+      },
+      {
+        text: 'Houdini Scene (.hipnc)',
+        value: '.hipnc'
+      },
+      {
+        text: 'Modo Scene',
+        value: '.lxo'
+      }
+    ],
     properties: {},
     imageRandomizer: 0,
     aboutModalOpened: false,
@@ -38,37 +85,53 @@ export default new Vuex.Store({
     settingModalOpened: false
   },
   mutations: {
-    clearDownloadsList(state) {
+    clearDownloadsList(state): void {
       state.downloads = []
     },
-    deleteItemFromDownloadsList(state, index) {
+    deleteItemFromDownloadsList(state, index): void {
       state.downloads.splice(index, 1)
     },
-    incrementImageRandomizer(state) {
+    incrementImageRandomizer(state): void {
       state.imageRandomizer++
     },
-    setApplicationDatabases(state, payload) {
+    setApplicationDatabases(state, payload): void {
       state.databases = payload
     },
-    setPageStatus(state, bool) {
-      state.pageLoaded = bool
+    setPageCategories(state, payload): void {
+      state.pageCategories = payload
     },
-    setPageTitle(state, payload) {
+    setPageLoadStatus(state, bool): void {
+      state.pageLoadStatus = bool
+    },
+    setPageTitle(state, payload): void {
       state.pageTitle = payload
     },
-    setPageData(state, payload) {
-      state.pageData = payload
+    setPageData(state, payload): void {
+      const categories: any[] = []
+      const results = payload.simplesort('name').data()
+
+      results.forEach((item: Model) => {
+        if (!categories.includes(item.category) && item.category != '') {
+          categories.push(item.category)
+        }
+      })
+
+      state.pageCategories = categories
+      state.pageData = results
     },
-    setProperties(state, payload) {
+    setPageRawData(state, payload): void {
+      state.pageRawData = payload
+    },
+    setProperties(state, payload): void {
       state.properties = payload
     },
-    setAboutProgramModal(state) {
+    setAboutProgramModal(state): void {
       state.aboutModalOpened = !state.aboutModalOpened
     },
-    setEditPropsModal(state, payload) {
+    setEditPropsModal(state, payload): void {
       state.editPropertiesModalOpened = payload
     },
-    setSettingsModal(state) {
+    setSettingsModal(state): void {
       state.settingModalOpened = !state.settingModalOpened
     }
   },

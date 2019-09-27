@@ -5,6 +5,8 @@ export default {
         title: "Название",
         path: "Полный путь к файлу",
     },
+    delete: "Удалить каталог",
+    filterDCCAll: "Все", 
     modal: {
         changeCategory: "Выберите категорию модели",
         changeImage: "Выберите изображение для превью",

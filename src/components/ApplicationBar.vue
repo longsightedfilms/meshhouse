@@ -10,8 +10,8 @@
     </v-toolbar-title>
 
     <v-progress-linear
-      :active="!$store.state.pageLoaded"
-      :indeterminate="!$store.state.pageLoaded"
+      :active="$store.state.pageLoadStatus === true"
+      :indeterminate="$store.state.pageLoadStatus === true"
       absolute
       bottom
       color="primary accent-4"
@@ -139,8 +139,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import ModalAbout from '@/views/Modals/AboutProgramModal'
-import ModalSettings from '@/views/Modals/SettingsModal'
+import ModalAbout from '@/views/Modals/AboutProgramModal.vue'
+import ModalSettings from '@/views/Modals/SettingsModal.vue'
 
 @Component({
   components: {

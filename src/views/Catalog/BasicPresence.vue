@@ -27,7 +27,21 @@
               >
                 <img :src="$returnExtensionIcon(item.extension)">
               </v-avatar>
-              {{ item.name }}
+              <ul class="v-ul no-dots">
+                <li class="d-flex align-center">
+                  <p class="ma-0 title">
+                    {{ item.name }}
+                  </p>
+                </li>
+                <li class="d-flex align-center">
+                  <v-icon>
+                    mdi-card-text-outline
+                  </v-icon>
+                  <p class="ma-0 ml-2 overline">
+                    {{ $returnItemCategory(item.category) }}
+                  </p>
+                </li>
+              </ul>
             </v-btn>
           </template>
 
@@ -38,7 +52,7 @@
             <v-list-item @click="$openFolder(item.path)">
               <v-list-item-title>{{ $t('lists.local.openFolder') }}</v-list-item-title>
             </v-list-item>
-            <v-list-item @click="openPropertiesModal(item)">
+            <v-list-item @click="$openPropertiesModal(item)">
               <v-list-item-title>Properties</v-list-item-title>
             </v-list-item>
           </v-list>
@@ -67,14 +81,7 @@ import Component from 'vue-class-component'
 import path from 'path'
 import EditPropertiesModal from '@/views/Modals/EditPropertiesModal.vue'
 import { getCollection, initDB, getDB } from 'lokijs-promise'
-import { Model } from '@/plugins/models-db/interfaces'
-
-interface IDatatableHeader {
-  text: string,
-  align?: string,
-  width?: string | number,
-  value: string
-}
+import { DatatableHeader, Model } from '@/plugins/models-db/interfaces'
 
 @Component({
   components: {
@@ -83,7 +90,7 @@ interface IDatatableHeader {
 })
 
 export default class BasicPresence extends Vue {
-  headers: IDatatableHeader[] = [
+  headers: DatatableHeader[] = [
     { text: this.getLocalizedString('lists.local.datatable.title'), align: 'left', width: '300', value: 'name'},
     { text: this.getLocalizedString('lists.local.datatable.filetype'), width: '160', value: 'extension' },
     { text: this.getLocalizedString('lists.local.datatable.path'), value: 'path' }
@@ -91,32 +98,6 @@ export default class BasicPresence extends Vue {
 
   getLocalizedString(str: string): string {
     return this.$t(str).toString()
-  }
-
-  async openPropertiesModal(model: Model) {
-    let models = await getCollection("models")
-
-    let categories: string[] = []
-    let query = models.chain().find({}).simplesort('category').data()
-
-    query.forEach((item: any) => {
-      if (categories.indexOf(item.category) === -1 && item.category != '') {
-        categories.push(item.category)
-      }
-    })
-
-    let properties = {
-      autocompleteTips: categories,
-      imageChanged: false,
-      name: model.name,
-      category: model.category,
-      image: model.image,
-      extension: model.extension,
-      path: model.path
-    }
-
-    this.$store.commit('setProperties', properties)
-    this.$store.commit('setEditPropsModal', true)
   }
 }
 </script>

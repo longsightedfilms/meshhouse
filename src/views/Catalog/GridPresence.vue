@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col
-      v-for="item in $store.state.pageData"
+      v-for="item in displayedModels"
       :key="item.index"
       xl="3"
       lg="4"
@@ -102,12 +102,22 @@
 
           <v-btn
             icon
-            @click.stop="openPropertiesModal(item)"
+            @click.stop="$openPropertiesModal(item)"
           >
             <v-icon>mdi-pencil-box-multiple</v-icon>
           </v-btn>
         </v-card-actions>
       </v-card>
+    </v-col>
+    <v-col cols="12">
+      <v-pagination
+        v-model="page"
+        class="large"
+        color="primary"
+        total-visible="10"
+        :value="page"
+        :length="computePaginationLength"
+      />
     </v-col>
     <edit-properties-modal />
   </v-row>
@@ -132,34 +142,33 @@ import { Model } from '@/plugins/models-db/interfaces'
 })
 
 export default class GridPresence extends Vue {
-  forceReloadImage(image: string) {
+  page = 1
+
+  forceReloadImage(image: string): string {
     return image != '' ? image + '?v=' + this.$store.state.imageRandomizer : image
   }
 
-  async openPropertiesModal(model: Model) {
-    let models = await getCollection("models")
+  get computePaginationLength(): number {
+    const len = this.$store.state.pageData.length
+    return Math.ceil(len / this.itemsPerPage)
+  }
 
-    let categories: string[] = []
-    let query = models.chain().find({}).simplesort('category').data()
+  get displayedModels(): Model[] {
+    const page = this.page
+    const from = (page * this.itemsPerPage) - this.itemsPerPage
+    const to = (page * this.itemsPerPage)
+    return this.$store.state.pageData.slice(from, to)
+  }
 
-    query.forEach((item: any) => {
-      if (categories.indexOf(item.category) === -1 && item.category != '') {
-        categories.push(item.category)
-      }
-    })
-
-    let properties = {
-      autocompleteTips: categories,
-      imageChanged: false,
-      name: model.name,
-      category: model.category,
-      image: model.image,
-      extension: model.extension,
-      path: model.path
+  get itemsPerPage (): number {
+    switch (this.$vuetify.breakpoint.name) {
+      case 'xs': return 18
+      case 'sm': return 18
+      case 'md': return 18
+      case 'lg': return 18
+      case 'xl': return 20
+      default: return 18
     }
-
-    this.$store.commit('setProperties', properties)
-    this.$store.commit('setEditPropsModal', true)
   }
 }
 </script>
