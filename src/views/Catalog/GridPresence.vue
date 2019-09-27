@@ -123,7 +123,7 @@ import uniqid from 'uniqid'
 import { remote } from 'electron'
 import { getCollection, initDB, getDB } from 'lokijs-promise'
 import EditPropertiesModal from '@/views/Modals/EditPropertiesModal.vue'
-import { IModel } from '@/plugins/models-db/interfaces'
+import { Model } from '@/plugins/models-db/interfaces'
 
 @Component({
   components: {
@@ -136,7 +136,7 @@ export default class GridPresence extends Vue {
     return image != '' ? image + '?v=' + this.$store.state.imageRandomizer : image
   }
 
-  async openPropertiesModal(model: IModel) {
+  async openPropertiesModal(model: Model) {
     let models = await getCollection("models")
 
     let categories: string[] = []

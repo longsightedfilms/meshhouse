@@ -49,6 +49,8 @@
   "devDependencies": {
     "@kazupon/vue-i18n-loader": "^0.3.0",
     "@mdi/font": "^4.2.95",
+    "@typescript-eslint/eslint-plugin": "^2.3.1",
+    "@typescript-eslint/parser": "^2.3.1",
     "@vue/cli-plugin-babel": "^3.9.0",
     "@vue/cli-plugin-eslint": "^3.9.0",
     "@vue/cli-service": "^3.9.0",

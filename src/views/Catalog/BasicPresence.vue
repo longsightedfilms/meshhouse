@@ -67,7 +67,7 @@ import Component from 'vue-class-component'
 import path from 'path'
 import EditPropertiesModal from '@/views/Modals/EditPropertiesModal.vue'
 import { getCollection, initDB, getDB } from 'lokijs-promise'
-import { IModel } from '@/plugins/models-db/interfaces'
+import { Model } from '@/plugins/models-db/interfaces'
 
 interface IDatatableHeader {
   text: string,
@@ -93,7 +93,7 @@ export default class BasicPresence extends Vue {
     return this.$t(str).toString()
   }
 
-  async openPropertiesModal(model: IModel) {
+  async openPropertiesModal(model: Model) {
     let models = await getCollection("models")
 
     let categories: string[] = []

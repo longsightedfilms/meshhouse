@@ -173,7 +173,7 @@ import path from 'path'
 import fs from 'fs'
 import { remote } from 'electron'
 import { getCollection, initDB } from 'lokijs-promise'
-import { IDatabase } from '@/plugins/models-db/interfaces'
+import { Database } from '@/plugins/models-db/interfaces'
 
 @Component({})
 
@@ -188,7 +188,7 @@ export default class AddNewCatalog extends Vue {
 
   viewString: string[] = ["grid", "basic"]
 
-  async startingIndexFolder(catalog: IDatabase): Promise<any> {
+  async startingIndexFolder(catalog: Database): Promise<any> {
     let models = await getCollection("models")
 
     this.$indexFolderRecursive(this.path).then((files: string[]) => {

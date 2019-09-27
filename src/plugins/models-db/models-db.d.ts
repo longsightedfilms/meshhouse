@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { IExtension, IDatabase } from './interfaces'
+import { Extension, Database } from './interfaces'
 
 declare module 'vue/types/vue' {
     interface Vue {
@@ -9,7 +9,7 @@ declare module 'vue/types/vue' {
         $dccGetConfig(): object,
         $dccSetConfig(config: object): void,
         $stringToSlug(str: string): string,
-        $addDatabase(db: IDatabase): void,
+        $addDatabase(db: Database): void,
         $editDatabase(database: string, setting: string, value: string): void,
         $indexFolderRecursive(folder: string): Promise<any>,
         $openItem(file: string): void,

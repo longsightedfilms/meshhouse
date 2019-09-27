@@ -90,7 +90,7 @@ import BasicPresence from './BasicPresence.vue'
 import path from 'path'
 import { remote } from 'electron'
 import { getCollection, initDB, getDB } from 'lokijs-promise'
-import { IDatabase } from '@/plugins/models-db/interfaces'
+import { Database } from '@/plugins/models-db/interfaces'
 
 @Component({
   components: {
@@ -134,7 +134,7 @@ export default class DatabaseListItems extends Vue {
     let db = await getDB()
     db.removeCollection('models')
     this.models = await getCollection('models')
-    let directory = this.$store.state.databases.find((base: IDatabase) => base.url === this.$route.params.database).path
+    let directory = this.$store.state.databases.find((base: Database) => base.url === this.$route.params.database).path
 
     this.$indexFolderRecursive(directory).then((files) => {
       files.forEach((file: string) => {
@@ -148,7 +148,7 @@ export default class DatabaseListItems extends Vue {
   }
 
   changePresence(view: string) {
-    let index = this.$store.state.databases.findIndex((db: IDatabase) => db.url == this.$route.params.database)
+    let index = this.$store.state.databases.findIndex((db: Database) => db.url == this.$route.params.database)
     this.view = this.views.indexOf(view)
     this.$editDatabase(index, 'view', this.views[this.view])
   }

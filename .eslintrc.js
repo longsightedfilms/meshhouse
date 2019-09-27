@@ -7,18 +7,20 @@ module.exports = {
         browser: true,
         mocha: true
     },
+    parser: 'vue-eslint-parser',
     parserOptions: {
-        parser: "babel-eslint",
-        // specifying a module sourcetype prevent eslint from marking import statements as errors
-        sourceType: "module",
-        ecmaFeatures: {
-            "legacyDecorators": true
-        }
+        parser: "@typescript-eslint/parser",
+        plugins: ["@typescript-eslint"],
+        project: "./tsconfig.json",
+        extraFileExtensions: [".vue"]
     },
     extends: [
-        // use the recommended rule set for both plain javascript and vue
+        // use the recommended rule set for typescript, javascript and vue
         "eslint:recommended",
-        "plugin:vue/recommended"
+        "plugin:vue/recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking"
     ],
     rules: {
         // we should always disable console logs and debugging in production

@@ -5,7 +5,7 @@ import { remote, shell } from 'electron'
 import { spawn } from 'child_process'
 import { transliterate as tr, slugify } from 'transliteration'
 import store from '../../store'
-import { IExtension, IDatabase } from '@/plugins/models-db/interfaces'
+import { Extension, Database } from '@/plugins/models-db/interfaces'
 // Import icons
 import iconMax from '@/assets/icons/max.svg'
 import iconMaya from '@/assets/icons/maya.svg'
@@ -20,7 +20,7 @@ const settings = new ElectronStore({name: "settings"})
 const databases = new ElectronStore({name: "databases"})
 const dcc = new ElectronStore({name: "dcc-config"})
 
-const modelsExtensions: IExtension = {
+const modelsExtensions: Extension = {
   ".max": {
     title: "3ds Max Scene",
     icon: iconMax
@@ -182,7 +182,7 @@ export default {
       return modelsExtensions[extension].icon
     }
 
-    Vue.prototype.$addDatabase = function (db: IDatabase): void {
+    Vue.prototype.$addDatabase = function (db: Database): void {
       let list = databases.get('databases')
       if (list) {
         databases.set('databases', list.concat(db))
