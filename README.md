@@ -9,14 +9,15 @@
     <a href="https://github.com/longsightedfilms/meshhouse/blob/dev/LICENSE"><img alt="GitHub" src="https://img.shields.io/github/license/longsightedfilms/meshhouse?style=for-the-badge"></a>
 </p>
 
-> Open-source program for catalogizing 3d models. Built on [Vue](https://vuejs.org/) and [Electron](https://electronjs.org/).
+> Open-source program for catalogizing 3d models. Built on [Typescript](https://www.typescriptlang.org/), [Vue](https://vuejs.org/) and [Electron](https://electronjs.org/).
 
 ## Features
 
 > TODO
 
 * Integration with MeshHouse service
-* Adding custom catalogs (curently basic view)
+* Adding custom catalogs (grid and table view)
+* Filter through your models collection
 * Localization support
 
 ## Releases
