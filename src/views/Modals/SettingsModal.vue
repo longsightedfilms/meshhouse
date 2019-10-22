@@ -32,7 +32,7 @@
                   Autodesk 3DS Max
                 </p>
                 <v-switch
-                  v-model="dcc_form.adsk_3dsmax.useSystemAssociation"
+                  v-model="dccForm.adsk_3dsmax.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
                   :hint="$t('settings.dcc.hint', { extension: '*.max' })"
@@ -40,13 +40,13 @@
                   persistent-hint
                 />
                 <v-file-input
-                  v-if="!dcc_form.adsk_3dsmax.useSystemAssociation"
+                  v-if="!dccForm.adsk_3dsmax.useSystemAssociation"
                   :label="$t('settings.dcc.exePath')"
-                  :hint="returnCurrentPathText(dcc_form.adsk_3dsmax.customPath)"
+                  :hint="returnCurrentPathText(dccForm.adsk_3dsmax.customPath)"
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dcc_form.adsk_3dsmax.customPath = file != undefined ? file.path : '' }"
+                  @change="(file) => { dccForm.adsk_3dsmax.customPath = file != undefined ? file.path : '' }"
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}
@@ -63,7 +63,7 @@
                   Autodesk Maya
                 </p>
                 <v-switch
-                  v-model="dcc_form.adsk_maya.useSystemAssociation"
+                  v-model="dccForm.adsk_maya.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
                   :hint="$t('settings.dcc.hint', { extension: '*.ma, *.mb' })"
@@ -71,13 +71,13 @@
                   persistent-hint
                 />
                 <v-file-input
-                  v-if="!dcc_form.adsk_maya.useSystemAssociation"
+                  v-if="!dccForm.adsk_maya.useSystemAssociation"
                   :label="$t('settings.dcc.exePath')"
-                  :hint="returnCurrentPathText(dcc_form.adsk_maya.customPath)"
+                  :hint="returnCurrentPathText(dccForm.adsk_maya.customPath)"
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dcc_form.adsk_maya.customPath = file != undefined ? file.path : '' }"
+                  @change="(file) => { dccForm.adsk_maya.customPath = file != undefined ? file.path : '' }"
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}
@@ -94,7 +94,7 @@
                   Blender
                 </p>
                 <v-switch
-                  v-model="dcc_form.blender.useSystemAssociation"
+                  v-model="dccForm.blender.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
                   :hint="$t('settings.dcc.hint', { extension: '*.blend' })"
@@ -102,13 +102,13 @@
                   persistent-hint
                 />
                 <v-file-input
-                  v-if="!dcc_form.blender.useSystemAssociation"
+                  v-if="!dccForm.blender.useSystemAssociation"
                   :label="$t('settings.dcc.exePath')"
-                  :hint="returnCurrentPathText(dcc_form.blender.customPath)"
+                  :hint="returnCurrentPathText(dccForm.blender.customPath)"
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dcc_form.blender.customPath = file != undefined ? file.path : '' }"
+                  @change="(file) => { dccForm.blender.customPath = file != undefined ? file.path : '' }"
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}
@@ -125,7 +125,7 @@
                   Cinema 4D
                 </p>
                 <v-switch
-                  v-model="dcc_form.cinema4d.useSystemAssociation"
+                  v-model="dccForm.cinema4d.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
                   :hint="$t('settings.dcc.hint', { extension: '*.c4d' })"
@@ -133,13 +133,13 @@
                   persistent-hint
                 />
                 <v-file-input
-                  v-if="!dcc_form.cinema4d.useSystemAssociation"
+                  v-if="!dccForm.cinema4d.useSystemAssociation"
                   :label="$t('settings.dcc.exePath')"
-                  :hint="returnCurrentPathText(dcc_form.cinema4d.customPath)"
+                  :hint="returnCurrentPathText(dccForm.cinema4d.customPath)"
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dcc_form.cinema4d.customPath = file != undefined ? file.path : '' }"
+                  @change="(file) => { dccForm.cinema4d.customPath = file != undefined ? file.path : '' }"
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}
@@ -156,7 +156,7 @@
                   Houdini
                 </p>
                 <v-switch
-                  v-model="dcc_form.houdini.useSystemAssociation"
+                  v-model="dccForm.houdini.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
                   :hint="$t('settings.dcc.hint', { extension: '*.hip, *.hiplc, *.hipnc' })"
@@ -164,13 +164,13 @@
                   persistent-hint
                 />
                 <v-file-input
-                  v-if="!dcc_form.houdini.useSystemAssociation"
+                  v-if="!dccForm.houdini.useSystemAssociation"
                   :label="$t('settings.dcc.exePath')"
-                  :hint="returnCurrentPathText(dcc_form.houdini.customPath)"
+                  :hint="returnCurrentPathText(dccForm.houdini.customPath)"
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dcc_form.houdini.customPath = file != undefined ? file.path : '' }"
+                  @change="(file) => { dccForm.houdini.customPath = file != undefined ? file.path : '' }"
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}
@@ -187,7 +187,7 @@
                   Modo
                 </p>
                 <v-switch
-                  v-model="dcc_form.modo.useSystemAssociation"
+                  v-model="dccForm.modo.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
                   :hint="$t('settings.dcc.hint', { extension: '*.lxo' })"
@@ -195,13 +195,13 @@
                   persistent-hint
                 />
                 <v-file-input
-                  v-if="!dcc_form.modo.useSystemAssociation"
+                  v-if="!dccForm.modo.useSystemAssociation"
                   :label="$t('settings.dcc.exePath')"
-                  :hint="returnCurrentPathText(dcc_form.modo.customPath)"
+                  :hint="returnCurrentPathText(dccForm.modo.customPath)"
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dcc_form.modo.customPath = file != undefined ? file.path : '' }"
+                  @change="(file) => { dccForm.modo.customPath = file != undefined ? file.path : '' }"
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}
@@ -239,7 +239,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import LanguageSelector from '@/components/LanguageSelector'
+import LanguageSelector from '@/components/LanguageSelector.vue'
 
 @Component({
   components: {
@@ -248,12 +248,12 @@ import LanguageSelector from '@/components/LanguageSelector'
 })
 
 export default class ModalSettings extends Vue {
-  dcc_form: object =  {
-    adsk_3dsmax: {
+  dccForm: object =  {
+    adsk3dsmax: {
       useSystemAssociation: true,
       customPath: ""
     },
-    adsk_maya: {
+    adskMaya: {
       useSystemAssociation: true,
       customPath: ''
     },
@@ -275,12 +275,12 @@ export default class ModalSettings extends Vue {
     }
   }
 
-  mounted() {
-    this.dcc_form = this.$dccGetConfig()
+  mounted(): void {
+    this.dccForm = this.$dccGetConfig()
   }
 
   saveSettingToFile(): void {
-    this.$dccSetConfig(this.dcc_form)
+    this.$dccSetConfig(this.dccForm)
     this.$store.commit('setSettingsModal')
   }
 

@@ -28,3 +28,11 @@ export interface Language {
     text: string;
     value: string;
 }
+export interface EditProperties {
+    category: string;
+    extension: string;
+    name: string;
+    image: string;
+    imageChanged: boolean;
+    path: string;
+}

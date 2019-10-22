@@ -33,7 +33,7 @@ export default class LanguageSelector extends Vue {
 
   onChange(lang: string): void {
     this.$i18n.locale = lang
-    this.$settingsSet(['language', lang])
+    this.$settingsSet('language', lang)
   }
 }
 </script>

@@ -12,14 +12,17 @@
     </v-toolbar-title>
 
     <template #extension>
-      <div class="d-flex" style="width: 100%">
+      <div
+        class="d-flex"
+        style="width: 100%"
+      >
         <v-text-field
           :value="search"
           label="Search..."
           hide-details
           solo
           @change="v => search = v"
-        ></v-text-field>
+        />
 
         <v-combobox
           :value="category"
@@ -136,12 +139,12 @@ export default class CatalogToolbar extends Vue {
     this.databaseIndex = this.$store.state.databases.findIndex((db: Database) => db.url == this.$route.params.database)
   }
 
-  async reindexModels(): Promise<any> {
+  async reindexModels(): Promise<void> {
     initDB(path.join(remote.app.getPath('userData'), "/databases/" + this.$route.params.database + ".db"), 1000)
     await this.reindexModelsCallBack()
   }
 
-  async reindexModelsCallBack(): Promise<any> {
+  async reindexModelsCallBack(): Promise<void> {
     this.$store.commit('setPageLoadStatus', true)
     
     const db = await getDB()
@@ -168,11 +171,11 @@ export default class CatalogToolbar extends Vue {
     })
   }
 
-  filterByDCC(option: any): void {
+  filterByDCC(option: string): void {
     const collection = this.$store.state.pageRawData
     const ext = option
 
-    let results: any[] = []
+    let results: Model[] = []
 
     if (ext != 'none') {
       results = collection.chain().find({ extension: ext })

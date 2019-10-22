@@ -37,7 +37,7 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to, from) => {
   Vue.nextTick(() => {
     store.commit('setPageLoadStatus', false)
-    router.app.$root.$settingsSet(['applicationWindow.lastOpened', to.path])
+    router.app.$root.$settingsSet('applicationWindow.lastOpened', to.path)
   })
 })
 

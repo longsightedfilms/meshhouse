@@ -31,6 +31,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { Watch } from 'vue-property-decorator'
 import GridPresence from './GridPresence.vue'
 import BasicPresence from './BasicPresence.vue'
 import CatalogToolbar from '@/components/CatalogToolbar.vue'
@@ -45,21 +46,21 @@ import { Database, Model } from '@/plugins/models-db/interfaces'
     CatalogToolbar,
     GridPresence
   },
-  watch: {
-    '$route' (to, from): void {
-      initDB(path.join(remote.app.getPath('userData'), "/databases/" + this.$route.params.database + ".db"), 1000)
-      this.databaseInitialize()
-    }
-  }
 })
 
 export default class DatabaseListItems extends Vue {
-  async mounted(): Promise<any> {
+  @Watch('$route')
+  onRouteChanged(): void {
+    initDB(path.join(remote.app.getPath('userData'), "/databases/" + this.$route.params.database + ".db"), 1000)
+    this.databaseInitialize()
+  }
+
+  async mounted(): Promise<void> {
     initDB(path.join(remote.app.getPath('userData'), "/databases/" + this.$route.params.database + ".db"), 1000)
     await this.databaseInitialize()
   }
 
-  async databaseInitialize(): Promise<boolean> {
+  async databaseInitialize(): Promise<void> {
     const categories: string[] = []
 
     const models = await getCollection("models")
@@ -68,7 +69,6 @@ export default class DatabaseListItems extends Vue {
     this.$store.commit('setPageRawData', models)
     this.$store.commit('setPageData', results)
     this.$store.commit('setPageLoadStatus', false)
-    return Promise.resolve(true)
   }
 }
 </script>

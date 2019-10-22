@@ -61,36 +61,44 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { Watch } from 'vue-property-decorator'
 import fs from 'fs'
 import path from 'path'
 import Jimp from 'jimp'
 import uniqid from 'uniqid'
 import { remote } from 'electron'
 import { getCollection, initDB, getDB } from 'lokijs-promise'
+import { EditProperties } from '@/plugins/models-db/interfaces'
 
-@Component({
-  watch: {
-    '$store.state.editPropertiesModalOpened'(): void {
-      this.properties = this.$store.state.properties
-    }
-  }
-})
+@Component({})
 export default class EditPresenceModal extends Vue {
   isBusy = false 
   uploadImage = ''
-  properties: any = {}
+  properties: EditProperties = {
+    category: "",
+    extension: "",
+    name: "",
+    image: "",
+    imageChanged: false,
+    path: ""
+  }
+
+  @Watch('$store.state.editPropertiesModalOpened')
+  onModalOpened(): void {
+    this.properties = this.$store.state.properties
+  }
 
   forceReloadImage(image: string): string {
     return image != '' ? image + '?v=' + this.$store.state.imageRandomizer : image
   }
 
-  changeFile(file: any): void {
+  changeFile(file: File): void {
     this.uploadImage = file != undefined ? file.path : ''
     this.properties.imageChanged = file != undefined
   }
 
-  async updateItem(): Promise<any> {
-    this.properties.isBusy = true
+  async updateItem(): Promise<void> {
+    this.isBusy = true
 
     const models = await getCollection("models")
     const queryModel = models.findOne({ path: this.properties.path })
@@ -111,7 +119,7 @@ export default class EditPresenceModal extends Vue {
     if(this.properties.imageChanged === true) {
       fs.access(imagePath, fs.constants.F_OK, (err) => {
         Jimp.read(this.uploadImage)
-        .then((image: any) => {
+        .then((image: Jimp) => {
           return image.cover(700, 700).quality(70).writeAsync(imagePath)
         })
         .then(() => {

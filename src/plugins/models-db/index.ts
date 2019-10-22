@@ -15,11 +15,11 @@ import iconC4D from '@/assets/icons/cinema4d.svg'
 import iconHoudini from '@/assets/icons/houdini.svg'
 import iconModo from '@/assets/icons/modo.svg'
 // Initializing storages
-const recursive = require('recursive-readdir')
-const ElectronStore = require('electron-store')
-const settings = new ElectronStore({name: "settings"})
-const databases = new ElectronStore({name: "databases"})
-const dcc = new ElectronStore({name: "dcc-config"})
+import recursive from 'recursive-readdir'
+import ElectronStore from 'electron-store'
+const settings: ElectronStore<any> = new ElectronStore({name: "settings"})
+const databases: ElectronStore<any> = new ElectronStore({name: "databases"})
+const dcc: ElectronStore<any> = new ElectronStore({name: "dcc-config"})
 
 const modelsExtensions: Extension = {
   ".max": {
@@ -60,17 +60,17 @@ const modelsExtensions: Extension = {
   },
 }
 
-function filterByModels(file: string, stats: any): boolean {
+function filterByModels(file: string, stats: fs.Stats): boolean {
   return !stats.isDirectory() && !modelsExtensions.hasOwnProperty(path.extname(file))
 }
 
 function getParameterByExtension(extension: string, param: string): string {
   switch (extension) {
     case ".max": 
-      return dcc.get('adsk_3dsmax.' + param)
+      return dcc.get('adsk3dsmax.' + param)
     case ".ma":
     case ".mb":
-      return dcc.get('adsk_maya.' + param)
+      return dcc.get('adskMaya.' + param)
     case ".blend":
       return dcc.get('blender.' + param)
     case ".c4d":
@@ -118,11 +118,11 @@ if ( !fs.existsSync( path.join(remote.app.getPath('userData'), path.normalize("\
 // Boilerplate DCC settings if not exists
 if ( !fs.existsSync( path.join(remote.app.getPath('userData'), path.normalize("\\dcc-config.json")) ) ) {
   dcc.set({
-    adsk_3dsmax: {
+    adsk3dsmax: {
       useSystemAssociation: true,
       customPath: ''
     },
-    adsk_maya: {
+    adskMaya: {
       useSystemAssociation: true,
       customPath: ''
     },
@@ -150,12 +150,8 @@ export function ModelsDB(Vue: typeof _Vue): void {
     return settings.get(setting)
   }
 
-  Vue.prototype.$settingsSet = function (setting: string[]): void {
-    settings.set(...setting)
-  }
-
-  Vue.prototype.$dccSet = function (setting: any): void {
-    dcc.set(...setting)
+  Vue.prototype.$settingsSet = function (key: string, value: string|number): void {
+    settings.set(key, value)
   }
 
   Vue.prototype.$dccGetConfig = function (): object {
@@ -178,7 +174,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
     return modelsExtensions[extension].title
   }
 
-  Vue.prototype.$returnExtensionIcon = function (extension: string): any {
+  Vue.prototype.$returnExtensionIcon = function (extension: string): '*.svg' {
     return modelsExtensions[extension].icon
   }
 
@@ -201,7 +197,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
     return Promise.resolve(true)
   }
 
-  Vue.prototype.$indexFolderRecursive = function (folder: string): Promise<any> {
+  Vue.prototype.$indexFolderRecursive = function (folder: string): Promise<string[]> {
     return recursive(folder, [filterByModels])
   }
 

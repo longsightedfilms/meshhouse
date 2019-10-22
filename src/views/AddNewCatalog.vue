@@ -178,18 +178,18 @@ import { Database } from '@/plugins/models-db/interfaces'
 @Component({})
 
 export default class AddNewCatalog extends Vue {
-  snackbar: boolean = false
-  inProgress: boolean = false
-  title: string = ""
-  color: string = ""
-  path: string = ""
-  view: number = 0
-  url: string = ""
+  snackbar = false
+  inProgress = false
+  title = ""
+  color = ""
+  path = ""
+  view = 0
+  url = ""
 
   viewString: string[] = ["grid", "basic"]
 
-  async startingIndexFolder(catalog: Database): Promise<any> {
-    let models = await getCollection("models")
+  async startingIndexFolder(catalog: Database): Promise<void> {
+    const models = await getCollection("models")
 
     this.$indexFolderRecursive(this.path).then((files: string[]) => {
       files.forEach((file: string) => {
@@ -199,8 +199,8 @@ export default class AddNewCatalog extends Vue {
     })
   }
 
-  submitNewCatalog() {
-    if(this.$refs.form.validate()) {
+  submitNewCatalog(): void {
+    if((this.$refs.form as Vue & { validate: () => boolean }).validate()) {
       this.inProgress = true
 
       const catalog = {
@@ -212,7 +212,7 @@ export default class AddNewCatalog extends Vue {
       }
       this.url = catalog.url
 
-      let directory = path.join(remote.app.getPath('userData'), "/databases/")
+      const directory = path.join(remote.app.getPath('userData'), "/databases/")
       if (!fs.existsSync(directory)){
         fs.mkdirSync(directory)
       }
