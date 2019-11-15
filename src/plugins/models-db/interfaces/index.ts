@@ -4,7 +4,7 @@ export interface DatatableHeader {
     width?: string | number;
     value: string;
 }
-export interface Database {
+export interface DatabaseItem {
     title: string;
     color: string;
     view: string;
@@ -18,6 +18,7 @@ export interface Extension {
     };
 }
 export interface Model {
+    id: number;
     name: string;
     category: string;
     image: string;

@@ -80,7 +80,6 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import path from 'path'
 import EditPropertiesModal from '@/views/Modals/EditPropertiesModal.vue'
-import { getCollection, initDB, getDB } from 'lokijs-promise'
 import { DatatableHeader, Model } from '@/plugins/models-db/interfaces'
 
 @Component({

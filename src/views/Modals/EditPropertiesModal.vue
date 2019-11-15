@@ -27,6 +27,7 @@
         />
         <v-file-input
           :label="$t('lists.local.modal.changeImage')"
+          @change="changeFile"
         >
           <template v-slot:selection="{ file }">
             {{ file.path }}
@@ -67,8 +68,7 @@ import path from 'path'
 import Jimp from 'jimp'
 import uniqid from 'uniqid'
 import { remote } from 'electron'
-import { getCollection, initDB, getDB } from 'lokijs-promise'
-import { EditProperties } from '@/plugins/models-db/interfaces'
+import { EditProperties, Model } from '@/plugins/models-db/interfaces'
 
 @Component({})
 export default class EditPresenceModal extends Vue {
@@ -100,12 +100,13 @@ export default class EditPresenceModal extends Vue {
   async updateItem(): Promise<void> {
     this.isBusy = true
 
-    const models = await getCollection("models")
-    const queryModel = models.findOne({ path: this.properties.path })
+    const models = await this.$getItemsFromDatabase(this.$route.params.database)
+    const queryModel = models[models.findIndex((item: Model) => item.path === this.properties.path)]
+
     const imageName = uniqid('image-') + '.jpg'
     
     let imagePath = ''
-    if (this.properties.imageChanged === true && this.properties.image != '') {
+    if (this.properties.imageChanged === true && this.properties.image !== '') {
       imagePath = path.normalize(this.properties.image)
     } else {
       imagePath = path.normalize(path.join(remote.app.getPath('userData'), '\\imagecache\\', imageName))
@@ -124,15 +125,15 @@ export default class EditPresenceModal extends Vue {
         })
         .then(() => {
           this.$store.commit('incrementImageRandomizer')
-          models.update(queryModel)
-          this.$store.commit('setPageData', models.chain().find({}).simplesort('name').data())
+          this.$updateItemInDatabase(this.$route.params.database, queryModel)
+          this.$store.commit('setPageData', models)
           this.isBusy = false
           this.$store.commit('setEditPropsModal', false)
         })
       })
     } else {
-      models.update(queryModel)
-      this.$store.commit('setPageData', models.chain().find({}).simplesort('name').data())
+      this.$updateItemInDatabase(this.$route.params.database, queryModel)
+      this.$store.commit('setPageData', models)
       this.isBusy = false
       this.$store.commit('setEditPropsModal', false)
     }

@@ -12,7 +12,7 @@ const settings = new ElectronStore({
   name: "settings"
 })
 
-let applicationOptions = {
+const applicationOptions = {
   width: settings.get('applicationWindow.width') || 1024,
   height: settings.get('applicationWindow.height') || 768,
   minWidth: 800,
@@ -30,13 +30,13 @@ let applicationOptions = {
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let appWin: any = null
-let createdAppProtocol: boolean = false
+const appWin: any = null
+let createdAppProtocol = false
 
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([{scheme: 'meshhouse', privileges: { secure: true, standard: true } }])
+protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
 
-function createWindow(winVar: any, devPath: string, prodPath: string, options: object) {
+function createWindow(winVar: any, devPath: string, prodPath: string, options: object): void {
   // Create the browser window.
   winVar = new BrowserWindow(options)
   winVar.setMenu(null)
@@ -47,11 +47,11 @@ function createWindow(winVar: any, devPath: string, prodPath: string, options: o
     if (!process.env.IS_TEST) winVar.webContents.openDevTools()
   } else {
     if (!createdAppProtocol) {
-      createProtocol('meshhouse')
+      createProtocol('app')
       createdAppProtocol = true
     }
     // Load the index.html when not in development
-    winVar.loadURL(`meshhouse://./${prodPath}`)
+    winVar.loadURL(`app://./${prodPath}`)
   }
 
   winVar.on('close', () => {
@@ -88,7 +88,7 @@ app.on('activate', () => {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', async () => {
+app.on('ready', () => {
   createWindow(appWin, 'app', 'index.html', applicationOptions)
 })
 

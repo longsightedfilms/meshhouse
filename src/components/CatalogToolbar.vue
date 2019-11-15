@@ -21,7 +21,7 @@
           label="Search..."
           hide-details
           solo
-          @change="v => search = v"
+          @input="filterBySearch"
         />
 
         <v-combobox
@@ -31,7 +31,7 @@
           class="flex-grow-0 mx-2"
           hide-details
           solo
-          @change="v => category = v"
+          @change="filterByCategory"
         />
 
         <v-select
@@ -121,8 +121,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import path from 'path'
 import { remote } from 'electron'
-import { getCollection, initDB, getDB } from 'lokijs-promise'
-import { Database, Model } from '@/plugins/models-db/interfaces'
+import { DatabaseItem, Model } from '@/plugins/models-db/interfaces'
 import Vuetify from 'vuetify'
 
 @Component({})
@@ -136,29 +135,12 @@ export default class CatalogToolbar extends Vue {
   views: string[] = ['grid', 'basic']
 
   mounted(): void {
-    this.databaseIndex = this.$store.state.databases.findIndex((db: Database) => db.url == this.$route.params.database)
+    this.databaseIndex = this.$store.state.databases.findIndex((db: DatabaseItem) => db.url == this.$route.params.database)
   }
 
-  async reindexModels(): Promise<void> {
-    initDB(path.join(remote.app.getPath('userData'), "/databases/" + this.$route.params.database + ".db"), 1000)
-    await this.reindexModelsCallBack()
-  }
-
-  async reindexModelsCallBack(): Promise<void> {
+  reindexModels(): void {
     this.$store.commit('setPageLoadStatus', true)
-    
-    const db = await getDB()
-    db.removeCollection('models')
-    let models = await getCollection('models')
-    const directory = this.$store.state.databases.find((base: Database) => base.url === this.$route.params.database).path
-
-    this.$indexFolderRecursive(directory).then((files) => {
-      files.forEach((file: string) => {
-        models.insert({ name: path.parse(file).name, extension: path.parse(file).ext, path: file, category: '', image: '' })
-      })
-      
-      models = models.chain().find({}).simplesort('name').data()
-      this.$store.commit('setPageData', models)
+    this.$reindexCatalog(this.$store.state.databases[this.databaseIndex]).then(() => {
       this.$store.commit('setPageLoadStatus', false)
     })
   }
@@ -171,18 +153,37 @@ export default class CatalogToolbar extends Vue {
     })
   }
 
+  filterBySearch(option: string): void {
+    const category = option
+    const filters = this.$store.state.pageFilters
+    filters.where.name = option
+
+    this.$store.commit('setPageFilters', filters)
+    this.$getItemsFromDatabase(this.$route.params.database).then((result) => {
+      this.$store.commit('setPageData', result)
+    })
+  }
+
+  filterByCategory(option: string): void {
+    const category = option
+    const filters = this.$store.state.pageFilters
+    filters.where.category = option
+
+    this.$store.commit('setPageFilters', filters)
+    this.$getItemsFromDatabase(this.$route.params.database).then((result) => {
+      this.$store.commit('setPageData', result)
+    })
+  }
+
   filterByDCC(option: string): void {
-    const collection = this.$store.state.pageRawData
     const ext = option
+    const filters = this.$store.state.pageFilters
+    filters.where.extension = ext
 
-    let results: Model[] = []
-
-    if (ext != 'none') {
-      results = collection.chain().find({ extension: ext })
-    } else {
-      results = collection.chain().find({})
-    }
-    this.$store.commit('setPageData', results)
+    this.$store.commit('setPageFilters', filters)
+    this.$getItemsFromDatabase(this.$route.params.database).then((result) => {
+      this.$store.commit('setPageData', result)
+    })
   }
 }
 </script>

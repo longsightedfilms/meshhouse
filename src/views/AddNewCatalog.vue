@@ -169,11 +169,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import path from 'path'
-import fs from 'fs'
-import { remote } from 'electron'
-import { getCollection, initDB } from 'lokijs-promise'
-import { Database } from '@/plugins/models-db/interfaces'
 
 @Component({})
 
@@ -188,17 +183,6 @@ export default class AddNewCatalog extends Vue {
 
   viewString: string[] = ["grid", "basic"]
 
-  async startingIndexFolder(catalog: Database): Promise<void> {
-    const models = await getCollection("models")
-
-    this.$indexFolderRecursive(this.path).then((files: string[]) => {
-      files.forEach((file: string) => {
-        models.insert({ name: path.parse(file).name, extension: path.parse(file).ext, path: file })
-      })
-      this.$addDatabase(catalog)
-    })
-  }
-
   submitNewCatalog(): void {
     if((this.$refs.form as Vue & { validate: () => boolean }).validate()) {
       this.inProgress = true
@@ -212,14 +196,11 @@ export default class AddNewCatalog extends Vue {
       }
       this.url = catalog.url
 
-      const directory = path.join(remote.app.getPath('userData'), "/databases/")
-      if (!fs.existsSync(directory)){
-        fs.mkdirSync(directory)
-      }
-
-      initDB(path.join(directory, catalog.url + ".db"), 1000)
-      this.startingIndexFolder(catalog).then(() => {
+      this.$addDatabase(catalog).then(() => {
         this.snackbar = true
+        this.inProgress = false
+      }).catch((err: any) => {
+        console.log(err)
         this.inProgress = false
       })
     }

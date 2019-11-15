@@ -33,7 +33,15 @@ export default new Vuex.Store({
     ],
     pageCategories: [''],
     pageData: [],
-    pageRawData: [],
+    pageFilters: {
+      order: 'ASC',
+      where: {
+        category: '',
+        extension: 'none',
+        name: '',
+        path: ''
+      }
+    },
     pageLoadStatus: false,
     pageTitle: "",
     pageSceneTypes: [
@@ -74,7 +82,7 @@ export default new Vuex.Store({
         value: '.hipnc'
       },
       {
-        text: 'Modo Scene',
+        text: 'Modo Scene (.lxo)',
         value: '.lxo'
       }
     ],
@@ -108,19 +116,18 @@ export default new Vuex.Store({
     },
     setPageData(state, payload): void {
       const categories: any[] = []
-      const results = payload.simplesort('name').data()
-
-      results.forEach((item: Model) => {
+      payload.forEach((item: Model) => {
         if (!categories.includes(item.category) && item.category != '') {
           categories.push(item.category)
         }
       })
 
       state.pageCategories = categories
-      state.pageData = results
+      state.pageData = payload
     },
-    setPageRawData(state, payload): void {
-      state.pageRawData = payload
+    setPageFilters(state, payload): Promise<any> {
+      state.pageFilters = payload
+      return Promise.resolve(true)
     },
     setProperties(state, payload): void {
       state.properties = payload

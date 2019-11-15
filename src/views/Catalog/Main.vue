@@ -6,9 +6,8 @@
       </v-col>
     </v-row>
     <div v-if="$store.state.pageData.length != 0">
-      <grid-presence v-if="$store.state.databases.find(db => db.url == $route.params.database).view == 'grid'" />
-      <basic-presence v-else-if="$store.state.databases.find(db => db.url == $route.params.database).view == 'basic'" />
-      <div v-else />
+      <grid-presence v-show="$store.state.databases.find(db => db.url == $route.params.database).view == 'grid'" />
+      <basic-presence v-show="$store.state.databases.find(db => db.url == $route.params.database).view == 'basic'" />
     </div>
     <v-row v-else>
       <v-col cols="12">
@@ -37,8 +36,6 @@ import BasicPresence from './BasicPresence.vue'
 import CatalogToolbar from '@/components/CatalogToolbar.vue'
 import path from 'path'
 import { remote } from 'electron'
-import { getCollection, initDB, getDB } from 'lokijs-promise'
-import { Database, Model } from '@/plugins/models-db/interfaces'
 
 @Component({
   components: {
@@ -50,24 +47,17 @@ import { Database, Model } from '@/plugins/models-db/interfaces'
 
 export default class DatabaseListItems extends Vue {
   @Watch('$route')
-  onRouteChanged(): void {
-    initDB(path.join(remote.app.getPath('userData'), "/databases/" + this.$route.params.database + ".db"), 1000)
-    this.databaseInitialize()
-  }
-
-  async mounted(): Promise<void> {
-    initDB(path.join(remote.app.getPath('userData'), "/databases/" + this.$route.params.database + ".db"), 1000)
+  async onRouteChanged(): Promise<void> {
     await this.databaseInitialize()
   }
 
+  async mounted(): Promise<void> {
+   await this.databaseInitialize()
+  }
+
   async databaseInitialize(): Promise<void> {
-    const categories: string[] = []
-
-    const models = await getCollection("models")
-    const results = models.chain().find({})
-
-    this.$store.commit('setPageRawData', models)
-    this.$store.commit('setPageData', results)
+    const models = await this.$getItemsFromDatabase(this.$route.params.database)
+    this.$store.commit('setPageData', models)
     this.$store.commit('setPageLoadStatus', false)
   }
 }

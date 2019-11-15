@@ -32,7 +32,7 @@
                   Autodesk 3DS Max
                 </p>
                 <v-switch
-                  v-model="dccForm.adsk_3dsmax.useSystemAssociation"
+                  v-model="dccForm.adsk3dsmax.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
                   :hint="$t('settings.dcc.hint', { extension: '*.max' })"
@@ -40,13 +40,13 @@
                   persistent-hint
                 />
                 <v-file-input
-                  v-if="!dccForm.adsk_3dsmax.useSystemAssociation"
+                  v-if="!dccForm.adsk3dsmax.useSystemAssociation"
                   :label="$t('settings.dcc.exePath')"
-                  :hint="returnCurrentPathText(dccForm.adsk_3dsmax.customPath)"
+                  :hint="returnCurrentPathText(dccForm.adsk3dsmax.customPath)"
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dccForm.adsk_3dsmax.customPath = file != undefined ? file.path : '' }"
+                  @change="(file) => { dccForm.adsk3dsmax.customPath = file != undefined ? file.path : '' }"
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}
@@ -63,7 +63,7 @@
                   Autodesk Maya
                 </p>
                 <v-switch
-                  v-model="dccForm.adsk_maya.useSystemAssociation"
+                  v-model="dccForm.adskMaya.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
                   :hint="$t('settings.dcc.hint', { extension: '*.ma, *.mb' })"
@@ -71,13 +71,13 @@
                   persistent-hint
                 />
                 <v-file-input
-                  v-if="!dccForm.adsk_maya.useSystemAssociation"
+                  v-if="!dccForm.adskMaya.useSystemAssociation"
                   :label="$t('settings.dcc.exePath')"
-                  :hint="returnCurrentPathText(dccForm.adsk_maya.customPath)"
+                  :hint="returnCurrentPathText(dccForm.adskMaya.customPath)"
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dccForm.adsk_maya.customPath = file != undefined ? file.path : '' }"
+                  @change="(file) => { dccForm.adskMaya.customPath = file != undefined ? file.path : '' }"
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}

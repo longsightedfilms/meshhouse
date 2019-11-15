@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { Database, Model } from './interfaces'
+import { DatabaseItem, Model } from './interfaces'
 
 declare module 'vue/types/vue' {
     interface Vue {
@@ -8,8 +8,11 @@ declare module 'vue/types/vue' {
         $dccGetConfig(): object;
         $dccSetConfig(config: object): void;
         $stringToSlug(str: string): string;
-        $addDatabase(db: Database): void;
+        $addDatabase(db: DatabaseItem): Promise<void>;
+        $reindexCatalog(db: DatabaseItem): Promise<void>;
         $editDatabase(database: string, setting: string, value: string): Promise<boolean>;
+        $getItemsFromDatabase(dbName: string, params?: any): Promise<any>;
+        $updateItemInDatabase(dbName: string, model?: Model): Promise<string | boolean>;
         $deleteDatabase(database: string): Promise<boolean>;
         $indexFolderRecursive(folder: string): Promise<string[]>;
         $openItem(file: string): void;

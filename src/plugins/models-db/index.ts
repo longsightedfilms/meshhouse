@@ -5,8 +5,8 @@ import { remote, shell } from 'electron'
 import { spawn } from 'child_process'
 import { transliterate as tr, slugify } from 'transliteration'
 import store from '../../store'
-import { getCollection } from 'lokijs-promise'
-import { Extension, Database, Model } from '@/plugins/models-db/interfaces'
+import { Extension, DatabaseItem, Model } from '@/plugins/models-db/interfaces'
+import Database from './database'
 // Import icons
 import iconMax from '@/assets/icons/max.svg'
 import iconMaya from '@/assets/icons/maya.svg'
@@ -90,13 +90,13 @@ function getParameterByExtension(extension: string, param: string): string {
 if ( !fs.existsSync( path.join(remote.app.getPath('userData'), path.normalize("\\databases.json")) ) ) {
   databases.set({
     databases: [
-      {
+      /*{
         title: "MeshHouse",
         color: "blue-grey",
         view: "rich",
         url: "meshhouse",
         path: ""
-      }
+      }*/
     ]
   })
   store.commit('setApplicationDatabases', databases.get('databases'))
@@ -178,12 +178,60 @@ export function ModelsDB(Vue: typeof _Vue): void {
     return modelsExtensions[extension].icon
   }
 
-  Vue.prototype.$addDatabase = function (db: Database): void {
-    const list = databases.get('databases')
-    if (list) {
-      databases.set('databases', list.concat(db))
+  Vue.prototype.$addDatabase = function (db: DatabaseItem): Promise<void> {
+    const file = path.join(remote.app.getPath('userData'), `/databases/${db.url}.sqlite3`)
+
+    if (!fs.existsSync(file)) {
+      const database = new Database(db.url)
+      database.createTable()
+
+      return this.$indexFolderRecursive(db.path).then((files: string[]) => {
+        const models: string[] = []
+        files.forEach((file: string) => {
+          models.push(`(null, '${path.parse(file).name}', '${path.parse(file).ext}', '${file}', '', '')`)
+        })
+        
+        const query = `INSERT INTO 'models' VALUES ${models}`
+        database.runQuery(query).then(() => {
+          const list = databases.get('databases')
+          if (list) {
+            databases.set('databases', list.concat(db))
+          }
+          store.commit('setApplicationDatabases', databases.get('databases'))
+        })
+      })
+    } else {
+      return Promise.reject('Database exists')
     }
-    store.commit('setApplicationDatabases', databases.get('databases'))
+  }
+
+  Vue.prototype.$reindexCatalog = function (db: DatabaseItem): Promise<void> {
+    const database = new Database(db.url)
+
+    return this.$indexFolderRecursive(db.path).then((files: string[]) => {
+      database.reindexCatalog(files)
+    })
+  }
+
+  Vue.prototype.$getItemsFromDatabase = function(dbName: string): Promise<void> {
+    const database = new Database(dbName)
+    const params = this.$store.state.pageFilters
+
+    let query = `SELECT * FROM 'models'`
+    query += database.dynamicQueryBuilder(params.where)
+    query += ` ORDER BY name COLLATE NOCASE ${params.order}`
+
+    return database.getAllFromDatabase(query)
+  }
+
+  Vue.prototype.$updateItemInDatabase = function(dbName: string, model: Model): Promise<void> {
+    const database = new Database(dbName)
+
+    let query = `UPDATE 'models' SET `
+    query += database.updateBuilder(model)
+    query += ` WHERE id = ${model.id}`
+
+    return database.runQuery(query)
   }
 
   Vue.prototype.$editDatabase = function (database: string, setting: string, value: string): Promise<boolean> {

@@ -84,7 +84,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import ApplicationBar from '@/components/ApplicationBar.vue'
-import { setPromiseLibrary } from 'lokijs-promise'
 
 @Component({
   components: {
@@ -95,8 +94,6 @@ import { setPromiseLibrary } from 'lokijs-promise'
 export default class App extends Vue {
   mounted(): void {
     this.$i18n.locale = this.$settingsGet('language')
-    setPromiseLibrary(global.Promise)
-
     const lastOpened = this.$settingsGet('applicationWindow.lastOpened')
     this.$router.push(lastOpened)
   }
