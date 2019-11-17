@@ -7,4 +7,7 @@ export default {
         save: "Сохранить",
         show: "Показать",
     },
+    labels: {
+        search: "Поиск...",
+    },
 }

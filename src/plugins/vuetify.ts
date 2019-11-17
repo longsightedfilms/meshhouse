@@ -17,7 +17,7 @@ export const i18n = new VueI18n({
 
 export default new Vuetify({
   lang: {
-    t: (key: string, ...params: any) => i18n.t(key, params),
+    t: (key: string, ...params: any): string => i18n.t(key, params),
   },
   icons: {
     iconfont: 'mdi'

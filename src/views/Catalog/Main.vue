@@ -1,29 +1,37 @@
 <template>
-  <div class="mr-2">
-    <v-row>
-      <v-col cols="12">
-        <catalog-toolbar />
-      </v-col>
-    </v-row>
-    <div v-if="$store.state.pageData.length != 0">
-      <grid-presence v-show="$store.state.databases.find(db => db.url == $route.params.database).view == 'grid'" />
-      <basic-presence v-show="$store.state.databases.find(db => db.url == $route.params.database).view == 'basic'" />
-    </div>
-    <v-row v-else>
-      <v-col cols="12">
-        <v-card>
-          <v-card-title>This catalog is empty :(</v-card-title>
-          <v-card-text>I'm card text</v-card-text>
-          <v-card-actions>
-            <v-btn
-              text
-            >
-              {{ $t('lists.local.open') }}
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+  <div>
+    <v-container
+      fluid
+      class="pa-0"
+    >
+      <v-row no-gutters>
+        <v-col cols="12">
+          <catalog-toolbar />
+        </v-col>
+      </v-row>
+    </v-container>
+    <template v-if="$store.state.pageData.length !== 0">
+      <grid-presence v-if="$store.state.databases.find(db => db.url == $route.params.database).view == 'grid'" />
+      <basic-presence v-else-if="$store.state.databases.find(db => db.url == $route.params.database).view == 'basic'" />
+      <div v-else />
+    </template>
+    <v-container v-else>
+      <v-row>
+        <v-col cols="12">
+          <v-card>
+            <v-card-title>This catalog is empty :(</v-card-title>
+            <v-card-text>I'm card text</v-card-text>
+            <v-card-actions>
+              <v-btn
+                text
+              >
+                {{ $t('lists.local.open') }}
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+    </v-container>
   </div>
 </template>
 

@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { i18n } from '@/plugins/vuetify'
-import { getCollection, initDB, getDB } from 'lokijs-promise'
 import { Model } from './plugins/models-db/interfaces'
 
 Vue.use(Vuex)
@@ -115,7 +114,7 @@ export default new Vuex.Store({
       state.pageTitle = payload
     },
     setPageData(state, payload): void {
-      const categories: any[] = []
+      const categories: string[] = []
       payload.forEach((item: Model) => {
         if (!categories.includes(item.category) && item.category != '') {
           categories.push(item.category)
@@ -125,7 +124,7 @@ export default new Vuex.Store({
       state.pageCategories = categories
       state.pageData = payload
     },
-    setPageFilters(state, payload): Promise<any> {
+    setPageFilters(state, payload): Promise<boolean> {
       state.pageFilters = payload
       return Promise.resolve(true)
     },

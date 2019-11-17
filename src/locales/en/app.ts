@@ -7,4 +7,7 @@ export default {
         save: "Save",
         show: "Show",
     },
+    labels: {
+        search: "Search...",
+    },
 }

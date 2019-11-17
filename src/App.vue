@@ -65,9 +65,7 @@
       <div v-bar>
         <div>
           <div style="max-height: calc(100vh - 64px)">
-            <v-container>
-              <router-view />
-            </v-container>
+            <router-view />
           </div>
         </div>
       </div>

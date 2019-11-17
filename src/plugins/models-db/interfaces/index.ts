@@ -37,3 +37,13 @@ export interface EditProperties {
     imageChanged: boolean;
     path: string;
 }
+
+export interface QueryFilters {
+    order: string;
+    where: {
+        category: string;
+        extension: string;
+        name: string;
+        path: string;
+    };
+}

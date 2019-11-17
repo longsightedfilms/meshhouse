@@ -166,16 +166,16 @@ export function ModelsDB(Vue: typeof _Vue): void {
     return slugify(str)
   }
 
-  Vue.prototype.$returnItemCategory = function (category: string): string {
-    return category || this.$t('lists.local.noCategory')
-  }
-
   Vue.prototype.$returnHumanLikeExtension = function (extension: string): string {
     return modelsExtensions[extension].title
   }
 
   Vue.prototype.$returnExtensionIcon = function (extension: string): '*.svg' {
     return modelsExtensions[extension].icon
+  }
+
+  Vue.prototype.$forceReloadImage = function (image: string): string {
+    return image !== '' ? image + '?v=' + store.state.imageRandomizer : image
   }
 
   Vue.prototype.$addDatabase = function (db: DatabaseItem): Promise<void> {

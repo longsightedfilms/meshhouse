@@ -16,5 +16,10 @@ export default {
     noCategory: "Category isn't set",
     open: "Open",
     openFolder: "Open folder with model",
+    order: {
+        asc: "Ascending order",
+        desc: "Descending order"
+    },
+    properties: "Properties",
     reindex: "Reindex folder",
 }
