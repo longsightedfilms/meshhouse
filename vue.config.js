@@ -1,8 +1,8 @@
 module.exports = {
   configureWebpack: {
     resolve: {
-      mainFields: ['module', 'main']
-    }
+      mainFields: ['module', 'main'],
+    },
   },
   pluginOptions: {
     i18n: {
