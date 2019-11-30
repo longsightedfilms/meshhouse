@@ -1,8 +1,5 @@
 <template>
-  <v-container
-    class="pr-4"
-    fluid
-  >
+  <v-container class="pr-4" fluid>
     <v-row>
       <v-col cols="12">
         <v-data-table
@@ -10,17 +7,14 @@
           :items="$store.state.pageData"
           :items-per-page="50"
           :footer-props="{
-            'items-per-page-options': [10, 25, 50, 100, -1]
+            'items-per-page-options': [10, 25, 50, 100, -1],
           }"
           disable-filtering
           disable-sort
         >
           <template v-slot:item.name="{ item }">
             <v-lazy min-height="57">
-              <v-menu
-                absolute
-                right
-              >
+              <v-menu absolute right>
                 <template v-slot:activator="{ on }">
                   <v-btn
                     class="text-none text-left d-inline-block btn-avatar"
@@ -28,11 +22,8 @@
                     text
                     v-on="on"
                   >
-                    <v-avatar
-                      size="24"
-                      tile
-                    >
-                      <img :src="$returnExtensionIcon(item.extension)">
+                    <v-avatar size="24" tile>
+                      <img :src="$returnExtensionIcon(item.extension)" />
                     </v-avatar>
                     <ul class="v-ul no-dots">
                       <li class="d-flex align-center">
@@ -50,10 +41,7 @@
                         >
                           {{ item.category }}
                         </p>
-                        <p
-                          v-else
-                          class="ma-0 ml-2 overline"
-                        >
+                        <p v-else class="ma-0 ml-2 overline">
                           {{ $t('lists.local.noCategory') }}
                         </p>
                       </li>
@@ -103,15 +91,26 @@ import { DatatableHeader, Model } from '@/plugins/models-db/interfaces'
 
 @Component({
   components: {
-    EditPropertiesModal
-  }
+    EditPropertiesModal,
+  },
 })
-
 export default class BasicPresence extends Vue {
   headers: DatatableHeader[] = [
-    { text: this.getLocalizedString('lists.local.datatable.title'), align: 'left', width: '300', value: 'name'},
-    { text: this.getLocalizedString('lists.local.datatable.filetype'), width: '160', value: 'extension' },
-    { text: this.getLocalizedString('lists.local.datatable.path'), value: 'path' }
+    {
+      text: this.getLocalizedString('lists.local.datatable.title'),
+      align: 'left',
+      width: '300',
+      value: 'name',
+    },
+    {
+      text: this.getLocalizedString('lists.local.datatable.filetype'),
+      width: '160',
+      value: 'extension',
+    },
+    {
+      text: this.getLocalizedString('lists.local.datatable.path'),
+      value: 'path',
+    },
   ]
 
   getLocalizedString(str: string): string {

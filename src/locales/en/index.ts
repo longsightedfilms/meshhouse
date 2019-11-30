@@ -6,13 +6,13 @@ import about from './modals/about'
 import local from './lists/local'
 
 export default {
-    $vuetify: vuetify,
-    about: about,
-    addCatalog: addCatalog,
-    app: app,
-    lists: {
-        local: local,
-    },
-    search: "Search",
-    settings: settings,
+  $vuetify: vuetify,
+  about: about,
+  addCatalog: addCatalog,
+  app: app,
+  lists: {
+    local: local,
+  },
+  search: 'Search',
+  settings: settings,
 }

@@ -9,7 +9,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 
 const ElectronStore = require('electron-store')
 const settings = new ElectronStore({
-  name: "settings"
+  name: 'settings',
 })
 
 const applicationOptions = {
@@ -23,10 +23,9 @@ const applicationOptions = {
   resizable: true,
   webPreferences: {
     nodeIntegration: true,
-    webSecurity: false
-  }
+    webSecurity: false,
+  },
 }
-
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -34,13 +33,20 @@ const appWin: any = null
 let createdAppProtocol = false
 
 // Scheme must be registered before the app is ready
-protocol.registerSchemesAsPrivileged([{scheme: 'app', privileges: { secure: true, standard: true } }])
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'app', privileges: { secure: true, standard: true } },
+])
 
-function createWindow(winVar: any, devPath: string, prodPath: string, options: object): void {
+function createWindow(
+  winVar: any,
+  devPath: string,
+  prodPath: string,
+  options: object
+): void {
   // Create the browser window.
   winVar = new BrowserWindow(options)
   winVar.setMenu(null)
-  
+
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
     winVar.loadURL(process.env.WEBPACK_DEV_SERVER_URL + devPath)
@@ -62,7 +68,7 @@ function createWindow(winVar: any, devPath: string, prodPath: string, options: o
   winVar.on('closed', () => {
     winVar = null
   })
-  
+
   winVar.once('ready-to-show', () => {
     winVar.show()
   })
@@ -95,7 +101,7 @@ app.on('ready', () => {
 // Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {
-    process.on('message', data => {
+    process.on('message', (data) => {
       if (data === 'graceful-exit') {
         app.quit()
       }

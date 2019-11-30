@@ -1,13 +1,13 @@
 export default {
-    buttons: {
-        add: "Add",
-        addCatalog: "Add new catalog",
-        cancel: "Cancel",
-        close: "Close",
-        save: "Save",
-        show: "Show",
-    },
-    labels: {
-        search: "Search...",
-    },
+  buttons: {
+    add: 'Add',
+    addCatalog: 'Add new catalog',
+    cancel: 'Cancel',
+    close: 'Close',
+    save: 'Save',
+    show: 'Show',
+  },
+  labels: {
+    search: 'Search...',
+  },
 }

@@ -17,69 +17,71 @@ import iconModo from '@/assets/icons/modo.svg'
 // Initializing storages
 import recursive from 'recursive-readdir'
 import ElectronStore from 'electron-store'
-const settings: ElectronStore<any> = new ElectronStore({name: "settings"})
-const databases: ElectronStore<any> = new ElectronStore({name: "databases"})
-const dcc: ElectronStore<any> = new ElectronStore({name: "dcc-config"})
+const settings: ElectronStore<any> = new ElectronStore({ name: 'settings' })
+const databases: ElectronStore<any> = new ElectronStore({ name: 'databases' })
+const dcc: ElectronStore<any> = new ElectronStore({ name: 'dcc-config' })
 
 const modelsExtensions: Extension = {
-  ".max": {
-    title: "3ds Max Scene",
-    icon: iconMax
+  '.max': {
+    title: '3ds Max Scene',
+    icon: iconMax,
   },
-  ".ma": {
-    title: "Maya ASCII Scene",
-    icon: iconMaya
+  '.ma': {
+    title: 'Maya ASCII Scene',
+    icon: iconMaya,
   },
-  ".mb": {
-    title: "Maya Binary Scene",
-    icon: iconMaya
+  '.mb': {
+    title: 'Maya Binary Scene',
+    icon: iconMaya,
   },
-  ".blend": {
-    title: "Blender Scene",
-    icon: iconBlender
+  '.blend': {
+    title: 'Blender Scene',
+    icon: iconBlender,
   },
-  ".c4d": {
-    title: "Cinema 4D Scene",
-    icon: iconC4D
+  '.c4d': {
+    title: 'Cinema 4D Scene',
+    icon: iconC4D,
   },
-  ".hip": {
-    title: "Houdini Scene",
-    icon: iconHoudini
+  '.hip': {
+    title: 'Houdini Scene',
+    icon: iconHoudini,
   },
-  ".hiplc": {
-    title: "Houdini Scene",
-    icon: iconHoudini
+  '.hiplc': {
+    title: 'Houdini Scene',
+    icon: iconHoudini,
   },
-  ".hipnc": {
-    title: "Houdini Scene",
-    icon: iconHoudini
+  '.hipnc': {
+    title: 'Houdini Scene',
+    icon: iconHoudini,
   },
-  ".lxo": {
-    title: "Modo Scene",
-    icon: iconModo
+  '.lxo': {
+    title: 'Modo Scene',
+    icon: iconModo,
   },
 }
 
 function filterByModels(file: string, stats: fs.Stats): boolean {
-  return !stats.isDirectory() && !modelsExtensions.hasOwnProperty(path.extname(file))
+  return (
+    !stats.isDirectory() && !modelsExtensions.hasOwnProperty(path.extname(file))
+  )
 }
 
 function getParameterByExtension(extension: string, param: string): string {
   switch (extension) {
-    case ".max": 
+    case '.max':
       return dcc.get('adsk3dsmax.' + param)
-    case ".ma":
-    case ".mb":
+    case '.ma':
+    case '.mb':
       return dcc.get('adskMaya.' + param)
-    case ".blend":
+    case '.blend':
       return dcc.get('blender.' + param)
-    case ".c4d":
+    case '.c4d':
       return dcc.get('cinema4d.' + param)
-    case ".hip":
-    case ".hiplc":
-    case ".hipnc":
+    case '.hip':
+    case '.hiplc':
+    case '.hipnc':
       return dcc.get('houdini.' + param)
-    case ".lxo":
+    case '.lxo':
       return dcc.get('modo.' + param)
     default:
       return ''
@@ -87,7 +89,14 @@ function getParameterByExtension(extension: string, param: string): string {
 }
 
 // Boilerplate settings if not exists
-if ( !fs.existsSync( path.join(remote.app.getPath('userData'), path.normalize("\\databases.json")) ) ) {
+if (
+  !fs.existsSync(
+    path.join(
+      remote.app.getPath('userData'),
+      path.normalize('\\databases.json')
+    )
+  )
+) {
   databases.set({
     databases: [
       /*{
@@ -97,7 +106,7 @@ if ( !fs.existsSync( path.join(remote.app.getPath('userData'), path.normalize("\
         url: "meshhouse",
         path: ""
       }*/
-    ]
+    ],
   })
   store.commit('setApplicationDatabases', databases.get('databases'))
 } else {
@@ -105,81 +114,100 @@ if ( !fs.existsSync( path.join(remote.app.getPath('userData'), path.normalize("\
 }
 
 // Boilerplate settings if not exists
-if ( !fs.existsSync( path.join(remote.app.getPath('userData'), path.normalize("\\settings.json")) ) ) {
+if (
+  !fs.existsSync(
+    path.join(remote.app.getPath('userData'), path.normalize('\\settings.json'))
+  )
+) {
   settings.set({
     language: 'en',
     applicationWindow: {
       width: 1024,
-      height: 768
-    }
+      height: 768,
+    },
   })
 }
 
 // Boilerplate DCC settings if not exists
-if ( !fs.existsSync( path.join(remote.app.getPath('userData'), path.normalize("\\dcc-config.json")) ) ) {
+if (
+  !fs.existsSync(
+    path.join(
+      remote.app.getPath('userData'),
+      path.normalize('\\dcc-config.json')
+    )
+  )
+) {
   dcc.set({
     adsk3dsmax: {
       useSystemAssociation: true,
-      customPath: ''
+      customPath: '',
     },
     adskMaya: {
       useSystemAssociation: true,
-      customPath: ''
+      customPath: '',
     },
     blender: {
       useSystemAssociation: true,
-      customPath: ''
+      customPath: '',
     },
     cinema4d: {
       useSystemAssociation: true,
-      customPath: ''
+      customPath: '',
     },
     houdini: {
       useSystemAssociation: true,
-      customPath: ''
+      customPath: '',
     },
     modo: {
       useSystemAssociation: true,
-      customPath: ''
-    }
+      customPath: '',
+    },
   })
 }
 
 export function ModelsDB(Vue: typeof _Vue): void {
-  Vue.prototype.$settingsGet = function (setting: string): string {
+  Vue.prototype.$settingsGet = function(setting: string): string {
     return settings.get(setting)
   }
 
-  Vue.prototype.$settingsSet = function (key: string, value: string|number): void {
+  Vue.prototype.$settingsSet = function(
+    key: string,
+    value: string | number
+  ): void {
     settings.set(key, value)
   }
 
-  Vue.prototype.$dccGetConfig = function (): object {
+  Vue.prototype.$dccGetConfig = function(): object {
     return dcc.store
   }
 
-  Vue.prototype.$dccSetConfig = function (config: object): void {
+  Vue.prototype.$dccSetConfig = function(config: object): void {
     dcc.store = config
   }
 
-  Vue.prototype.$stringToSlug = function (str: string): string {
+  Vue.prototype.$stringToSlug = function(str: string): string {
     return slugify(str)
   }
 
-  Vue.prototype.$returnHumanLikeExtension = function (extension: string): string {
+  Vue.prototype.$returnHumanLikeExtension = function(
+    extension: string
+  ): string {
     return modelsExtensions[extension].title
   }
 
-  Vue.prototype.$returnExtensionIcon = function (extension: string): '*.svg' {
+  Vue.prototype.$returnExtensionIcon = function(extension: string): '*.svg' {
     return modelsExtensions[extension].icon
   }
 
-  Vue.prototype.$forceReloadImage = function (image: string): string {
+  Vue.prototype.$forceReloadImage = function(image: string): string {
     return image !== '' ? image + '?v=' + store.state.imageRandomizer : image
   }
 
-  Vue.prototype.$addDatabase = function (db: DatabaseItem): Promise<void> {
-    const file = path.join(remote.app.getPath('userData'), `/databases/${db.url}.sqlite3`)
+  Vue.prototype.$addDatabase = function(db: DatabaseItem): Promise<void> {
+    const file = path.join(
+      remote.app.getPath('userData'),
+      `/databases/${db.url}.sqlite3`
+    )
 
     if (!fs.existsSync(file)) {
       const database = new Database(db.url)
@@ -188,9 +216,13 @@ export function ModelsDB(Vue: typeof _Vue): void {
       return this.$indexFolderRecursive(db.path).then((files: string[]) => {
         const models: string[] = []
         files.forEach((file: string) => {
-          models.push(`(null, '${path.parse(file).name}', '${path.parse(file).ext}', '${file}', '', '')`)
+          models.push(
+            `(null, '${path.parse(file).name}', '${
+              path.parse(file).ext
+            }', '${file}', '', '')`
+          )
         })
-        
+
         const query = `INSERT INTO 'models' VALUES ${models}`
         database.runQuery(query).then(() => {
           const list = databases.get('databases')
@@ -205,7 +237,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
     }
   }
 
-  Vue.prototype.$reindexCatalog = function (db: DatabaseItem): Promise<void> {
+  Vue.prototype.$reindexCatalog = function(db: DatabaseItem): Promise<void> {
     const database = new Database(db.url)
 
     return this.$indexFolderRecursive(db.path).then((files: string[]) => {
@@ -213,7 +245,9 @@ export function ModelsDB(Vue: typeof _Vue): void {
     })
   }
 
-  Vue.prototype.$getItemsFromDatabase = function(dbName: string): Promise<void> {
+  Vue.prototype.$getItemsFromDatabase = function(
+    dbName: string
+  ): Promise<void> {
     const database = new Database(dbName)
     const params = this.$store.state.pageFilters
 
@@ -224,7 +258,10 @@ export function ModelsDB(Vue: typeof _Vue): void {
     return database.getAllFromDatabase(query)
   }
 
-  Vue.prototype.$updateItemInDatabase = function(dbName: string, model: Model): Promise<void> {
+  Vue.prototype.$updateItemInDatabase = function(
+    dbName: string,
+    model: Model
+  ): Promise<void> {
     const database = new Database(dbName)
 
     let query = `UPDATE 'models' SET `
@@ -234,42 +271,52 @@ export function ModelsDB(Vue: typeof _Vue): void {
     return database.runQuery(query)
   }
 
-  Vue.prototype.$editDatabase = function (database: string, setting: string, value: string): Promise<boolean> {
+  Vue.prototype.$editDatabase = function(
+    database: string,
+    setting: string,
+    value: string
+  ): Promise<boolean> {
     databases.set('databases.' + database + '.' + setting, value)
     store.commit('setApplicationDatabases', databases.get('databases'))
     return Promise.resolve(true)
   }
 
-  Vue.prototype.$deleteDatabase = function (database: string): Promise<boolean> {
+  Vue.prototype.$deleteDatabase = function(database: string): Promise<boolean> {
     console.log('deleted')
     return Promise.resolve(true)
   }
 
-  Vue.prototype.$indexFolderRecursive = function (folder: string): Promise<string[]> {
+  Vue.prototype.$indexFolderRecursive = function(
+    folder: string
+  ): Promise<string[]> {
     return recursive(folder, [filterByModels])
   }
 
-  Vue.prototype.$openItem = function (file: string): void {
+  Vue.prototype.$openItem = function(file: string): void {
     const extension = path.extname(file)
     if (getParameterByExtension(extension, 'useSystemAssociation')) {
       shell.openItem(path.normalize(file))
     } else {
-      spawn(getParameterByExtension(extension, 'customPath'), [path.normalize(file)])
+      spawn(getParameterByExtension(extension, 'customPath'), [
+        path.normalize(file),
+      ])
     }
   }
 
-  Vue.prototype.$openFolder = function (folder: string): void {
+  Vue.prototype.$openFolder = function(folder: string): void {
     shell.showItemInFolder(path.normalize(folder))
   }
 
-  Vue.prototype.$openPropertiesModal = async function (model: Model): Promise<boolean> {
+  Vue.prototype.$openPropertiesModal = async function(
+    model: Model
+  ): Promise<boolean> {
     const properties = {
       imageChanged: false,
       name: model.name,
       category: model.category,
       image: model.image,
       extension: model.extension,
-      path: model.path
+      path: model.path,
     }
 
     store.commit('setProperties', properties)

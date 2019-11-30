@@ -37,14 +37,15 @@ before_cache:
 deploy:
   provider: releases
   token: $GH_TOKEN
-  file: 
+  file:
     - ./dist-electron/*.exe
     - ./dist-electron/*.dmg
+    - ./dist-electron/*.AppImage
   draft: true
-  #on:
-    #tags: true
+  on:
+    tags: true
 
 branches:
   only:
-  - master
-  - dev
+    - master
+    - dev

@@ -8,27 +8,35 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     databases: [
-      { title: 'MeshHouse', url: 'meshhouse', path: '', color: 'primary', view: 'rich' }
+      {
+        title: 'MeshHouse',
+        url: 'meshhouse',
+        path: '',
+        color: 'primary',
+        view: 'rich',
+      },
     ],
     downloads: [
       {
-        img: "https://vuetifyjs.com/apple-touch-icon-180x180.png",
-        title: "Downloads not implemented",
-        path: "H:\\TES.Long-Sighted Films\\Mods\\Defenders of Skyrim\\Assets\\Characters\\LoL\\Ahri\\Ahri Ears.max",
+        img: 'https://vuetifyjs.com/apple-touch-icon-180x180.png',
+        title: 'Downloads not implemented',
+        path:
+          'H:\\TES.Long-Sighted Films\\Mods\\Defenders of Skyrim\\Assets\\Characters\\LoL\\Ahri\\Ahri Ears.max',
         status: {
           finished: true,
-          percentage: 100
-        }
+          percentage: 100,
+        },
       },
       {
-        img: "https://vuetifyjs.com/apple-touch-icon-180x180.png",
-        title: "Ahri Ears (3ds Max)",
-        path: "H:\\TES.Long-Sighted Films\\Mods\\Defenders of Skyrim\\Assets\\Characters\\LoL\\Ahri\\Ahri Ears.max",
+        img: 'https://vuetifyjs.com/apple-touch-icon-180x180.png',
+        title: 'Ahri Ears (3ds Max)',
+        path:
+          'H:\\TES.Long-Sighted Films\\Mods\\Defenders of Skyrim\\Assets\\Characters\\LoL\\Ahri\\Ahri Ears.max',
         status: {
           finished: false,
-          percentage: 30
-        }
-      }
+          percentage: 30,
+        },
+      },
     ],
     pageCategories: [''],
     pageData: [],
@@ -38,58 +46,58 @@ export default new Vuex.Store({
         category: '',
         extension: 'none',
         name: '',
-        path: ''
-      }
+        path: '',
+      },
     },
     pageLoadStatus: false,
-    pageTitle: "",
+    pageTitle: '',
     pageSceneTypes: [
       {
         text: i18n.t('lists.local.filterDCCAll'),
-        value: 'none'
+        value: 'none',
       },
       {
         text: '3ds Max Scene (.max)',
-        value: '.max'
+        value: '.max',
       },
       {
         text: 'Maya ASCII Scene (.ma)',
-        value: '.ma'
+        value: '.ma',
       },
       {
         text: 'Maya Binary Scene (.mb)',
-        value: '.mb'
+        value: '.mb',
       },
       {
         text: 'Blender Scene (.blend)',
-        value: '.blend'
+        value: '.blend',
       },
       {
         text: 'Cinema 4D Scene (.c4d)',
-        value: '.c4d'
+        value: '.c4d',
       },
       {
         text: 'Houdini Scene (.hip)',
-        value: '.hip'
+        value: '.hip',
       },
       {
         text: 'Houdini Scene (.hiplc)',
-        value: '.hiplc'
+        value: '.hiplc',
       },
       {
         text: 'Houdini Scene (.hipnc)',
-        value: '.hipnc'
+        value: '.hipnc',
       },
       {
         text: 'Modo Scene (.lxo)',
-        value: '.lxo'
-      }
+        value: '.lxo',
+      },
     ],
     properties: {},
     imageRandomizer: 0,
     aboutModalOpened: false,
     editPropertiesModalOpened: false,
-    settingModalOpened: false
+    settingModalOpened: false,
   },
   mutations: {
     clearDownloadsList(state): void {
@@ -139,9 +147,7 @@ export default new Vuex.Store({
     },
     setSettingsModal(state): void {
       state.settingModalOpened = !state.settingModalOpened
-    }
+    },
   },
-  actions: {
-
-  }
+  actions: {},
 })

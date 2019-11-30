@@ -12,17 +12,17 @@ Vue.use(VueI18n)
 export const i18n = new VueI18n({
   locale: 'en', // set locale
   fallbackLocale: 'en',
-  messages
+  messages,
 })
 
 export default new Vuetify({
   lang: {
-    t: (key: string, ...params: any): string => (i18n.t(key, params) as string),
+    t: (key: string, ...params: any): string => i18n.t(key, params) as string,
   },
   icons: {
-    iconfont: 'mdi'
+    iconfont: 'mdi',
   },
   theme: {
-    dark: true
-  }
+    dark: true,
+  },
 })

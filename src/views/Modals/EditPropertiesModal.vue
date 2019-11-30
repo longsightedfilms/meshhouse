@@ -1,8 +1,5 @@
 <template>
-  <v-dialog
-    v-model="$store.state.editPropertiesModalOpened"
-    max-width="500"
-  >
+  <v-dialog v-model="$store.state.editPropertiesModalOpened" max-width="500">
     <v-card>
       <v-card-title class="headline">
         {{ $t('lists.local.modal.title') }}
@@ -17,13 +14,13 @@
         <v-text-field
           :value="properties.name"
           :label="$t('lists.local.modal.changeName')"
-          @change="v => properties.name = v"
+          @change="(v) => (properties.name = v)"
         />
         <v-combobox
           :value="properties.category"
           :items="$store.state.pageCategories"
           :label="$t('lists.local.modal.changeCategory')"
-          @change="v => properties.category = v"
+          @change="(v) => (properties.category = v)"
         />
         <v-file-input
           :label="$t('lists.local.modal.changeImage')"
@@ -72,15 +69,15 @@ import { EditProperties, Model } from '@/plugins/models-db/interfaces'
 
 @Component({})
 export default class EditPresenceModal extends Vue {
-  isBusy = false 
+  isBusy = false
   uploadImage = ''
   properties: EditProperties = {
-    category: "",
-    extension: "",
-    name: "",
-    image: "",
+    category: '',
+    extension: '',
+    name: '',
+    image: '',
     imageChanged: false,
-    path: ""
+    path: '',
   }
 
   @Watch('$store.state.editPropertiesModalOpened')
@@ -89,7 +86,9 @@ export default class EditPresenceModal extends Vue {
   }
 
   forceReloadImage(image: string): string {
-    return image != '' ? image + '?v=' + this.$store.state.imageRandomizer : image
+    return image != ''
+      ? image + '?v=' + this.$store.state.imageRandomizer
+      : image
   }
 
   changeFile(file: File): void {
@@ -101,35 +100,44 @@ export default class EditPresenceModal extends Vue {
     this.isBusy = true
 
     const models = await this.$getItemsFromDatabase(this.$route.params.database)
-    const queryModel = models[models.findIndex((item: Model) => item.path === this.properties.path)]
+    const queryModel =
+      models[
+        models.findIndex((item: Model) => item.path === this.properties.path)
+      ]
 
     const imageName = uniqid('image-') + '.jpg'
-    
+
     let imagePath = ''
     if (this.properties.imageChanged === true && this.properties.image !== '') {
       imagePath = path.normalize(this.properties.image)
     } else {
-      imagePath = path.normalize(path.join(remote.app.getPath('userData'), '\\imagecache\\', imageName))
+      imagePath = path.normalize(
+        path.join(remote.app.getPath('userData'), '\\imagecache\\', imageName)
+      )
     }
 
     queryModel.name = this.properties.name
     queryModel.category = this.properties.category
-    queryModel.image = (this.properties.imageChanged === true) ? imagePath : this.properties.image
+    queryModel.image =
+      this.properties.imageChanged === true ? imagePath : this.properties.image
 
     // Create thumbnails and save in imagecache folder
-    if(this.properties.imageChanged === true) {
+    if (this.properties.imageChanged === true) {
       fs.access(imagePath, fs.constants.F_OK, (err) => {
         Jimp.read(this.uploadImage)
-        .then((image: Jimp) => {
-          return image.cover(700, 700).quality(70).writeAsync(imagePath)
-        })
-        .then(() => {
-          this.$store.commit('incrementImageRandomizer')
-          this.$updateItemInDatabase(this.$route.params.database, queryModel)
-          this.$store.commit('setPageData', models)
-          this.isBusy = false
-          this.$store.commit('setEditPropsModal', false)
-        })
+          .then((image: Jimp) => {
+            return image
+              .cover(700, 700)
+              .quality(70)
+              .writeAsync(imagePath)
+          })
+          .then(() => {
+            this.$store.commit('incrementImageRandomizer')
+            this.$updateItemInDatabase(this.$route.params.database, queryModel)
+            this.$store.commit('setPageData', models)
+            this.isBusy = false
+            this.$store.commit('setEditPropsModal', false)
+          })
       })
     } else {
       this.$updateItemInDatabase(this.$route.params.database, queryModel)

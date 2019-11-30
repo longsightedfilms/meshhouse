@@ -1,33 +1,21 @@
 <template>
   <v-card>
-    <v-card-title
-      class="headline"
-      primary-title
-    >
+    <v-card-title class="headline" primary-title>
       {{ $t('settings.title') }}
     </v-card-title>
 
     <v-divider />
 
-    <v-card-text
-      v-bar
-      class="pt-4 text--primary"
-    >
+    <v-card-text v-bar class="pt-4 text--primary">
       <div>
         <language-selector />
         <p class="headline">
           {{ $t('settings.launchProgram') }}
         </p>
-        <v-container
-          class="pa-0"
-          fluid
-        >
+        <v-container class="pa-0" fluid>
           <v-row>
             <v-col cols="6">
-              <v-sheet
-                color="grey darken-4"
-                class="pa-4"
-              >
+              <v-sheet color="grey darken-4" class="pa-4">
                 <p class="title">
                   Autodesk 3DS Max
                 </p>
@@ -46,7 +34,12 @@
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dccForm.adsk3dsmax.customPath = file != undefined ? file.path : '' }"
+                  @change="
+                    (file) => {
+                      dccForm.adsk3dsmax.customPath =
+                        file != undefined ? file.path : ''
+                    }
+                  "
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}
@@ -55,10 +48,7 @@
               </v-sheet>
             </v-col>
             <v-col cols="6">
-              <v-sheet
-                color="grey darken-4"
-                class="pa-4"
-              >
+              <v-sheet color="grey darken-4" class="pa-4">
                 <p class="title">
                   Autodesk Maya
                 </p>
@@ -77,7 +67,12 @@
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dccForm.adskMaya.customPath = file != undefined ? file.path : '' }"
+                  @change="
+                    (file) => {
+                      dccForm.adskMaya.customPath =
+                        file != undefined ? file.path : ''
+                    }
+                  "
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}
@@ -86,10 +81,7 @@
               </v-sheet>
             </v-col>
             <v-col cols="6">
-              <v-sheet
-                color="grey darken-4"
-                class="pa-4"
-              >
+              <v-sheet color="grey darken-4" class="pa-4">
                 <p class="title">
                   Blender
                 </p>
@@ -108,7 +100,12 @@
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dccForm.blender.customPath = file != undefined ? file.path : '' }"
+                  @change="
+                    (file) => {
+                      dccForm.blender.customPath =
+                        file != undefined ? file.path : ''
+                    }
+                  "
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}
@@ -117,10 +114,7 @@
               </v-sheet>
             </v-col>
             <v-col cols="6">
-              <v-sheet
-                color="grey darken-4"
-                class="pa-4"
-              >
+              <v-sheet color="grey darken-4" class="pa-4">
                 <p class="title">
                   Cinema 4D
                 </p>
@@ -139,7 +133,12 @@
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dccForm.cinema4d.customPath = file != undefined ? file.path : '' }"
+                  @change="
+                    (file) => {
+                      dccForm.cinema4d.customPath =
+                        file != undefined ? file.path : ''
+                    }
+                  "
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}
@@ -148,10 +147,7 @@
               </v-sheet>
             </v-col>
             <v-col cols="6">
-              <v-sheet
-                color="grey darken-4"
-                class="pa-4"
-              >
+              <v-sheet color="grey darken-4" class="pa-4">
                 <p class="title">
                   Houdini
                 </p>
@@ -159,7 +155,11 @@
                   v-model="dccForm.houdini.useSystemAssociation"
                   color="primary"
                   :label="$t('settings.useSystemAssociation')"
-                  :hint="$t('settings.dcc.hint', { extension: '*.hip, *.hiplc, *.hipnc' })"
+                  :hint="
+                    $t('settings.dcc.hint', {
+                      extension: '*.hip, *.hiplc, *.hipnc',
+                    })
+                  "
                   inset
                   persistent-hint
                 />
@@ -170,7 +170,12 @@
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dccForm.houdini.customPath = file != undefined ? file.path : '' }"
+                  @change="
+                    (file) => {
+                      dccForm.houdini.customPath =
+                        file != undefined ? file.path : ''
+                    }
+                  "
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}
@@ -179,10 +184,7 @@
               </v-sheet>
             </v-col>
             <v-col cols="6">
-              <v-sheet
-                color="grey darken-4"
-                class="pa-4"
-              >
+              <v-sheet color="grey darken-4" class="pa-4">
                 <p class="title">
                   Modo
                 </p>
@@ -201,7 +203,12 @@
                   class="mt-4"
                   persistent-hint
                   solo
-                  @change="(file) => { dccForm.modo.customPath = file != undefined ? file.path : '' }"
+                  @change="
+                    (file) => {
+                      dccForm.modo.customPath =
+                        file != undefined ? file.path : ''
+                    }
+                  "
                 >
                   <template v-slot:selection="{ file }">
                     {{ file.path }}
@@ -218,18 +225,10 @@
 
     <v-card-actions>
       <div class="flex-grow-1" />
-      <v-btn
-        color="primary"
-        text
-        @click="saveSettingToFile"
-      >
+      <v-btn color="primary" text @click="saveSettingToFile">
         {{ $t('app.buttons.save') }}
       </v-btn>
-      <v-btn
-        color="error"
-        text
-        @click="$store.commit('setSettingsModal')"
-      >
+      <v-btn color="error" text @click="$store.commit('setSettingsModal')">
         {{ $t('app.buttons.cancel') }}
       </v-btn>
     </v-card-actions>
@@ -243,36 +242,35 @@ import LanguageSelector from '@/components/LanguageSelector.vue'
 
 @Component({
   components: {
-    LanguageSelector
-  }
+    LanguageSelector,
+  },
 })
-
 export default class ModalSettings extends Vue {
-  dccForm: object =  {
+  dccForm: object = {
     adsk3dsmax: {
       useSystemAssociation: true,
-      customPath: ""
+      customPath: '',
     },
     adskMaya: {
       useSystemAssociation: true,
-      customPath: ''
+      customPath: '',
     },
     blender: {
       useSystemAssociation: true,
-      customPath: ''
+      customPath: '',
     },
     cinema4d: {
       useSystemAssociation: true,
-      customPath: ''
+      customPath: '',
     },
     houdini: {
       useSystemAssociation: true,
-      customPath: ''
+      customPath: '',
     },
     modo: {
       useSystemAssociation: true,
-      customPath: ''
-    }
+      customPath: '',
+    },
   }
 
   mounted(): void {

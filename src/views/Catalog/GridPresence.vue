@@ -37,10 +37,9 @@ import { Model } from '@/plugins/models-db/interfaces'
 @Component({
   components: {
     EditPropertiesModal,
-    GridCard
-  }
+    GridCard,
+  },
 })
-
 export default class GridPresence extends Vue {
   page = 1
 
@@ -51,19 +50,25 @@ export default class GridPresence extends Vue {
 
   get displayedModels(): Model[] {
     const page = this.page
-    const from = (page * this.itemsPerPage) - this.itemsPerPage
-    const to = (page * this.itemsPerPage)
+    const from = page * this.itemsPerPage - this.itemsPerPage
+    const to = page * this.itemsPerPage
     return this.$store.state.pageData.slice(from, to)
   }
 
-  get itemsPerPage (): number {
+  get itemsPerPage(): number {
     switch (this.$vuetify.breakpoint.name) {
-      case 'xs': return 18
-      case 'sm': return 18
-      case 'md': return 18
-      case 'lg': return 18
-      case 'xl': return 20
-      default: return 18
+      case 'xs':
+        return 18
+      case 'sm':
+        return 18
+      case 'md':
+        return 18
+      case 'lg':
+        return 18
+      case 'xl':
+        return 20
+      default:
+        return 18
     }
   }
 }

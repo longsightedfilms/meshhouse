@@ -9,24 +9,32 @@ const router = new Router({
     {
       path: '/',
       name: 'home',
-      component: () => import(/* webpackChunkName: "about" */ './views/Home.vue')
+      component: (): Promise<typeof import('*.vue')> =>
+        import(/* webpackChunkName: "about" */ './views/Home.vue'),
     },
     {
       path: '/about',
       name: 'about',
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
+      component: (): Promise<typeof import('*.vue')> =>
+        import(/* webpackChunkName: "about" */ './views/About.vue'),
     },
     {
       path: '/add-new-catalog',
       name: 'AddNewCatalog',
-      component: () => import(/* webpackChunkName: "AddNewCatalog" */ './views/AddNewCatalog.vue')
+      component: (): Promise<typeof import('*.vue')> =>
+        import(
+          /* webpackChunkName: "AddNewCatalog" */ './views/AddNewCatalog.vue'
+        ),
     },
     {
       path: '/db/:database',
       name: 'DatabaseListItems',
-      component: () => import(/* webpackChunkName: "DatabaseListItems" */ './views/Catalog/Main.vue')
-    }
-  ]
+      component: (): Promise<typeof import('*.vue')> =>
+        import(
+          /* webpackChunkName: "DatabaseListItems" */ './views/Catalog/Main.vue'
+        ),
+    },
+  ],
 })
 
 router.beforeEach((to, from, next) => {

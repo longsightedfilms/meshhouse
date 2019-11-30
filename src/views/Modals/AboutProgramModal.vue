@@ -1,25 +1,19 @@
 <template>
   <v-card>
     <v-card-text class="pt-4 text--primary">
-      <v-img
-        class="mb-4"
-        src="@/assets/logo_full.svg"
-      />
+      <v-img class="mb-4" src="@/assets/logo_full.svg" />
       <p class="text--primary">
-        {{ $t('about.text_description') }}
+        {{ $t('about.textDescription') }}
       </p>
       <p class="text--primary">
         {{ returnContributorsAsText }}
       </p>
       <p class="text--primary">
-        {{ $t('about.text_license') }}
+        {{ $t('about.textLicense') }}
       </p>
       <p class="text--primary">
-        Github: 
-        <a
-          :href="githubLink"
-          @click.prevent="openLink"
-        >
+        Github:
+        <a :href="githubLink" @click.prevent="openLink">
           {{ githubLink }}
         </a>
       </p>
@@ -46,20 +40,19 @@ import Component from 'vue-class-component'
 import { shell } from 'electron'
 
 @Component({})
-
 export default class AboutProgramModal extends Vue {
-  githubContributors: string[] = [ 'Maxim Makarov' ]
-  githubLink: string = "https://github.com/longsightedfilms/meshhouse"
+  githubContributors: string[] = ['Maxim Makarov']
+  githubLink = 'https://github.com/longsightedfilms/meshhouse'
 
   get returnContributorsAsText(): string {
     let contrib = ''
     this.githubContributors.forEach((contributor, index) => {
       contrib += contributor
-      if (index < (this.githubContributors.length - 1)) {
-        contrib += ", "
+      if (index < this.githubContributors.length - 1) {
+        contrib += ', '
       }
     })
-    return this.$t('about.text_contributors') + contrib
+    return this.$t('about.textContributors') + contrib
   }
 
   openLink(): void {

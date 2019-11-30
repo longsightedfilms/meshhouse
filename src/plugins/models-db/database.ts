@@ -5,21 +5,23 @@ import sqlite3 from 'sqlite3'
 import { Model } from './interfaces'
 
 type QueryParameters = {
-  category: string;
-  extension: string;
-  name: string;
-  path: string;
+  category: string
+  extension: string
+  name: string
+  path: string
 }
 
 export default class Database {
-  directory = path.join(remote.app.getPath('userData'), "/databases/")
+  directory = path.join(remote.app.getPath('userData'), '/databases/')
   db: sqlite3.Database
 
   constructor(name: string) {
     if (!fs.existsSync(this.directory)) {
       fs.mkdirSync(this.directory)
     }
-    this.db = new (sqlite3.cached.Database as any)(path.resolve(`${this.directory}`, `${name}.sqlite3`))
+    this.db = new (sqlite3.cached.Database as any)(
+      path.resolve(`${this.directory}`, `${name}.sqlite3`)
+    )
   }
 
   /**
@@ -43,14 +45,14 @@ export default class Database {
    */
   runQuery(query: string): Promise<any> {
     return new Promise((resolve, reject): void => {
-      this.db.run(query, ((err: Error) => {
+      this.db.run(query, (err: Error) => {
         if (err) {
           console.log(err)
           reject(err)
         } else {
           resolve(true)
         }
-      }))
+      })
     })
   }
   /**
@@ -59,14 +61,14 @@ export default class Database {
    */
   getAllFromDatabase(query: string): Promise<any> {
     return new Promise((resolve, reject): void => {
-      this.db.all(query, ((err, rows) => {
+      this.db.all(query, (err, rows) => {
         if (err) {
           console.log(err)
           reject(err)
         } else {
           resolve(rows)
         }
-      }))
+      })
     })
   }
   /**
@@ -79,7 +81,13 @@ export default class Database {
     const paramsEmpty: boolean[] = []
 
     for (const [key, value] of Object.entries(params)) {
-      if (value !== '' && value !== 'all' && value !== 'none' && value !== null && value !== undefined) {
+      if (
+        value !== '' &&
+        value !== 'all' &&
+        value !== 'none' &&
+        value !== null &&
+        value !== undefined
+      ) {
         paramsEmpty.push(true)
         if (key === 'name') {
           clause += `${key} LIKE '%${value}%'`
@@ -125,10 +133,14 @@ export default class Database {
       const diff: string[] = []
       files.forEach((file: string) => {
         if (!res.includes(file)) {
-          diff.push(`(null, '${path.parse(file).name}', '${path.parse(file).ext}', '${file}', '', '')`)
+          diff.push(
+            `(null, '${path.parse(file).name}', '${
+              path.parse(file).ext
+            }', '${file}', '', '')`
+          )
         }
       })
-      if(diff.length > 0) {
+      if (diff.length > 0) {
         const query = `INSERT INTO 'models' VALUES ${diff}`
         this.runQuery(query)
       }
