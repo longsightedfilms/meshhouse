@@ -8,3 +8,5 @@ declare module '*.svg'
 declare module 'uniqid'
 
 declare module 'recursive-readdir'
+declare module 'vue-context'
+declare module 'vue-fragment'

@@ -1,59 +1,78 @@
 <template>
-  <v-dialog v-model="$store.state.editPropertiesModalOpened" max-width="500">
-    <v-card>
-      <v-card-title class="headline">
-        {{ $t('lists.local.modal.title') }}
-      </v-card-title>
-      <v-card-text>
-        <v-img
-          :src="forceReloadImage(properties.image)"
-          aspect-ratio="1"
-          class="grey lighten-2 mb-4"
-          max-height="300"
-        />
-        <v-text-field
-          :value="properties.name"
-          :label="$t('lists.local.modal.changeName')"
-          @change="(v) => (properties.name = v)"
-        />
-        <v-combobox
-          :value="properties.category"
-          :items="$store.state.pageCategories"
-          :label="$t('lists.local.modal.changeCategory')"
-          @change="(v) => (properties.category = v)"
-        />
-        <v-file-input
-          :label="$t('lists.local.modal.changeImage')"
-          @change="changeFile"
+  <div class="modal modal--sidebar modal--properties">
+    <header class="modal_header">
+      <h2>{{ $t('context.model.properties') }}</h2>
+    </header>
+    <div class="modal_content">
+      <img
+        class="modal_image"
+        :src="forceReloadImage(properties.image)"
+      >
+      <div class="input-group">
+        <label>{{ $t('modals.properties.title') }}</label>
+        <input
+          v-model="properties.name"
+          type="text"
+          class="input"
+          required
         >
-          <template v-slot:selection="{ file }">
-            {{ file.path }}
-          </template>
-        </v-file-input>
-      </v-card-text>
-
-      <v-card-actions>
-        <div class="flex-grow-1" />
-
-        <v-btn
-          color="primary"
-          :loading="isBusy"
-          :disabled="isBusy"
-          text
-          @click="updateItem()"
+      </div>
+      <div class="input-group">
+        <label>{{ $t('modals.properties.category') }}</label>
+        <div class="input--select">
+          <select
+            v-model="properties.category"
+            class="input"
+          >
+            <option
+              v-for="(category, index) in $store.state.db.categories"
+              :key="index"
+              :value="category"
+            >
+              {{ category }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>{{ $t('modals.properties.image') }}</label>
+        <input
+          ref="file"
+          type="file"
+          accept=".jpg, .jpeg, .png, .webp"
+          hidden
+          required
+          @change="handleFileChange"
         >
-          {{ $t('app.buttons.save') }}
-        </v-btn>
-        <v-btn
-          color="error"
-          text
-          @click="$store.commit('setEditPropsModal', false)"
+        <button
+          class="input input--file"
+          @click.prevent="handleFileClick"
         >
-          {{ $t('app.buttons.cancel') }}
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+          <span v-if="uploadImage !== ''">{{ uploadImage }}</span>
+          <span
+            v-else
+            class="placeholder"
+          >
+            {{ $t('modals.properties.image') }}
+          </span>
+        </button>
+      </div>
+    </div>
+    <div class="modal_actions">
+      <button
+        class="button button--primary"
+        @click="updateItem()"
+      >
+        {{ $t('common.buttons.save') }}
+      </button>
+      <button
+        class="button button--danger"
+        @click="$emit('close')"
+      >
+        {{ $t('common.buttons.cancel') }}
+      </button>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -62,14 +81,13 @@ import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
 import fs from 'fs'
 import path from 'path'
-import Jimp from 'jimp'
+import sharp from 'sharp'
 import uniqid from 'uniqid'
 import { remote } from 'electron'
 import { EditProperties, Model } from '@/plugins/models-db/interfaces'
 
 @Component({})
-export default class EditPresenceModal extends Vue {
-  isBusy = false
+export default class EditPropertiesModal extends Vue {
   uploadImage = ''
   properties: EditProperties = {
     category: '',
@@ -80,24 +98,27 @@ export default class EditPresenceModal extends Vue {
     path: '',
   }
 
-  @Watch('$store.state.editPropertiesModalOpened')
-  onModalOpened(): void {
-    this.properties = this.$store.state.properties
+  mounted(): void {
+    this.properties = this.$store.state.controls.properties
   }
 
   forceReloadImage(image: string): string {
     return image != ''
-      ? image + '?v=' + this.$store.state.imageRandomizer
+      ? image + '?v=' + this.$store.state.controls.imageRandomizer
       : image
   }
 
-  changeFile(file: File): void {
+  handleFileChange(event: any): void {
+    const file = event.target.files[0]
     this.uploadImage = file != undefined ? file.path : ''
     this.properties.imageChanged = file != undefined
   }
 
+  handleFileClick(): void {
+    (this.$refs.file as HTMLInputElement).click()
+  }
+
   async updateItem(): Promise<void> {
-    this.isBusy = true
 
     const models = await this.$getItemsFromDatabase(this.$route.params.database)
     const queryModel =
@@ -105,11 +126,13 @@ export default class EditPresenceModal extends Vue {
         models.findIndex((item: Model) => item.path === this.properties.path)
       ]
 
-    const imageName = uniqid('image-') + '.jpg'
+    const imageName = uniqid('image-') + '.webp'
 
     let imagePath = ''
     if (this.properties.imageChanged === true && this.properties.image !== '') {
-      imagePath = path.normalize(this.properties.image)
+      const image = path.parse(this.properties.image)
+      image.ext = '.webp'
+      imagePath = path.normalize(path.join(image.dir, image.name) + image.ext)
     } else {
       imagePath = path.normalize(
         path.join(remote.app.getPath('userData'), '\\imagecache\\', imageName)
@@ -124,26 +147,27 @@ export default class EditPresenceModal extends Vue {
     // Create thumbnails and save in imagecache folder
     if (this.properties.imageChanged === true) {
       fs.access(imagePath, fs.constants.F_OK, (err) => {
-        Jimp.read(this.uploadImage)
-          .then((image: Jimp) => {
-            return image
-              .cover(700, 700)
-              .quality(70)
-              .writeAsync(imagePath)
+        fs.unlinkSync(this.properties.image)
+        sharp(this.uploadImage)
+          .resize(1024, 1024)
+          .webp({
+            quality: 85,
+            smartSubsample: true,
+            reductionEffort: 6,
+            force: true
           })
+          .toFile(imagePath)
           .then(() => {
             this.$store.commit('incrementImageRandomizer')
             this.$updateItemInDatabase(this.$route.params.database, queryModel)
-            this.$store.commit('setPageData', models)
-            this.isBusy = false
-            this.$store.commit('setEditPropsModal', false)
+            this.$store.commit('setLoadedData', models)
+            this.$emit('close')
           })
       })
     } else {
       this.$updateItemInDatabase(this.$route.params.database, queryModel)
-      this.$store.commit('setPageData', models)
-      this.isBusy = false
-      this.$store.commit('setEditPropsModal', false)
+      this.$store.commit('setLoadedData', models)
+      this.$emit('close')
     }
   }
 }

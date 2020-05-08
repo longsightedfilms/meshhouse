@@ -4,7 +4,7 @@ import path from 'path'
 import { remote, shell } from 'electron'
 import { spawn } from 'child_process'
 import { transliterate as tr, slugify } from 'transliteration'
-import store from '../../store'
+import store from '@/store/main'
 import { Extension, DatabaseItem, Model } from '@/plugins/models-db/interfaces'
 import Database from './database'
 // Import icons
@@ -172,7 +172,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
 
   Vue.prototype.$settingsSet = function(
     key: string,
-    value: string | number
+    value: string | number | boolean
   ): void {
     settings.set(key, value)
   }
@@ -200,7 +200,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
   }
 
   Vue.prototype.$forceReloadImage = function(image: string): string {
-    return image !== '' ? image + '?v=' + store.state.imageRandomizer : image
+    return image !== '' ? image + '?v=' + (store as any).state.controls.imageRandomizer : image
   }
 
   Vue.prototype.$addDatabase = function(db: DatabaseItem): Promise<void> {
@@ -215,11 +215,14 @@ export function ModelsDB(Vue: typeof _Vue): void {
 
       return this.$indexFolderRecursive(db.path).then((files: string[]) => {
         const models: string[] = []
+        let totalSize = 0
         files.forEach((file: string) => {
+          const size = fs.statSync(file)['size']
+          totalSize += size
           models.push(
             `(null, '${path.parse(file).name}', '${
               path.parse(file).ext
-            }', '${file}', '', '')`
+            }', '${file}', '', '${size}','')`
           )
         })
 
@@ -227,6 +230,8 @@ export function ModelsDB(Vue: typeof _Vue): void {
         database.runQuery(query).then(() => {
           const list = databases.get('databases')
           if (list) {
+            db.count = models.length
+            db.totalsize = totalSize
             databases.set('databases', list.concat(db))
           }
           store.commit('setApplicationDatabases', databases.get('databases'))
@@ -241,7 +246,15 @@ export function ModelsDB(Vue: typeof _Vue): void {
     const database = new Database(db.url)
 
     return this.$indexFolderRecursive(db.path).then((files: string[]) => {
-      database.reindexCatalog(files)
+      database.reindexCatalog(files).then((items: any) => {
+          const list = databases.get('databases')
+          if (list) {
+            db.count = items.count
+            db.totalsize = items.totalSize
+            databases.set('databases', list.concat(db))
+          }
+          store.commit('setApplicationDatabases', databases.get('databases'))
+        })
     })
   }
 
@@ -249,7 +262,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
     dbName: string
   ): Promise<void> {
     const database = new Database(dbName)
-    const params = this.$store.state.pageFilters
+    const params = this.$store.state.controls.filters
 
     let query = `SELECT * FROM 'models'`
     query += database.dynamicQueryBuilder(params.where)
@@ -320,7 +333,6 @@ export function ModelsDB(Vue: typeof _Vue): void {
     }
 
     store.commit('setProperties', properties)
-    store.commit('setEditPropsModal', true)
 
     return Promise.resolve(true)
   }

@@ -1,10 +1,22 @@
 <template>
-  <v-select
-    v-model="currentLang"
-    :items="langs"
-    :label="$t('settings.language.title')"
-    @change="onChange"
-  />
+  <div class="filter-field">
+    <label>{{ $t('modals.settings.tabs.common.content.language') }}</label>
+    <div class="input--select">
+      <select
+        v-model="currentLang"
+        class="input"
+        @change="onChange"
+      >
+        <option
+          v-for="(lang, index) in langs"
+          :key="index"
+          :value="lang.value"
+        >
+          {{ lang.text }}
+        </option>
+      </select>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -31,9 +43,9 @@ export default class LanguageSelector extends Vue {
     this.currentLang = this.$i18n.locale
   }
 
-  onChange(lang: string): void {
-    this.$i18n.locale = lang
-    this.$settingsSet('language', lang)
+  onChange(event: any): void {
+    this.$i18n.locale = event.target.value
+    this.$settingsSet('language', event.target.value)
   }
 }
 </script>

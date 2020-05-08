@@ -12,7 +12,7 @@ module.exports = {
       enableInSFC: true
     },
     electronBuilder: {
-      externals: ['node-notifier', 'electron-store', 'lokijs', 'lokijs-promise', 'jimp', 'axios'],
+      externals: ['node-notifier', 'electron-store', 'sqlite3', 'sharp', 'axios'],
       nodeModulesPath: ['../../node_modules', './node_modules'],
       builderOptions: {
         appId: 'com.longsightedfilms.meshhouse',

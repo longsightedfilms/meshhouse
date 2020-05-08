@@ -1,0 +1,118 @@
+.application__sidebar
+  position: relative
+  grid-area: Sidebar
+  padding-right: 1rem
+  label
+    display: block
+    color: $white
+    padding: 1rem
+    font-weight: 100
+  nav
+    .nav-container
+      max-height: calc(100vh - 114px * 2 - 1rem)
+    a
+      display: grid
+      color: $white
+      background-color: lighten($themeDarkMain, 5%)
+      margin-bottom: 1rem
+      border-left: 5px solid lighten($themeDarkMain, 5%)
+      padding: 0.5rem
+      padding-right: 1rem
+      text-decoration: none
+      grid-template-columns: 3rem 1fr
+      grid-template-rows: 1fr
+      grid-template-areas: "Avatar Info"
+      grid-gap: 0 0.25rem
+      align-items: center
+      .avatar
+        display: flex
+        align-items: center
+        justify-content: center
+        width: 3rem
+        height: 3rem
+        background-color: $themeDarkMain
+        border-radius: 50%
+        font-weight: 700
+        font-size: 1.5rem
+        line-height: 1
+        grid-area: Avatar
+        overflow: hidden
+        img
+          display: block
+          width: 3rem
+          height: 3rem
+          object-fit: contain
+      .info
+        grid-area: Info
+        grid-template-columns: 1fr
+        grid-template-rows: repeat(3, 1fr)
+        grid-template-areas: "Title" "Progress" "Count"
+        .title
+          display: block
+          grid-area: Title
+          font-weight: 100
+          font-size: 1.125rem
+        .progress
+          --color: #fff
+          grid-area: Progress
+          -webkit-appearance: none
+          -moz-appearance: none
+          appearance: none
+          width: 100%
+          &::-webkit-progress-value
+            background-color: var(--color)
+        .count
+          grid-area: Count
+          line-height: 1
+          display: flex
+          align-items: center
+          span
+            display: block
+            margin-left: auto
+            font-style: italic
+            font-size: 0.8rem
+            color: #cccccc
+      &[disabled]
+        color: #aaaaaa
+      &:last-child
+        margin-bottom: 0
+      &.router-link-exact-active
+        border-left: 5px solid var(--color)
+  .show-databases
+    position: absolute
+    right: 0
+    top: 0
+    height: 100%
+    background-color: lighten($themeDarkMain, 5%)
+    color: $white
+    &:hover
+      background-color: lighten($themeDarkMain, 10%)
+    &:focus
+      outline: 0
+  &-filters
+    grid-area: SidebarAlt
+    display: flex
+    flex-direction: column
+    position: relative
+    padding-left: 1rem
+    label
+      display: block
+      color: $white
+      padding: 1rem
+      font-weight: 100
+    .show-filters
+      position: absolute
+      left: 0
+      top: 0
+      height: 100%
+      background-color: lighten($themeDarkMain, 5%)
+      color: $white
+      &:hover
+        background-color: lighten($themeDarkMain, 10%)
+      &:focus
+        outline: 0
+    .settings
+      margin-top: auto
+      background-color: lighten($themeDarkMain, 5%)
+      .slider
+        padding: 0 1.5rem 2.5rem

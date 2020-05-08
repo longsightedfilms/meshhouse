@@ -5,10 +5,10 @@ import sqlite3 from 'sqlite3'
 import { Model } from './interfaces'
 
 type QueryParameters = {
-  category: string
-  extension: string
-  name: string
-  path: string
+  category: string;
+  extension: string;
+  name: string;
+  path: string;
 }
 
 export default class Database {
@@ -34,6 +34,7 @@ export default class Database {
       "extension"	TEXT NOT NULL,
       "path"	TEXT NOT NULL UNIQUE,
       "category"	TEXT,
+      "size" TEXT,
       "image"	TEXT
     )`
 
@@ -126,24 +127,38 @@ export default class Database {
    * Incremental reindex catalog (inserts only difference)
    * @param files - files array
    */
-  reindexCatalog(files: string[]): void {
-    const query = `SELECT path FROM 'models'`
-    this.getAllFromDatabase(query).then((result: Model[]) => {
-      const res = result.map((item: Model) => item.path)
-      const diff: string[] = []
-      files.forEach((file: string) => {
-        if (!res.includes(file)) {
-          diff.push(
-            `(null, '${path.parse(file).name}', '${
-              path.parse(file).ext
-            }', '${file}', '', '')`
-          )
-        }
-      })
-      if (diff.length > 0) {
-        const query = `INSERT INTO 'models' VALUES ${diff}`
-        this.runQuery(query)
+  async reindexCatalog(files: string[]): Promise<any> {
+    let query = `SELECT path FROM 'models'`
+    const result: Model[] = await this.getAllFromDatabase(query)
+
+    const res = result.map((item: Model) => item.path)
+    const diff: string[] = []
+    files.forEach((file: string) => {
+      if (!res.includes(file)) {
+        const size = fs.statSync(file)['size']
+        diff.push(
+          `(null, '${path.parse(file).name}', '${
+            path.parse(file).ext
+          }', '${file}', '', '${size}', '')`
+        )
       }
     })
+    if (diff.length > 0) {
+      const query = `INSERT INTO 'models' VALUES ${diff}`
+      this.runQuery(query)
+    }
+
+    query = `SELECT size FROM 'models'`
+    const items = await this.getAllFromDatabase(query)
+    const infoUpdate = {
+      count: 0,
+      totalSize: 0
+    }
+
+    items.forEach((element: Model) => {
+      infoUpdate.count++
+      infoUpdate.totalSize += parseInt(element.size)
+    })
+    return items
   }
 }

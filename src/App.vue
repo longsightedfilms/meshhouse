@@ -1,80 +1,75 @@
 <template>
-  <v-app>
-    <v-navigation-drawer
-      color="blue-grey darken-4"
-      mini-variant-width="80"
-      app
-      clipped
-      dark
-      mini-variant
-      permanent
+  <div :class="detectUserOS">
+    <application-header />
+    <span
+      class="application__main"
+      :style="contentStyles"
     >
-      <v-list>
-        <v-tooltip
-          v-for="item in $store.state.databases"
-          :key="item.title"
-          right
-        >
-          <template v-slot:activator="{ on }">
-            <v-list-item
-              link
-              :to="{ path: '/db/' + item.url, meta: { title: item.title } }"
-              v-on="on"
-            >
-              <v-avatar class="my-2" :color="item.color" width="48" height="48">
-                <p class="white--text ma-0">
-                  {{ item.title.substr(0, 1) }}
-                </p>
-              </v-avatar>
-            </v-list-item>
-          </template>
-          <span>{{ item.title }}</span>
-        </v-tooltip>
-
-        <v-tooltip right>
-          <template v-slot:activator="{ on }">
-            <v-list-item link to="/add-new-catalog" v-on="on">
-              <v-avatar class="my-2" color="primary" width="48" height="48">
-                <v-icon class="white--text">
-                  mdi-plus
-                </v-icon>
-              </v-avatar>
-            </v-list-item>
-          </template>
-          <span>{{ $t('app.buttons.addCatalog') }}</span>
-        </v-tooltip>
-      </v-list>
-    </v-navigation-drawer>
-
-    <application-bar />
-    <v-content>
-      <div v-bar>
+      <application-sidebar />
+      <main
+        v-bar
+        class="application__content"
+      >
         <div>
-          <div style="max-height: calc(100vh - 64px)">
+          <div style="max-height: calc(100vh - 80px)">
             <router-view />
           </div>
         </div>
-      </div>
-    </v-content>
-  </v-app>
+      </main>
+      <filters-sidebar />
+    </span>
+    <modals-container />
+  </div>
 </template>
 
 <style lang="sass">
-@import 'sass/vuebar'
-@import 'sass/vuetify'
+@import 'sass/main'
 </style>
 
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import ApplicationBar from '@/components/ApplicationBar.vue'
+import ApplicationHeader from '@/components/UI/Header/ApplicationHeader.vue'
+import ApplicationSidebar from '@/components/UI/Sidebar/ApplicationSidebar.vue'
+import FiltersSidebar from '@/components/UI/Sidebar/FiltersSidebar.vue'
+
+import { remote } from 'electron'
 
 @Component({
   components: {
-    ApplicationBar,
+    ApplicationHeader,
+    ApplicationSidebar,
+    FiltersSidebar,
   },
 })
 export default class App extends Vue {
+  get detectUserOS(): string {
+    let bodyClass = 'application'
+    switch(remote.process.platform) {
+      case "win32":
+        bodyClass += ' application--windows'
+        break
+      case "linux":
+        bodyClass += ' application--linux'
+        break
+      case "darwin":
+        bodyClass += ' application--mac'
+        break
+      default:
+        bodyClass += ''
+        break
+    }
+    return bodyClass
+  }
+
+  get contentStyles(): object {
+    const filtersVisible = this.$store.state.controls.filtersVisible ? '300px' : '1rem'
+    const databasesVisible = this.$store.state.controls.databasesVisible ? '300px' : '1rem'
+    return {
+      gridTemplateColumns: `${databasesVisible} 1fr ${filtersVisible}`
+    }
+  }
+
   mounted(): void {
     this.$i18n.locale = this.$settingsGet('language')
     const lastOpened = this.$settingsGet('applicationWindow.lastOpened')

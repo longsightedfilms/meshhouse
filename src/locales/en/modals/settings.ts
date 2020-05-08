@@ -1,14 +1,20 @@
 export default {
-  currentPath: 'Current path to application: ',
-  dcc: {
-    exePath: 'Choose executable file',
-    hint:
-      'If switch is enabled (set to right), program will open file with system association with {extension} files',
+  tabs: {
+    common: {
+      title: "Common settings",
+      content: {
+        language: 'Language',
+      }
+    },
+    dcc: {
+      title: "DCC launch settings",
+      content: {
+        currentPath: 'Current path to application: ',
+        useSystemAssociation: 'Use system association',
+        exePath: 'Choose executable file',
+        hint: 'If switch is enabled (set to right), program will open file with system association with {extension} files',
+      }
+    }
   },
-  language: {
-    title: 'Language',
-  },
-  launchProgram: 'DCC launch settings',
   title: 'MeshHouse settings',
-  useSystemAssociation: 'Use system association',
 }

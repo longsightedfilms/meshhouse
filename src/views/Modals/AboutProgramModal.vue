@@ -1,37 +1,34 @@
 <template>
-  <v-card>
-    <v-card-text class="pt-4 text--primary">
-      <v-img class="mb-4" src="@/assets/logo_full.svg" />
-      <p class="text--primary">
-        {{ $t('about.textDescription') }}
-      </p>
-      <p class="text--primary">
-        {{ returnContributorsAsText }}
-      </p>
-      <p class="text--primary">
-        {{ $t('about.textLicense') }}
-      </p>
-      <p class="text--primary">
+  <div class="modal modal--about">
+    <img
+      class="logo"
+      src="@/assets/logo-icon.svg"
+    >
+    <h1>Meshhouse</h1>
+    <span>Version 0.2.0</span>
+    <div class="modal_content">
+      <p>{{ $t('modals.about.textDescription') }}</p>
+      <p>{{ returnContributorsAsText }}</p>
+      <p>{{ $t('modals.about.textLicense') }}</p>
+      <p>
         Github:
-        <a :href="githubLink" @click.prevent="openLink">
+        <a
+          :href="githubLink"
+          @click.prevent="openLink"
+        >
           {{ githubLink }}
         </a>
       </p>
-    </v-card-text>
-
-    <v-divider />
-
-    <v-card-actions>
-      <div class="flex-grow-1" />
-      <v-btn
-        color="primary"
-        text
-        @click="$store.commit('setAboutProgramModal')"
+    </div>
+    <div class="modal_actions">
+      <button
+        class="button button--primary"
+        @click="$emit('close')"
       >
-        {{ $t('app.buttons.close') }}
-      </v-btn>
-    </v-card-actions>
-  </v-card>
+        {{ $t('common.buttons.close') }}
+      </button>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -52,7 +49,7 @@ export default class AboutProgramModal extends Vue {
         contrib += ', '
       }
     })
-    return this.$t('about.textContributors') + contrib
+    return this.$t('modals.about.textContributors') + contrib
   }
 
   openLink(): void {

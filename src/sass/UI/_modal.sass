@@ -1,0 +1,115 @@
+.vm--modal
+  background-color: $themeDarkMain !important
+  border-radius: 0 !important
+  color: $white
+  padding: 1rem
+  a
+    color: $white
+
+.modal
+  display: flex
+  flex-direction: column
+  color: $white
+  &--about
+    .logo
+      display: block
+      width: 200px
+      height: auto
+      margin: 2rem auto 0rem
+    h1
+      text-align: center
+      text-transform: uppercase
+      font-weight: 100
+      font-size: 4rem
+      margin: 0
+    span
+      display: block
+      text-align: center
+      margin-bottom: 1rem
+      font-size: 1.125rem
+  &--properties
+    height: calc(100vh - 96px)
+    padding-bottom: 2rem
+    .modal
+      &_content
+        .modal
+          &_image
+            display: block
+            margin: 0 -1rem
+            max-width: 200%
+            width: calc(100% + 2rem)
+            object-fit: cover
+            height: 300px
+  &_header
+    border-bottom: 2px solid lighten($themeDarkMain, 10%)
+    padding: 1rem
+    padding-bottom: 1rem
+    margin: -1rem
+    margin-bottom: 0
+    h2
+      text-transform: uppercase
+      letter-spacing: 3px
+      text-align: center
+      font-weight: 100
+  &_content
+    padding-bottom: 1rem
+  &_actions
+    display: flex
+    justify-content: flex-end
+    border-top: 2px solid lighten($themeDarkMain, 10%)
+    margin: auto -1rem -1rem
+    padding: 1rem
+    .button
+      margin-right: 1rem
+      &:last-child
+        margin-right: 0
+  &--add-catalog
+    .catalog-preview
+      display: flex
+      width: 20rem
+      height: 20rem
+      border-radius: 50%
+      border: 2px solid lighten($themeDarkMain, 10%)
+      margin: 1rem auto 0
+      align-items: center
+      justify-content: center
+      overflow: hidden
+      img
+        display: block
+        width: 20rem
+        height: 20rem
+        object-fit: cover
+      span
+        font-size: 10rem
+        vertical-align: middle
+  &--settings
+    flex-direction: row
+    main
+      flex: 1 1 auto
+    .modal
+      &_tabs
+        background-color: lighten($themeDarkMain, 10%)
+        margin: -1rem
+        margin-right: 2rem
+        flex: 0 0 300px
+        label
+          display: block
+          color: $white
+          background-color: $themeDarkMain
+          padding: 1rem
+          font-weight: 100
+        .button
+          border-radius: 0
+          width: 100%
+          padding: 0.5rem 1rem
+          text-transform: none
+          letter-spacing: 0
+          &:hover, &.active
+            background-color: $primary
+      &_content
+        height: 60vh
+        margin-right: -1rem
+      &_header
+        padding: 0.625rem 1rem
+      &_header, &_actions
+        margin-left: -2rem

@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     runApp() {
-      let max = this.$dccGetConfig().adsk_3dsmax
+      const max = this.$dccGetConfig().adsk_3dsmax
 
       if(max.useSystemAssociation === true) {
         shell.openItem(path.join(this.returnDocsPath, path.normalize("\\3dsmax\\scenes\\Studio_scene_share.max")))

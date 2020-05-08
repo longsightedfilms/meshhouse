@@ -15,12 +15,13 @@ const settings = new ElectronStore({
 const applicationOptions = {
   width: settings.get('applicationWindow.width') || 1024,
   height: settings.get('applicationWindow.height') || 768,
-  minWidth: 800,
-  minHeight: 600,
+  minWidth: 1024,
+  minHeight: 768,
   icon: path.join(__static, 'icon.png'),
-  frame: true,
+  frame: false,
   show: false,
   resizable: true,
+  backgroundColor: '#2e3131',
   webPreferences: {
     nodeIntegration: true,
     webSecurity: false,
@@ -74,6 +75,9 @@ function createWindow(
   })
 }
 
+app.disableHardwareAcceleration()
+//app.commandLine.appendSwitch('disable-software-rasterizer')
+//app.commandLine.appendSwitch('disable-gpu')
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar

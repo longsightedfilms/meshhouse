@@ -1,18 +1,23 @@
-import vuetify from 'vuetify/src/locale/en'
-import app from './app'
-import addCatalog from './addCatalog'
+import common from './common'
+import addCatalog from './modals/addCatalog'
 import settings from './modals/settings'
 import about from './modals/about'
-import local from './lists/local'
+import properties from './modals/properties'
+import catalog from './views/catalog'
+import model from './context/model'
 
 export default {
-  $vuetify: vuetify,
-  about: about,
-  addCatalog: addCatalog,
-  app: app,
-  lists: {
-    local: local,
+  common: common,
+  context: {
+    model: model
   },
-  search: 'Search',
-  settings: settings,
+  modals: {
+    about: about,
+    addCatalog: addCatalog,
+    properties: properties,
+    settings: settings,
+  },
+  views: {
+    catalog: catalog
+  }
 }
