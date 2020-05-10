@@ -32,11 +32,7 @@ import Component from 'vue-class-component'
 })
 export default class ModelImage extends Vue {
   retrieveImage(src: string): string {
-    if (src !== '') {
-      return this.$forceReloadImage(src)
-    } else {
-      return require('@/assets/logo-icon.svg')
-    }
+    return src !== '' ? this.$forceReloadImage(src) : '/assets/integrations/meshhouse.svg'
   }
 }
 </script>

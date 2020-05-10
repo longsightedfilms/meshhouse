@@ -31,6 +31,8 @@ import ModelContext from '@/components/UI/Context/ModelContext.vue'
 import ModelCard from '@/components/UI/Card/ModelCard.vue'
 import { Model } from '@/plugins/models-db/interfaces'
 
+import Integrations from '@/plugins/models-db/integrations/main'
+
 @Component({
   components: {
     ModelCard,
@@ -38,7 +40,7 @@ import { Model } from '@/plugins/models-db/interfaces'
     ModelContext
   },
 })
-export default class DatabaseListItems extends Vue {
+export default class LocalDatabase extends Vue {
   @Watch('$route')
   async onRouteChanged(): Promise<void> {
     await this.databaseInitialize()
@@ -49,7 +51,9 @@ export default class DatabaseListItems extends Vue {
   }
 
   async databaseInitialize(): Promise<void> {
-    const models = await this.$getItemsFromDatabase(this.$route.params.database)
+    const database = new Integrations.local(this.$route.params.database)
+
+    const models = await database.fetchItemsFromDatabase()
     this.$store.commit('setLoadedData', models)
   }
 

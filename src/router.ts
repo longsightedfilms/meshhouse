@@ -12,12 +12,26 @@ const router = new Router({
         import(/* webpackChunkName: "about" */ './views/Home.vue'),
     },
     {
-      path: '/db/:database',
-      name: 'DatabaseListItems',
+      path: '/db/local/:database',
+      name: 'LocalDatabase',
       component: (): Promise<any> =>
         import(
-          /* webpackChunkName: "DatabaseListItems" */ './views/Catalog/Main.vue'
+          /* webpackChunkName: "LocalDatabase" */ './views/Catalog/Local.vue'
         ),
+      meta: {
+        localDB: true
+      }
+    },
+    {
+      path: '/db/remote/:database',
+      name: 'RemoteDatabase',
+      component: (): Promise<any> =>
+        import(
+          /* webpackChunkName: "LocalDatabase" */ './views/Catalog/Remote.vue'
+        ),
+      meta: {
+        localDB: false
+      }
     },
   ],
 })

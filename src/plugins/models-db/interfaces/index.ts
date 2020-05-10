@@ -11,13 +11,14 @@ export interface DatabaseItem {
   url: string;
   path: string | undefined;
   count?: string | number;
+  localDB: boolean;
   totalsize?: string | number;
   disabled: boolean;
 }
 export interface Extension {
   [properties: string]: {
     title: string;
-    icon: '*.svg';
+    icon: any;
   };
 }
 export interface Model {

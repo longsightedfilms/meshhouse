@@ -85,6 +85,7 @@ import sharp from 'sharp'
 import uniqid from 'uniqid'
 import { remote } from 'electron'
 import { EditProperties, Model } from '@/plugins/models-db/interfaces'
+import Integrations from '@/plugins/models-db/integrations/main'
 
 @Component({})
 export default class EditPropertiesModal extends Vue {
@@ -119,12 +120,10 @@ export default class EditPropertiesModal extends Vue {
   }
 
   async updateItem(): Promise<void> {
+    const db = new Integrations.local(this.$route.params.database)
 
-    const models = await this.$getItemsFromDatabase(this.$route.params.database)
-    const queryModel =
-      models[
-        models.findIndex((item: Model) => item.path === this.properties.path)
-      ]
+    const query = `SELECT * FROM 'Models' WHERE path ='${this.properties.path}'`
+    const models = await db.fetchItemsFromDatabase(query)
 
     const imageName = uniqid('image-') + '.webp'
 
@@ -139,9 +138,9 @@ export default class EditPropertiesModal extends Vue {
       )
     }
 
-    queryModel.name = this.properties.name
-    queryModel.category = this.properties.category
-    queryModel.image =
+    models[0].name = this.properties.name
+    models[0].category = this.properties.category
+    models[0].image =
       this.properties.imageChanged === true ? imagePath : this.properties.image
 
     // Create thumbnails and save in imagecache folder
@@ -159,13 +158,13 @@ export default class EditPropertiesModal extends Vue {
           .toFile(imagePath)
           .then(() => {
             this.$store.commit('incrementImageRandomizer')
-            this.$updateItemInDatabase(this.$route.params.database, queryModel)
+            this.$updateItemInDatabase(this.$route.params.database, models[0])
             this.$store.commit('setLoadedData', models)
             this.$emit('close')
           })
       })
     } else {
-      this.$updateItemInDatabase(this.$route.params.database, queryModel)
+      this.$updateItemInDatabase(this.$route.params.database, models[0])
       this.$store.commit('setLoadedData', models)
       this.$emit('close')
     }

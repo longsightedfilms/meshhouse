@@ -2,7 +2,7 @@
   <header class="application__header">
     <img
       class="application__header-logo"
-      src="@/assets/logo-icon.svg"
+      src="/assets/integrations/meshhouse.svg"
       alt="Meshhouse"
     >
     <header-navigation />

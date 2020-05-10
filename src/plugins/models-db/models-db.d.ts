@@ -18,7 +18,6 @@ declare module 'vue/types/vue' {
       setting: string,
       value: string
     ): Promise<boolean>;
-    $getItemsFromDatabase(dbName: string, params?: any): Promise<any>;
     $updateItemInDatabase(
       dbName: string,
       model?: Model

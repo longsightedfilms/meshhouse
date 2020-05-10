@@ -58,6 +58,9 @@ import AboutProgramModal from '@/views/Modals/AboutProgramModal.vue'
 import AddNewCatalogModal from '@/views/Modals/AddNewCatalogModal.vue'
 import { remote } from 'electron'
 
+import Integrations from '@/plugins/models-db/integrations/main'
+import { Model } from '@/plugins/models-db/interfaces'
+
 @Component({})
 export default class HeaderNavigation extends Vue {
   get selectedDB(): any {
@@ -90,7 +93,17 @@ export default class HeaderNavigation extends Vue {
 
   handleChangeOrder(order: string): void {
     this.$store.commit('setFilterOrder', order)
-    this.$getItemsFromDatabase(this.$route.params.database).then((result) => {
+
+    const dbType = this.$route.meta.localDB ? 'local' : this.$route.params.database
+    let db
+
+    if (dbType === 'local') {
+      db = new Integrations.local(this.$route.params.database)
+    } else {
+      db = new Integrations[dbType]()
+    }
+
+    db.fetchItemsFromDatabase().then((result: Model[]): void => {
       this.$store.commit('setLoadedData', result)
     })
   }
@@ -100,7 +113,15 @@ export default class HeaderNavigation extends Vue {
       field: 'name',
       value: event.target.value
     })
-    this.$getItemsFromDatabase(this.$route.params.database).then((result) => {
+
+    const dbType = this.$route.meta.localDB ? 'local' : this.$route.params.database
+    let db
+
+    if (dbType === 'local') {
+      db = new Integrations.local(this.$route.params.database)
+    }
+
+    db.fetchItemsFromDatabase().then((result: Model[]): void => {
       this.$store.commit('setLoadedData', result)
     })
   }

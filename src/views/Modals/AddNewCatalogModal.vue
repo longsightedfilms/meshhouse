@@ -153,6 +153,7 @@ export default class AddNewCatalogModal extends Vue {
         color: this.color,
         url: this.$stringToSlug(this.title),
         path: this.path,
+        localDB: true,
         disabled: false
       }
       this.url = catalog.url

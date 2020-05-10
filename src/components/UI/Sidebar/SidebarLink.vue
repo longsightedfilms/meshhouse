@@ -1,6 +1,6 @@
 <template>
   <router-link
-    :to="{ path: '/db/' + navlink.url, meta: { title: navlink.title }}"
+    :to="routerLink"
     :style="{'--color': navlink.color}"
     :event="!navlink.disabled ? 'click' : ''"
     :disabled="navlink.disabled"
@@ -35,7 +35,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { formatBytes } from '@/plugins/functions'
+import { formatBytes } from '@/plugins/models-db/functions'
+import { DatabaseItem } from '@/plugins/models-db/interfaces'
 
 @Component({
   props: {
@@ -49,8 +50,9 @@ import { formatBytes } from '@/plugins/functions'
         url: '',
         path: null,
         count: 0,
+        localDB: false,
         totalsize: 0,
-        disabled: true
+        disabled: false
       }
     },
     progress: {
@@ -60,22 +62,28 @@ import { formatBytes } from '@/plugins/functions'
   }
 })
 export default class SidebarLink extends Vue {
-  mounted(): void {
-    console.log(this.$props.navlink.icon)
+  get routerLink(): object {
+    return {
+      path: `/db/${this.$props.navlink.localDB ? 'local' : 'remote' }/${this.$props.navlink.url}`,
+      meta: {
+        title: this.$props.navlink.title,
+        localDB: this.$props.navlink.localDB
+      }
+    }
   }
 
   computeFileSize(bytes: number): string {
     return formatBytes(bytes)
   }
-  avatarStyle(navlink: any): object {
+  avatarStyle(navlink: DatabaseItem): object {
     return navlink.localDB ? { backgroundColor: navlink.color } : { backgroundColor: '#2e3131' }
   }
 
-  retrieveImage(src: string): any {
+  retrieveImage(src: string): string {
     if (!this.$props.navlink.icon.includes('@/')) {
       return this.$forceReloadImage(this.$props.navlink.icon)
     } else {
-      return require('@/assets/logo-icon.svg')
+      return `/assets/integrations/${this.$props.navlink.icon.substr(2)}`
     }
   }
 }

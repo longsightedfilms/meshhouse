@@ -2,7 +2,7 @@
   <div class="modal modal--about">
     <img
       class="logo"
-      src="@/assets/logo-icon.svg"
+      src="/assets/integrations/meshhouse.svg"
     >
     <h1>Meshhouse</h1>
     <span>Version 0.2.0</span>

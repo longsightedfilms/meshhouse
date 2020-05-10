@@ -5,15 +5,8 @@ import { remote, shell } from 'electron'
 import { spawn } from 'child_process'
 import { transliterate as tr, slugify } from 'transliteration'
 import store from '@/store/main'
-import { Extension, DatabaseItem, Model } from '@/plugins/models-db/interfaces'
-import Database from './database'
-// Import icons
-import iconMax from '@/assets/icons/max.svg'
-import iconMaya from '@/assets/icons/maya.svg'
-import iconBlender from '@/assets/icons/blender.svg'
-import iconC4D from '@/assets/icons/cinema4d.svg'
-import iconHoudini from '@/assets/icons/houdini.svg'
-import iconModo from '@/assets/icons/modo.svg'
+import { DatabaseItem, Model } from '@/plugins/models-db/interfaces'
+import Integration from '@/plugins/models-db/integrations/main'
 // Initializing storages
 import recursive from 'recursive-readdir'
 import ElectronStore from 'electron-store'
@@ -21,149 +14,17 @@ const settings: ElectronStore<any> = new ElectronStore({ name: 'settings' })
 const databases: ElectronStore<any> = new ElectronStore({ name: 'databases' })
 const dcc: ElectronStore<any> = new ElectronStore({ name: 'dcc-config' })
 
-const modelsExtensions: Extension = {
-  '.max': {
-    title: '3ds Max Scene',
-    icon: iconMax,
-  },
-  '.ma': {
-    title: 'Maya ASCII Scene',
-    icon: iconMaya,
-  },
-  '.mb': {
-    title: 'Maya Binary Scene',
-    icon: iconMaya,
-  },
-  '.blend': {
-    title: 'Blender Scene',
-    icon: iconBlender,
-  },
-  '.c4d': {
-    title: 'Cinema 4D Scene',
-    icon: iconC4D,
-  },
-  '.hip': {
-    title: 'Houdini Scene',
-    icon: iconHoudini,
-  },
-  '.hiplc': {
-    title: 'Houdini Scene',
-    icon: iconHoudini,
-  },
-  '.hipnc': {
-    title: 'Houdini Scene',
-    icon: iconHoudini,
-  },
-  '.lxo': {
-    title: 'Modo Scene',
-    icon: iconModo,
-  },
-}
+import {
+  getParameterByExtension,
+  filterByModels,
+  modelsExtensions
+} from './functions'
 
-function filterByModels(file: string, stats: fs.Stats): boolean {
-  return (
-    !stats.isDirectory() && !modelsExtensions.hasOwnProperty(path.extname(file))
-  )
-}
+import { initDatabases, initAppSettings, initDCCSettings } from './init'
 
-function getParameterByExtension(extension: string, param: string): string {
-  switch (extension) {
-    case '.max':
-      return dcc.get('adsk3dsmax.' + param)
-    case '.ma':
-    case '.mb':
-      return dcc.get('adskMaya.' + param)
-    case '.blend':
-      return dcc.get('blender.' + param)
-    case '.c4d':
-      return dcc.get('cinema4d.' + param)
-    case '.hip':
-    case '.hiplc':
-    case '.hipnc':
-      return dcc.get('houdini.' + param)
-    case '.lxo':
-      return dcc.get('modo.' + param)
-    default:
-      return ''
-  }
-}
-
-// Boilerplate settings if not exists
-if (
-  !fs.existsSync(
-    path.join(
-      remote.app.getPath('userData'),
-      path.normalize('\\databases.json')
-    )
-  )
-) {
-  databases.set({
-    databases: [
-      /*{
-        title: "MeshHouse",
-        color: "blue-grey",
-        view: "rich",
-        url: "meshhouse",
-        path: ""
-      }*/
-    ],
-  })
-  store.commit('setApplicationDatabases', databases.get('databases'))
-} else {
-  store.commit('setApplicationDatabases', databases.get('databases'))
-}
-
-// Boilerplate settings if not exists
-if (
-  !fs.existsSync(
-    path.join(remote.app.getPath('userData'), path.normalize('\\settings.json'))
-  )
-) {
-  settings.set({
-    language: 'en',
-    applicationWindow: {
-      width: 1024,
-      height: 768,
-    },
-  })
-}
-
-// Boilerplate DCC settings if not exists
-if (
-  !fs.existsSync(
-    path.join(
-      remote.app.getPath('userData'),
-      path.normalize('\\dcc-config.json')
-    )
-  )
-) {
-  dcc.set({
-    adsk3dsmax: {
-      useSystemAssociation: true,
-      customPath: '',
-    },
-    adskMaya: {
-      useSystemAssociation: true,
-      customPath: '',
-    },
-    blender: {
-      useSystemAssociation: true,
-      customPath: '',
-    },
-    cinema4d: {
-      useSystemAssociation: true,
-      customPath: '',
-    },
-    houdini: {
-      useSystemAssociation: true,
-      customPath: '',
-    },
-    modo: {
-      useSystemAssociation: true,
-      customPath: '',
-    },
-  })
-}
+initDatabases()
+initAppSettings()
+initDCCSettings()
 
 export function ModelsDB(Vue: typeof _Vue): void {
   Vue.prototype.$settingsGet = function(setting: string): string {
@@ -195,8 +56,8 @@ export function ModelsDB(Vue: typeof _Vue): void {
     return modelsExtensions[extension].title
   }
 
-  Vue.prototype.$returnExtensionIcon = function(extension: string): '*.svg' {
-    return modelsExtensions[extension].icon
+  Vue.prototype.$returnExtensionIcon = function(extension: string): string {
+    return `/assets/dcc/${modelsExtensions[extension].icon}.svg`
   }
 
   Vue.prototype.$forceReloadImage = function(image: string): string {
@@ -210,8 +71,8 @@ export function ModelsDB(Vue: typeof _Vue): void {
     )
 
     if (!fs.existsSync(file)) {
-      const database = new Database(db.url)
-      database.createTable()
+      const database = new Integration.local(db.url)
+      database.initializeLocalDatabase()
 
       return this.$indexFolderRecursive(db.path).then((files: string[]) => {
         const models: string[] = []
@@ -243,7 +104,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
   }
 
   Vue.prototype.$reindexCatalog = function(db: DatabaseItem): Promise<void> {
-    const database = new Database(db.url)
+    const database = new Integration.local(db.url)
 
     return this.$indexFolderRecursive(db.path).then((files: string[]) => {
       database.reindexCatalog(files).then((items: any) => {
@@ -258,24 +119,11 @@ export function ModelsDB(Vue: typeof _Vue): void {
     })
   }
 
-  Vue.prototype.$getItemsFromDatabase = function(
-    dbName: string
-  ): Promise<void> {
-    const database = new Database(dbName)
-    const params = this.$store.state.controls.filters
-
-    let query = `SELECT * FROM 'models'`
-    query += database.dynamicQueryBuilder(params.where)
-    query += ` ORDER BY name COLLATE NOCASE ${params.order}`
-
-    return database.getAllFromDatabase(query)
-  }
-
   Vue.prototype.$updateItemInDatabase = function(
     dbName: string,
     model: Model
   ): Promise<void> {
-    const database = new Database(dbName)
+    const database = new Integration.local(dbName)
 
     let query = `UPDATE 'models' SET `
     query += database.updateBuilder(model)
