@@ -1,5 +1,3 @@
-import { Model } from '@/plugins/models-db/interfaces'
-
 export default {
   state: {
     databases: [],

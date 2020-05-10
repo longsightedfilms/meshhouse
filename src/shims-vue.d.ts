@@ -4,7 +4,6 @@ declare module '*.vue' {
 }
 
 declare module 'vuebar'
-declare module '*.svg'
 declare module 'uniqid'
 
 declare module 'recursive-readdir'

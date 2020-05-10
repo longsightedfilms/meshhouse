@@ -59,12 +59,11 @@ import AddNewCatalogModal from '@/views/Modals/AddNewCatalogModal.vue'
 import { remote } from 'electron'
 
 import Integrations from '@/plugins/models-db/integrations/main'
-import { Model } from '@/plugins/models-db/interfaces'
 
 @Component({})
 export default class HeaderNavigation extends Vue {
-  get selectedDB(): any {
-    return this.$store.state.db.databases.find((db: any) => db.url == this.$route.params.database)
+  get selectedDB(): DatabaseItem {
+    return this.$store.state.db.databases.find((db: DatabaseItem) => db.url == this.$route.params.database)
   }
 
   showSettings(): void {
@@ -108,10 +107,10 @@ export default class HeaderNavigation extends Vue {
     })
   }
 
-  handleSearchField(event: any): void {
+  handleSearchField(event: KeyboardEvent): void {
     this.$store.commit('setFilter', {
       field: 'name',
-      value: event.target.value
+      value: (event.target as HTMLInputElement).value
     })
 
     const dbType = this.$route.meta.localDB ? 'local' : this.$route.params.database

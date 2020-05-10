@@ -84,13 +84,12 @@ import path from 'path'
 import sharp from 'sharp'
 import uniqid from 'uniqid'
 import { remote } from 'electron'
-import { EditProperties, Model } from '@/plugins/models-db/interfaces'
 import Integrations from '@/plugins/models-db/integrations/main'
 
 @Component({})
 export default class EditPropertiesModal extends Vue {
   uploadImage = ''
-  properties: EditProperties = {
+  properties: ImageProperties = {
     category: '',
     extension: '',
     name: '',

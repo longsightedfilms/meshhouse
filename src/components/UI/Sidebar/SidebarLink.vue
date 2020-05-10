@@ -36,7 +36,6 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { formatBytes } from '@/plugins/models-db/functions'
-import { DatabaseItem } from '@/plugins/models-db/interfaces'
 
 @Component({
   props: {

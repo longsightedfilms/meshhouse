@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import { DatabaseItem, Model } from './interfaces'
 
 declare module 'vue/types/vue' {
   interface Vue {

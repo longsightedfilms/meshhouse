@@ -2,7 +2,6 @@ import { remote } from 'electron'
 import fs from 'fs'
 import path from 'path'
 import sqlite3 from 'sqlite3'
-import { Model } from '@/plugins/models-db/interfaces'
 
 export abstract class Integration {
   directory = path.join(remote.app.getPath('userData'), '/databases/')

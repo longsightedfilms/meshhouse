@@ -1,15 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import store from '@/store/main'
-import { Model } from '@/plugins/models-db/interfaces'
 import { Integration } from './template'
-
-type QueryParameters = {
-  category: string;
-  extension: string;
-  name: string;
-  path: string;
-}
 
 export default class Local extends Integration {
   constructor(name: string) {

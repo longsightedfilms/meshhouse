@@ -5,7 +5,6 @@ import { remote, shell } from 'electron'
 import { spawn } from 'child_process'
 import { transliterate as tr, slugify } from 'transliteration'
 import store from '@/store/main'
-import { DatabaseItem, Model } from '@/plugins/models-db/interfaces'
 import Integration from '@/plugins/models-db/integrations/main'
 // Initializing storages
 import recursive from 'recursive-readdir'
@@ -107,11 +106,11 @@ export function ModelsDB(Vue: typeof _Vue): void {
     const database = new Integration.local(db.url)
 
     return this.$indexFolderRecursive(db.path).then((files: string[]) => {
-      database.reindexCatalog(files).then((items: any) => {
+      database.reindexCatalog(files).then((items: DatabaseItem) => {
           const list = databases.get('databases')
           if (list) {
             db.count = items.count
-            db.totalsize = items.totalSize
+            db.totalsize = items.totalsize
             databases.set('databases', list.concat(db))
           }
           store.commit('setApplicationDatabases', databases.get('databases'))
@@ -171,7 +170,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
   Vue.prototype.$openPropertiesModal = async function(
     model: Model
   ): Promise<boolean> {
-    const properties = {
+    const properties: ImageProperties = {
       imageChanged: false,
       name: model.name,
       category: model.category,

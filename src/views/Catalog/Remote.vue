@@ -29,7 +29,6 @@ import VueContext from 'vue-context'
 import EditPropertiesModal from '@/views/Modals/EditPropertiesModal.vue'
 import ModelContext from '@/components/UI/Context/ModelContext.vue'
 import ModelCard from '@/components/UI/Card/ModelCard.vue'
-import { Model } from '@/plugins/models-db/interfaces'
 
 @Component({
   components: {

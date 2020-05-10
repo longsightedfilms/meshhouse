@@ -53,7 +53,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import VueSlider from 'vue-slider-component'
-import { DatabaseItem, Model, QueryFilters } from '@/plugins/models-db/interfaces'
+import Integrations from '@/plugins/models-db/integrations/main'
 
 @Component({
   components: {
@@ -139,7 +139,16 @@ export default class FiltersSidebar extends Vue {
   }
 
   setFilters(): void {
-    this.$getItemsFromDatabase(this.$route.params.database).then((result) => {
+    const dbType = this.$route.meta.localDB ? 'local' : this.$route.params.database
+    let db
+
+    if (dbType === 'local') {
+      db = new Integrations.local(this.$route.params.database)
+    } else {
+      db = new Integrations[dbType]()
+    }
+
+    db.fetchItemsFromDatabase().then((result: Model[]): void => {
       this.$store.commit('setLoadedData', result)
     })
   }

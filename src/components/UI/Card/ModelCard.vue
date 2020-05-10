@@ -15,10 +15,10 @@
 </template>
 
 <script lang="ts">
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
 import VueContext from 'vue-context'
 import Component from 'vue-class-component'
-import { Model } from '@/plugins/models-db/interfaces'
 import ModelImage from '@/components/UI/Image/ModelImage.vue'
 
 @Component({
@@ -31,8 +31,8 @@ import ModelImage from '@/components/UI/Image/ModelImage.vue'
   }
 })
 export default class ModelCard extends Vue {
-  onRightClick(event: any): void {
-    (this as any).$parent.$refs.menu.open(event)
+  onRightClick(event: MouseEvent): void {
+    (this.$parent.$refs.menu as any).open(event)
     this.$store.commit('setProperties', this.$props.item)
   }
 

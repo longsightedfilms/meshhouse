@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import { Extension } from '@/plugins/models-db/interfaces'
 import ElectronStore from 'electron-store'
 
 const dcc: ElectronStore<any> = new ElectronStore({ name: 'dcc-config' })
