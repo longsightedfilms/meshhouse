@@ -49,9 +49,7 @@ export default class LocalDatabase extends Vue {
   }
 
   async databaseInitialize(): Promise<void> {
-    const database = new Integrations.local(this.$route.params.database)
-
-    const models = await database.fetchItemsFromDatabase()
+    const models = await new Integrations.local(this.$route.params.database).fetchItemsFromDatabase()
     this.$store.commit('setLoadedData', models)
   }
 

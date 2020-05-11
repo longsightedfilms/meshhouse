@@ -1,8 +1,10 @@
 import fs from 'fs'
 import path from 'path'
 import ElectronStore from 'electron-store'
+import Integrations from './integrations/main'
 
 const dcc: ElectronStore<any> = new ElectronStore({ name: 'dcc-config' })
+const databases: ElectronStore<any> = new ElectronStore({ name: 'databases' })
 
 export const modelsExtensions: Extension = {
   '.max': {
@@ -80,4 +82,14 @@ export function formatBytes(bytes: number, decimals = 2): string {
   const i = Math.floor(Math.log(bytes) / Math.log(k))
 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
+}
+
+export function handleDatabases(database: DatabaseItem): PossibleIntegrations {
+  const dbType = database.localDB ? 'local' : database.url
+
+  return dbType === 'local' ? new Integrations.local(database.url) : null//new Integrations[dbType]()
+}
+
+export function findDatabaseIndex(database: string): number {
+  return databases.get('databases').indexOf((db: DatabaseItem) => db.url == database)
 }

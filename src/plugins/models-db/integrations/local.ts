@@ -15,7 +15,6 @@ export default class Local extends Integration {
       "extension"	TEXT NOT NULL,
       "path"	TEXT NOT NULL UNIQUE,
       "category"	TEXT,
-      "size" TEXT,
       "image"	TEXT
     )`
 
@@ -35,7 +34,7 @@ export default class Local extends Integration {
     })
   }
 
-  fetchItemsRemote(params: any): Promise<any> {
+  fetchItemsRemote(params: any): Promise<boolean> {
     return Promise.resolve(true)
   }
 
@@ -106,7 +105,7 @@ export default class Local extends Integration {
     return query
   }
 
-  async reindexCatalog(files: string[]): Promise<any> {
+  async reindexCatalog(files: string[]): Promise<Model[]> {
     let query = `SELECT path FROM 'models'`
     const result: Model[] = await this.fetchItemsFromDatabase(query)
 
@@ -136,7 +135,7 @@ export default class Local extends Integration {
 
     items.forEach((element: Model) => {
       infoUpdate.count++
-      infoUpdate.totalSize += parseInt(element.size)
+      infoUpdate.totalSize += fs.statSync(element.path)['size']
     })
     return items
   }

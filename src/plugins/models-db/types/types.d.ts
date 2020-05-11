@@ -29,7 +29,6 @@ type Model = {
   extension: string;
   path: string;
   category: string;
-  size: string;
   image: string;
 }
 
@@ -96,3 +95,5 @@ type QueryParameters = {
 type Integrations = {
   [key: string]: any;
 }
+
+type PossibleIntegrations = any;

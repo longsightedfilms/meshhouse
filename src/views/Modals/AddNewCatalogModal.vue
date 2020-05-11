@@ -52,7 +52,6 @@
             type="file"
             accept=".jpg, .jpeg, .png, .svg, .webp"
             hidden
-            required
             @change="handleImageChange"
           >
           <button

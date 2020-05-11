@@ -26,7 +26,8 @@
         :value="progress"
       />
       <p class="count">
-        {{ navlink.count }} models <span>({{ computeFileSize(navlink.totalsize) }} used)</span>
+        {{ $tc('views.catalog.sidebar.model', navlink.count) }}
+        <span>{{ computeFileSize(navlink.totalsize) }}</span>
       </p>
     </div>
   </router-link>

@@ -4,8 +4,7 @@
       class="logo"
       src="/assets/integrations/meshhouse.svg"
     >
-    <h1>Meshhouse</h1>
-    <span>Version 0.2.0</span>
+    <h1>Meshhouse {{ applicationVersion }}</h1>
     <div class="modal_content">
       <p>{{ $t('modals.about.textDescription') }}</p>
       <p>{{ returnContributorsAsText }}</p>
@@ -40,6 +39,10 @@ import { shell } from 'electron'
 export default class AboutProgramModal extends Vue {
   githubContributors: string[] = ['Maxim Makarov']
   githubLink = 'https://github.com/longsightedfilms/meshhouse'
+
+  get applicationVersion(): string {
+    return process.env.VUE_APP_VERSION !== undefined ? process.env.VUE_APP_VERSION : '0.0.0'
+  }
 
   get returnContributorsAsText(): string {
     let contrib = ''

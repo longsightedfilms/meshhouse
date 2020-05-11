@@ -4,12 +4,13 @@ import path from 'path'
 import ElectronStore from 'electron-store'
 import { remote } from 'electron'
 import { databaseDefault } from './defaults'
+import { handleDatabases } from './functions'
 
 const settings: ElectronStore<any> = new ElectronStore({ name: 'settings' })
 const databases: ElectronStore<any> = new ElectronStore({ name: 'databases' })
 const dcc: ElectronStore<any> = new ElectronStore({ name: 'dcc-config' })
 
-export function initDatabases(): void {
+export async function initDatabases(): Promise<void> {
   if (
     !fs.existsSync(
       path.join(
@@ -23,7 +24,26 @@ export function initDatabases(): void {
     })
     store.commit('setApplicationDatabases', databases.get('databases'))
   } else {
-    store.commit('setApplicationDatabases', databases.get('databases'))
+    const db = databases.get('databases')
+
+    // Update model count and total size
+    for await (const [index, database] of db.entries()) {
+      const handleDB = handleDatabases(database)
+
+      if (handleDB !== null) {
+        let totalSize = 0
+        const models = await handleDB.fetchItemsFromDatabase()
+        models.forEach((model: Model) => {
+          const stats = fs.statSync(model.path)
+          totalSize += stats['size']
+        })
+
+        db[index].count = models.length
+        db[index].totalsize = totalSize
+      }
+    }
+    databases.store = { databases: db }
+    store.commit('setApplicationDatabases', db)
   }
 }
 
