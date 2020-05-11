@@ -8,7 +8,6 @@ declare module 'vue/types/vue' {
     $dccSetConfig(config: object): void;
     $stringToSlug(str: string): string;
     $returnHumanLikeExtension(extension: string): string;
-    $returnExtensionIcon(extension: string): '*.svg';
     $forceReloadImage(image: string): string;
     $addDatabase(db: DatabaseItem): Promise<void>;
     $reindexCatalog(db: DatabaseItem): Promise<void>;

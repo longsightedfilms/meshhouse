@@ -2,7 +2,10 @@
   <div class="application__header-navigation">
     <div class="buttons">
       <button @click="showNewCatalog">
-        <font-awesome-icon icon="plus" />
+        <vue-icon
+          icon="add"
+          inverted
+        />
       </button>
     </div>
     <div class="breadcrumbs">
@@ -14,37 +17,62 @@
       </span>
     </div>
     <div class="buttons">
-      <button
-        :class="$store.state.controls.filters.order === 'ASC' ? 'active' : ''"
-        @click="handleChangeOrder('ASC')"
-      >
-        <font-awesome-icon icon="sort-alpha-up" />
-      </button>
-      <button
-        :class="$store.state.controls.filters.order === 'DESC' ? 'active' : ''"
-        @click="handleChangeOrder('DESC')"
-      >
-        <font-awesome-icon icon="sort-alpha-down-alt" />
+      <button @click="handleChangeOrder">
+        <vue-icon
+          :icon="$store.state.controls.filters.order === 'ASC'
+            ? 'sort-alpha-down'
+            : 'sort-alpha-up'"
+          inverted
+          raster
+        />
       </button>
     </div>
-    <div class="filter-field">
+    <div class="filter-field filter-field--search">
+      <vue-icon
+        class="decor"
+        icon="search"
+        inverted
+      />
       <input
         type="text"
         class="input"
+        size="1"
         :value="$store.state.controls.filters.where.name"
         :placeholder="$t('common.labels.search')"
+        @input="handleSearchInput"
         @change="handleSearchField"
       >
+      <button
+        v-if="$store.state.controls.filters.where.name !== ''"
+        class="clear"
+        @click="clearSearchField"
+      >
+        <vue-icon
+          icon="clear"
+          inverted
+          raster
+        />
+      </button>
     </div>
     <div class="buttons">
       <button>
-        <font-awesome-icon icon="download" />
+        <vue-icon
+          icon="downloads"
+          inverted
+          raster
+        />
       </button>
       <button @click="showSettings">
-        <font-awesome-icon icon="cog" />
+        <vue-icon
+          icon="settings"
+          inverted
+        />
       </button>
       <button @click="showAbout">
-        <font-awesome-icon icon="question-circle" />
+        <vue-icon
+          icon="info"
+          inverted
+        />
       </button>
     </div>
   </div>
@@ -57,8 +85,7 @@ import SettingsModal from '@/views/Modals/SettingsModal.vue'
 import AboutProgramModal from '@/views/Modals/AboutProgramModal.vue'
 import AddNewCatalogModal from '@/views/Modals/AddNewCatalogModal.vue'
 import { remote } from 'electron'
-
-import Integrations from '@/plugins/models-db/integrations/main'
+import { handleDatabases, findDatabaseIndex } from '@/plugins/models-db/functions'
 
 @Component({})
 export default class HeaderNavigation extends Vue {
@@ -90,21 +117,18 @@ export default class HeaderNavigation extends Vue {
     })
   }
 
-  handleChangeOrder(order: string): void {
-    this.$store.commit('setFilterOrder', order)
-
-    const dbType = this.$route.meta.localDB ? 'local' : this.$route.params.database
-    let db
-
-    if (dbType === 'local') {
-      db = new Integrations.local(this.$route.params.database)
-    } else {
-      db = new Integrations[dbType]()
-    }
+  updateItems(): void {
+    const db = handleDatabases(this.$route.params.database)
 
     db.fetchItemsFromDatabase().then((result: Model[]): void => {
       this.$store.commit('setLoadedData', result)
     })
+  }
+
+  handleChangeOrder(): void {
+    const order = this.$store.state.controls.filters.order
+    this.$store.commit('setFilterOrder', order === 'ASC' ? 'DESC' : 'ASC')
+    this.updateItems()
   }
 
   handleSearchField(event: KeyboardEvent): void {
@@ -112,17 +136,22 @@ export default class HeaderNavigation extends Vue {
       field: 'name',
       value: (event.target as HTMLInputElement).value
     })
+    this.updateItems()
+  }
 
-    const dbType = this.$route.meta.localDB ? 'local' : this.$route.params.database
-    let db
-
-    if (dbType === 'local') {
-      db = new Integrations.local(this.$route.params.database)
-    }
-
-    db.fetchItemsFromDatabase().then((result: Model[]): void => {
-      this.$store.commit('setLoadedData', result)
+  handleSearchInput(event: KeyboardEvent): void {
+    this.$store.commit('setFilter', {
+      field: 'name',
+      value: (event.target as HTMLInputElement).value
     })
+  }
+
+  clearSearchField(): void {
+    this.$store.commit('setFilter', {
+      field: 'name',
+      value: ''
+    })
+    this.updateItems()
   }
 }
 </script>

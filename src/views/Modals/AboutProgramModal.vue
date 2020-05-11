@@ -12,10 +12,24 @@
       <p>
         Github:
         <a
-          :href="githubLink"
-          @click.prevent="openLink"
+          href="https://github.com/longsightedfilms/meshhouse"
+          @click="openLink"
         >
-          {{ githubLink }}
+          https://github.com/longsightedfilms/meshhouse
+        </a>
+      </p>
+      <p>
+        <a
+          href="https://icons8.ru/icons/windows"
+          @click="openLink"
+        >
+          Using Windows 10 style icons from
+          <a
+            href="https://icons8.ru"
+            @click="openLink"
+          >
+            Icons8
+          </a>
         </a>
       </p>
     </div>
@@ -38,7 +52,6 @@ import { shell } from 'electron'
 @Component({})
 export default class AboutProgramModal extends Vue {
   githubContributors: string[] = ['Maxim Makarov']
-  githubLink = 'https://github.com/longsightedfilms/meshhouse'
 
   get applicationVersion(): string {
     return process.env.VUE_APP_VERSION !== undefined ? process.env.VUE_APP_VERSION : '0.0.0'
@@ -55,8 +68,9 @@ export default class AboutProgramModal extends Vue {
     return this.$t('modals.about.textContributors') + contrib
   }
 
-  openLink(): void {
-    shell.openExternal(this.githubLink)
+  openLink(event: any): void {
+    event.preventDefault()
+    shell.openExternal(event.target.href)
   }
 }
 </script>

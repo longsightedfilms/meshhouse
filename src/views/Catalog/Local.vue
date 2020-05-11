@@ -57,7 +57,6 @@ export default class LocalDatabase extends Vue {
     const { thumbnailSize } = this.$store.state.controls
     return {
       gridTemplateColumns: `repeat(auto-fit, ${thumbnailSize}px)`,
-      gridAutoRows: `${thumbnailSize}px`
     }
   }
 }

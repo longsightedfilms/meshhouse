@@ -1,22 +1,27 @@
 <template>
   <fragment>
     <li>
-      <a
-        v-t="'context.model.open'"
-        @click.prevent="$openItem($store.state.controls.properties.path)"
-      />
+      <a @click.prevent="$openItem($store.state.controls.properties.path)">
+        {{ $t('context.model.open') }}
+      </a>
     </li>
     <li>
-      <a
-        v-t="'context.model.openFolder'"
-        @click.prevent="$openFolder($store.state.controls.properties.path)"
-      />
+      <a @click.prevent="$openFolder($store.state.controls.properties.path)">
+        <vue-icon
+          icon="folder"
+          inverted
+        />
+        {{ $t('context.model.openFolder') }}
+      </a>
     </li>
     <li>
-      <a
-        v-t="'context.model.properties'"
-        @click.prevent="openProperties"
-      />
+      <a @click.prevent="openProperties">
+        <vue-icon
+          icon="edit"
+          inverted
+        />
+        {{ $t('context.model.properties') }}
+      </a>
     </li>
   </fragment>
 </template>

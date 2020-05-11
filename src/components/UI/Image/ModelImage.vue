@@ -7,7 +7,7 @@
     <img
       v-if="src !== ''"
       class="icon"
-      :src="$returnExtensionIcon(extension)"
+      :src="`/assets/files/${extension.substr(1)}.svg`"
     >
   </div>
 </template>
@@ -32,7 +32,9 @@ import Component from 'vue-class-component'
 })
 export default class ModelImage extends Vue {
   retrieveImage(src: string): string {
-    return src !== '' ? this.$forceReloadImage(src) : '/assets/integrations/meshhouse.svg'
+    return src !== ''
+      ? this.$forceReloadImage(src)
+      : `/assets/files/${this.$props.extension.substr(1)}.svg`
   }
 }
 </script>

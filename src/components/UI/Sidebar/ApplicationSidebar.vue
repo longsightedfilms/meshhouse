@@ -4,10 +4,11 @@
       class="show-databases"
       @click="toggleVisibility"
     >
-      <font-awesome-icon
-        icon="angle-left"
-        size="2x"
+      <vue-icon
         :style="flipIcon"
+        icon="caret-back"
+        inverted
+        raster
       />
     </button>
     <nav v-bar>
@@ -61,7 +62,7 @@ export default class ApplicationSidebar extends Vue {
   get flipIcon(): object {
     const { databasesVisible } = this.$store.state.controls
     return !databasesVisible ? {
-      transform: `rotate(180deg)`
+      transform: `translateX(-1px) rotate(180deg)`
     } : {}
   }
 

@@ -6,8 +6,7 @@
   background-color: $themeDarkMain
   color: $white
   height: 6rem
-  padding-left: 1rem
-  padding-bottom: 0.75rem
+  padding: 0 1rem 0.75rem
   .filter-field
     margin: 0 0.5rem
   &:after
@@ -48,12 +47,12 @@
         display: flex
         align-items: center
         margin-right: 0.5rem
-        padding: 0.75rem
+        padding: 0.625rem
         border: 2px solid lighten($themeDarkMain, 10%)
         color: $white
-        .svg-inline--fa
-          width: 1.25rem
-          height: 1.25rem
+        .icon
+          width: 1.5rem
+          height: 1.5rem
         &:last-child
           margin-right: 0
         &:focus
@@ -68,6 +67,7 @@
     &-buttons
       display: grid
       grid-template-columns: repeat(3, 46px)
+      margin-right: -1rem
       align-self: flex-start
       margin-left: auto
       button

@@ -84,12 +84,22 @@ export function formatBytes(bytes: number, decimals = 2): string {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i]
 }
 
-export function handleDatabases(database: DatabaseItem): PossibleIntegrations {
-  const dbType = database.localDB ? 'local' : database.url
+// Database handling
 
-  return dbType === 'local' ? new Integrations.local(database.url) : null//new Integrations[dbType]()
+export function findDatabaseIndex(url: string): number {
+  return databases.get('databases').findIndex((db: DatabaseItem) => db.url === url)
 }
 
-export function findDatabaseIndex(database: string): number {
-  return databases.get('databases').indexOf((db: DatabaseItem) => db.url == database)
+export function handleDatabases(database: DatabaseItem | string): PossibleIntegrations {
+  let searchableDB
+
+  if (typeof database === 'string') {
+    searchableDB =  databases.get('databases')[findDatabaseIndex(database)]
+  } else {
+    searchableDB = database
+  }
+  const dbType = searchableDB.localDB ? 'local' : searchableDB.url
+
+  return dbType === 'local' ? new Integrations.local(searchableDB.url) : null//new Integrations[dbType]()
 }
+

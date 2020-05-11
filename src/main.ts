@@ -5,32 +5,12 @@ import store from './store/main'
 import { ModelsDB } from './plugins/models-db'
 import Vuebar from 'vuebar'
 import { i18n } from '@/locales/i18n'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-  faAngleLeft,
-  faCog,
-  faDownload,
-  faPlus,
-  faQuestionCircle,
-  faSortAlphaUp,
-  faSortAlphaDownAlt
-} from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import VModal from 'vue-js-modal'
+import VueIcon from '@/components/UI/Icon/Icon.vue'
 
 Vue.config.productionTip = false
 
-library.add(
-  faAngleLeft,
-  faCog,
-  faDownload,
-  faPlus,
-  faQuestionCircle,
-  faSortAlphaUp,
-  faSortAlphaDownAlt
-)
-
-Vue.component('font-awesome-icon', FontAwesomeIcon)
+Vue.component('vue-icon', VueIcon)
 Vue.use(ModelsDB)
 Vue.use(Vuebar)
 Vue.use(VModal, { dynamic: true, dynamicDefaults: { clickToClose: false } })

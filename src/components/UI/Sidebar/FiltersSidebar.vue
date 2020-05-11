@@ -4,10 +4,11 @@
       class="show-filters"
       @click="toggleVisibility"
     >
-      <font-awesome-icon
-        icon="angle-left"
-        size="2x"
+      <vue-icon
         :style="flipIcon"
+        icon="caret-back"
+        inverted
+        raster
       />
     </button>
     <div class="filter-field">
@@ -29,6 +30,11 @@
             {{ sceneType.text }}
           </option>
         </select>
+        <vue-icon
+          icon="caret-forward"
+          inverted
+          raster
+        />
       </div>
     </div>
     <div class="settings">
@@ -156,11 +162,12 @@ export default class FiltersSidebar extends Vue {
   get flipIcon(): object {
     const { filtersVisible } = this.$store.state.controls
     return filtersVisible ? {
-      transform: `rotate(180deg)`
+      transform: `translateX(-1px) rotate(180deg)`
     } : {}
   }
 
   onSliderChange(val: number): void {
+    this.$parent.$forceUpdate()
     this.$settingsSet('thumbnailSize', val)
     this.$store.commit('setThumbnailSize', val)
   }

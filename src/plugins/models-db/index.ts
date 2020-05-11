@@ -55,10 +55,6 @@ export function ModelsDB(Vue: typeof _Vue): void {
     return modelsExtensions[extension].title
   }
 
-  Vue.prototype.$returnExtensionIcon = function(extension: string): string {
-    return `/assets/dcc/${modelsExtensions[extension].icon}.svg`
-  }
-
   Vue.prototype.$forceReloadImage = function(image: string): string {
     return image !== '' ? image + '?v=' + (store as any).state.controls.imageRandomizer : image
   }

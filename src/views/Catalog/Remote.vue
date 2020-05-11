@@ -55,8 +55,7 @@ export default class RemoteDatabase extends Vue {
   get dynamicGrid(): object {
     const { thumbnailSize } = this.$store.state.controls
     return {
-      gridTemplateColumns: `repeat(auto-fit, ${thumbnailSize}px)`,
-      gridAutoRows: `${thumbnailSize}px`
+      gridTemplateColumns: `repeat(auto-fit, ${thumbnailSize}px)`
     }
   }
 }
