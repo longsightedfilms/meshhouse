@@ -76,7 +76,7 @@ export default class SidebarLink extends Vue {
     return formatBytes(bytes)
   }
   avatarStyle(navlink: DatabaseItem): object {
-    return navlink.localDB ? { backgroundColor: navlink.color } : { backgroundColor: '#2e3131' }
+    return navlink.localDB ? { backgroundColor: navlink.color } : {}
   }
 
   retrieveImage(src: string): string {

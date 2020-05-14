@@ -1,5 +1,5 @@
 .v-context
-  background-color: $themeDarkMain
+  background-color: var(--blockColor)
   display: block !important
   border-radius: 0
   border: 1px solid #bbb
@@ -17,7 +17,7 @@
     > a
       display: flex
       align-items: center
-      color: $white
+      color: var(--textColor)
       font-size: 0.75rem
       padding: 0.5rem 2rem
       .icon
@@ -26,5 +26,5 @@
         margin-left: -1.5rem
         margin-right: 0.5rem
       &:hover
-        background-color: lighten($themeDarkMain, 10%)
-        color: $white
+        background-color: var(--buttonHover)
+        color: var(--textColor)

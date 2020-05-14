@@ -6,10 +6,19 @@ import model from './context/model'
 import common from './common'
 import properties from './modals/properties'
 
+import DDMenu from './dropdowns/mainmenu'
+import navbarHint from './hints/navbar'
+
 export default {
   common: common,
   context: {
     model: model
+  },
+  dropdowns: {
+    mainmenu: DDMenu
+  },
+  hints: {
+    navbar: navbarHint
   },
   modals: {
     about: about,

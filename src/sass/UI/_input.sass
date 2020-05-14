@@ -1,10 +1,10 @@
 .input
   display: block
   width: 100%
-  border: 2px solid lighten($themeDarkMain, 10%)
+  border: 2px solid var(--blockColorDarker)
   padding: 0.625rem 1rem
   transition: all 0.3s ease
-  color: $white
+  color: var(--textColor)
   &:focus
     outline: 0
     border-color: $primary
@@ -31,7 +31,7 @@
       height: 1.5rem
       transform: rotate(90deg)
     option
-      background-color: $themeDarkMain
+      background-color: var(--blockColor)
   &--file
     text-align: left
     .placeholder

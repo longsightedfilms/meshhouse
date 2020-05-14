@@ -3,7 +3,6 @@
   border-radius: 2rem
   text-transform: uppercase
   letter-spacing: 1px
-  transition: all 0.3s ease
   color: $white
   &--primary
     background-color: $primary
@@ -13,3 +12,27 @@
     background-color: $danger
     &:hover
       background-color: darken($danger, 20%)
+  &--flat
+    border-radius: 0
+    text-transform: none
+    letter-spacing: 0
+    display: flex
+    align-items: center
+    padding: 0.625rem
+    border: 2px solid rgba(0,0,0,0)
+    color: var(--textColor)
+    .icon
+      width: 1.5rem
+      height: 1.5rem
+    &:focus
+      outline: 0
+    &:hover, &.active
+      border: 2px solid var(--buttonHover)
+      background-color: var(--buttonHover)
+    &-danger
+      background-color: darken($danger, 30%)
+      .icon, .icon--inverted
+        filter: invert(1)
+      &:hover
+        border-color: $danger
+        background-color: $danger

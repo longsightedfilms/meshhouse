@@ -1,0 +1,122 @@
+.dropdown
+  position: relative
+  &__menu
+    position: absolute
+    bottom: auto
+    right: 0
+    padding: 0.25rem 0.125rem
+    display: flex
+    list-style: none
+    flex-direction: column
+    background-color: var(--blockColor)
+    border: 1px solid #bbb
+    min-width: 20rem
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1)
+    transform: translateY(-100%)
+    pointer-events: none
+    z-index: -1
+    overflow: hidden
+    &.show
+      pointer-events: all
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1)
+      transform: translateY(0.5rem)
+      box-shadow: 0 1rem 1rem rgba(0,0,0,0.3)
+    >.title
+      position: relative
+      text-transform: uppercase
+      font-weight: 700
+      letter-spacing: 0.125rem
+      text-align: center
+      &:before
+        content: ''
+        display: block
+        width: 100%
+        height: 0.125rem
+        position: absolute
+        top: 50%
+        left: 0
+        z-index: -1
+        transform: translateY(-50%)
+        background-color: var(--buttonHover)
+      span
+        display: inline-block
+        padding: 0 1rem
+        background-color: var(--blockColor)
+    a
+      display: flex
+      align-items: center
+      color: var(--textColor)
+      text-decoration: none
+      font-size: 0.875rem
+      padding: 0.5rem 2rem
+      .icon
+        width: 1.5rem
+        height: 1.5rem
+        margin-left: -1.5rem
+        margin-right: 0.5rem
+      &:hover
+        background-color: var(--buttonHover)
+        color: var(--textColor)
+
+.download
+  .dropdown
+    &__menu
+      padding: 1rem
+      min-width: 30rem
+  &__item
+    display: grid
+    grid-template-columns: 3rem 1fr auto
+    grid-gap: 0 0.5rem
+    grid-template-areas: "Image Content Buttons"
+    align-items: center
+    border-bottom: 0.125rem solid var(--blockColorLighter)
+    margin-bottom: 1rem
+    .image
+      display: flex
+      background-color: var(--blockColorLighter)
+      width: 3rem
+      height: 3rem
+      align-items: center
+      justify-content: center
+      border-radius: 50%
+      overflow: hidden
+      img
+        grid-area: Image
+        display: block
+        width: 3rem
+        height: 3rem
+    .content
+      grid-area: Content
+      .progress
+        grid-area: Progress
+        display: block
+        -webkit-appearance: none
+        -moz-appearance: none
+        appearance: none
+        width: 100%
+        height: 0.5rem
+        margin: 0.25rem 0
+        &::-webkit-progress-value
+          background-color: $primary
+      .status
+        font-size: 0.75rem
+    .buttons
+      grid-area: Buttons
+    &:last-child
+      border-bottom: none
+      margin-bottom: 0
+
+.filters
+  .dropdown
+    &__menu
+      padding: 1rem
+      .filter
+        margin-bottom: 1rem
+        label
+          display: block
+          color: var(--textColor)
+          margin-bottom: 0.5rem
+        .slider
+          padding: 0 0.5rem 2rem
+        &:last-child
+          margin-bottom: 0

@@ -4,6 +4,14 @@ export default {
       title: "Основные настройки",
       content: {
         language: 'Язык',
+        theme: {
+          title: 'Тема',
+          content: {
+            light: 'Светлая',
+            dark: 'Темная',
+            system: 'Системные настройки (Windows 10, MacOS 10.14+)'
+          }
+        }
       }
     },
     dcc: {

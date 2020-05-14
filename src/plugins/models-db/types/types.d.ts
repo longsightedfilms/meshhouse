@@ -51,11 +51,11 @@ type QueryFilters = {
 type ControlsState = {
   filters: Filters;
   databasesVisible: boolean;
-  filtersVisible: boolean;
   imageRandomizer: number;
   isLoaded: boolean;
   properties: ImageProperties;
   thumbnailSize: string | number;
+  theme: string;
 }
 
 type Filters = {

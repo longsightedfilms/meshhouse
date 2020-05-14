@@ -1,5 +1,5 @@
 <template>
-  <div :class="detectUserOS">
+  <div :class="applicationClass">
     <application-header />
     <span
       class="application__main"
@@ -16,7 +16,6 @@
           </div>
         </div>
       </main>
-      <filters-sidebar />
     </span>
     <modals-container />
   </div>
@@ -31,7 +30,6 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import ApplicationHeader from '@/components/UI/Header/ApplicationHeader.vue'
 import ApplicationSidebar from '@/components/UI/Sidebar/ApplicationSidebar.vue'
-import FiltersSidebar from '@/components/UI/Sidebar/FiltersSidebar.vue'
 
 import { remote } from 'electron'
 
@@ -39,12 +37,24 @@ import { remote } from 'electron'
   components: {
     ApplicationHeader,
     ApplicationSidebar,
-    FiltersSidebar,
   },
 })
 export default class App extends Vue {
-  get detectUserOS(): string {
+
+  get applicationClass(): string {
     let bodyClass = 'application'
+    const systemThemeDark = (remote as any).nativeTheme.shouldUseDarkColors
+    const theme = this.$settingsGet('theme') || 'light'
+    let cssTheme = '';
+
+    (remote as any).nativeTheme.themeSource = this.$store.state.controls.theme
+
+    if (theme !== 'system') {
+      cssTheme = this.$store.state.controls.theme === 'light' ? 'theme--light' : 'theme--dark'
+    } else {
+      cssTheme = systemThemeDark ? 'theme--dark' : 'theme--light'
+    }
+
     switch(remote.process.platform) {
       case "win32":
         bodyClass += ' application--windows'
@@ -59,20 +69,21 @@ export default class App extends Vue {
         bodyClass += ''
         break
     }
-    return bodyClass
+    return `${bodyClass} ${cssTheme}`
   }
 
   get contentStyles(): object {
-    const filtersVisible = this.$store.state.controls.filtersVisible ? '300px' : '1rem'
-    const databasesVisible = this.$store.state.controls.databasesVisible ? '300px' : '1rem'
+    const databasesVisible = this.$store.state.controls.databasesVisible ? 'minmax(300px, 17vw)' : '1rem'
     return {
-      gridTemplateColumns: `${databasesVisible} 1fr ${filtersVisible}`
+      gridTemplateColumns: `${databasesVisible} 1fr`
     }
   }
 
   mounted(): void {
     this.$i18n.locale = this.$settingsGet('language')
+    const theme = this.$settingsGet('theme') || 'light'
     const lastOpened = this.$settingsGet('applicationWindow.lastOpened')
+    this.$store.commit('setTheme', theme)
     this.$router.push(lastOpened)
   }
 }

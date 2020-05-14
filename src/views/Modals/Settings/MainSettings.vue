@@ -3,6 +3,7 @@
     <div>
       <div class="tab">
         <language-selector />
+        <theme-selector />
       </div>
     </div>
   </div>
@@ -11,11 +12,13 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import LanguageSelector from '@/components/LanguageSelector.vue'
+import LanguageSelector from '@/components/ComposedSettings/LanguageSelector.vue'
+import ThemeSelector from '@/components/ComposedSettings/ThemeSelector.vue'
 
 @Component({
   components: {
-    LanguageSelector
+    LanguageSelector,
+    ThemeSelector
   }
 })
 

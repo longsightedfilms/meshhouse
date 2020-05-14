@@ -1,5 +1,5 @@
 <template>
-  <div class="filter-field">
+  <div class="setting">
     <label>{{ $t('modals.settings.tabs.common.content.language') }}</label>
     <div class="input--select">
       <select
@@ -15,6 +15,10 @@
           {{ lang.text }}
         </option>
       </select>
+      <vue-icon
+        icon="caret-forward"
+        raster
+      />
     </div>
   </div>
 </template>

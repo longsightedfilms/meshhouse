@@ -10,10 +10,10 @@ export default {
   state: [
     {
       img: 'https://vuetifyjs.com/apple-touch-icon-180x180.png',
-      title: 'Downloads not implemented',
+      title: 'Test item',
       path: 'H:\\TES.Long-Sighted Films\\Mods\\Defenders of Skyrim\\Assets\\Characters\\LoL\\Ahri\\Ahri Ears.max',
       totalSize: 1048576,
-      progress: 100
+      downloadedSize: 0
     },
   ],
   mutations: {

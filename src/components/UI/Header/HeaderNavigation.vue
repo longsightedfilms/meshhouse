@@ -1,13 +1,15 @@
 <template>
   <div class="application__header-navigation">
-    <div class="buttons">
-      <button @click="showNewCatalog">
-        <vue-icon
-          icon="add"
-          inverted
-        />
-      </button>
-    </div>
+    <button
+      :title="$t('hints.navbar.addCatalog')"
+      class="button button--flat"
+      @click="showNewCatalog"
+    >
+      <vue-icon
+        icon="add"
+        inverted
+      />
+    </button>
     <div class="breadcrumbs">
       <span
         v-if="selectedDB !== undefined"
@@ -17,7 +19,13 @@
       </span>
     </div>
     <div class="buttons">
-      <button @click="handleChangeOrder">
+      <button
+        :title="$store.state.controls.filters.order === 'ASC'
+          ? $t('hints.navbar.sortASC')
+          : $t('hints.navbar.sortDESC')"
+        class="button button--flat"
+        @click="handleChangeOrder"
+      >
         <vue-icon
           :icon="$store.state.controls.filters.order === 'ASC'
             ? 'sort-alpha-down'
@@ -55,25 +63,41 @@
       </button>
     </div>
     <div class="buttons">
-      <button>
-        <vue-icon
-          icon="downloads"
-          inverted
-          raster
-        />
-      </button>
-      <button @click="showSettings">
-        <vue-icon
-          icon="settings"
-          inverted
-        />
-      </button>
-      <button @click="showAbout">
-        <vue-icon
-          icon="info"
-          inverted
-        />
-      </button>
+      <vue-dropdown
+        class="filters"
+        :hint="$t('hints.navbar.filters')"
+      >
+        <template slot="button">
+          <vue-icon
+            icon="adjust"
+            inverted
+            raster
+          />
+        </template>
+        <filters-dropdown />
+      </vue-dropdown>
+      <vue-dropdown
+        class="download"
+        :hint="$t('hints.navbar.downloads')"
+      >
+        <template slot="button">
+          <vue-icon
+            icon="downloads"
+            inverted
+            raster
+          />
+        </template>
+        <downloads-dropdown />
+      </vue-dropdown>
+      <vue-dropdown>
+        <template slot="button">
+          <vue-icon
+            icon="menu"
+            inverted
+          />
+        </template>
+        <main-menu-dropdown />
+      </vue-dropdown>
     </div>
   </div>
 </template>
@@ -81,32 +105,23 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import SettingsModal from '@/views/Modals/SettingsModal.vue'
-import AboutProgramModal from '@/views/Modals/AboutProgramModal.vue'
 import AddNewCatalogModal from '@/views/Modals/AddNewCatalogModal.vue'
+import FiltersDropdown from '@/components/UI/Header/Dropdowns/Filters.vue'
+import DownloadsDropdown from '@/components/UI/Header/Dropdowns/Downloads.vue'
+import MainMenuDropdown from '@/components/UI/Header/Dropdowns/MainMenu.vue'
 import { remote } from 'electron'
 import { handleDatabases, findDatabaseIndex } from '@/plugins/models-db/functions'
 
-@Component({})
+@Component({
+  components: {
+    DownloadsDropdown,
+    FiltersDropdown,
+    MainMenuDropdown
+  }
+})
 export default class HeaderNavigation extends Vue {
   get selectedDB(): DatabaseItem {
     return this.$store.state.db.databases.find((db: DatabaseItem) => db.url == this.$route.params.database)
-  }
-
-  showSettings(): void {
-    this.$modal.show(SettingsModal, {}, {
-      adaptive: true,
-      clickToClose: true,
-      width: '1024px',
-      height: 'auto',
-    })
-  }
-
-  showAbout(): void {
-    this.$modal.show(AboutProgramModal, {}, {
-      clickToClose: true,
-      height: 'auto'
-    })
   }
 
   showNewCatalog(): void {

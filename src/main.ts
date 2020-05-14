@@ -7,10 +7,12 @@ import Vuebar from 'vuebar'
 import { i18n } from '@/locales/i18n'
 import VModal from 'vue-js-modal'
 import VueIcon from '@/components/UI/Icon/Icon.vue'
+import VueDropdown from '@/components/UI/Button/DropdownButton.vue'
 
 Vue.config.productionTip = false
 
 Vue.component('vue-icon', VueIcon)
+Vue.component('vue-dropdown', VueDropdown)
 Vue.use(ModelsDB)
 Vue.use(Vuebar)
 Vue.use(VModal, { dynamic: true, dynamicDefaults: { clickToClose: false } })

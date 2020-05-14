@@ -8,6 +8,8 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import { Watch } from 'vue-property-decorator'
+import { remote } from 'electron'
 
 @Component({
   props: {
@@ -16,11 +18,6 @@ import Component from 'vue-class-component'
       required: true,
       default: 'edit'
     },
-    inverted: {
-      type: Boolean,
-      required: false,
-      default: false
-    },
     raster: {
       type: Boolean,
       required: false,
@@ -28,9 +25,19 @@ import Component from 'vue-class-component'
     }
   }
 })
-export default class ModelImage extends Vue {
+export default class Icon extends Vue {
+  useInvertedIcon = (remote as any).nativeTheme.shouldUseDarkColors === true
+    || this.$store.state.controls.theme === 'dark'
+
+  @Watch('$store.state.controls.theme')
+  onThemeChanged(val: any): void {
+    this.useInvertedIcon = (remote as any).nativeTheme.shouldUseDarkColors === true
+    || val === 'dark'
+  }
+
+
   get iconClass(): string {
-    return `icon ${this.$props.inverted ? 'icon--inverted' : ''}`
+    return `icon ${this.useInvertedIcon ? 'icon--inverted' : ''}`
   }
 
   retrieveImage(icon: string): string {

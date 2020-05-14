@@ -4,6 +4,14 @@ export default {
       title: "Common settings",
       content: {
         language: 'Language',
+        theme: {
+          title: 'Theme',
+          content: {
+            light: 'Light',
+            dark: 'Dark',
+            system: 'System settings (Windows 10, MacOS 10.14+)'
+          }
+        }
       }
     },
     dcc: {

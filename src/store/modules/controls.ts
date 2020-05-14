@@ -10,11 +10,11 @@ export default {
       },
     },
     databasesVisible: false,
-    filtersVisible: false,
     imageRandomizer: 0,
     isLoaded: false,
     properties: {},
-    thumbnailSize: 256
+    thumbnailSize: 256,
+    theme: 'light'
   },
   mutations: {
     incrementImageRandomizer(state: ControlsState): void {
@@ -36,14 +36,14 @@ export default {
       state.filters = payload
       return Promise.resolve(true)
     },
-    setFilterVisibility(state: ControlsState, visibility: boolean): void {
-      state.filtersVisible = visibility
-    },
     setLoadStatus(state: ControlsState, status: boolean): void {
       state.isLoaded = status
     },
     setProperties(state: ControlsState, payload: ImageProperties): void {
       state.properties = payload
     },
+    setTheme(state: ControlsState, payload: string): void {
+      state.theme = payload
+    }
   },
 }

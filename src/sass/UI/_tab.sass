@@ -2,10 +2,12 @@
   padding: 1rem
   height: calc(60vh - 3rem)
   padding-left: 0
-  .filter-field
+  .filter-field, .setting
     label
       display: block
       margin-bottom: 1rem
+  .setting
+    margin-bottom: 1rem
   &--programs
     .programs
       .program
@@ -13,7 +15,7 @@
         flex-direction: column
         margin: 1rem 0
         padding: 1rem
-        background-color: darken($themeDarkMain, 10%)
+        background-color: var(--blockColorDarker)
         &-header
           display: flex
           align-items: center

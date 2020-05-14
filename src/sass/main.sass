@@ -9,24 +9,41 @@ body
   -webkit-user-select: none
   display: grid
   grid-template-columns: 1fr
-  grid-template-rows: 96px calc(100vh - 96px)
+  grid-template-rows: auto calc(100vh - 5.5rem)
   grid-template-areas: "Header" "Main"
+  &.theme--light
+    --blockColorLighter: #{lighten($themeLightMain, 7%)}
+    --blockColorLight: #{lighten($themeLightMain, 3%)}
+    --blockColor: #{$themeLightMain}
+    --blockColorDark: #{darken($themeLightMain, 3%)}
+    --blockColorDarker: #{darken($themeLightMain, 7%)}
+    --blockColorInvert: #{darken($themeLightMain, 7%)}
+    --buttonHover: #{darken($themeLightMain, 7%)}
+    --textColor: #{$black}
+  &.theme--dark
+    --blockColorLighter: #{lighten($themeDarkMain, 10%)}
+    --blockColorLight: #{lighten($themeDarkMain, 5%)}
+    --blockColor: #{$themeDarkMain}
+    --blockColorDark: #{darken($themeDarkMain, 5%)}
+    --blockColorDarker: #{darken($themeDarkMain, 10%)}
+    --blockColorInvert: #{lighten($themeDarkMain, 10%)}
+    --buttonHover: #{lighten($themeDarkMain, 10%)}
+    --textColor: #{$white}
   &__content
     grid-area: Content
-    background-color: darken($themeDarkMain, 5%)
+    background-color: var(--blockColorDark)
   &__main
     display: grid
-    grid-template-columns: 16px 1fr 16px
+    grid-template-columns: 16px 1fr
     grid-template-rows: 1fr
-    grid-template-areas: "Sidebar Content SidebarAlt"
+    grid-template-areas: "Sidebar Content"
     grid-area: Main
-    transition: all 0.3s ease
-    &.filters-visible
-      grid-template-columns: 300px 1fr 316px
+    background-color: var(--blockColor)
 // UI
 @import 'UI/button'
 @import 'UI/card'
 @import 'UI/context'
+@import 'UI/dropdown'
 @import 'UI/header'
 @import 'UI/icon'
 @import 'UI/input'

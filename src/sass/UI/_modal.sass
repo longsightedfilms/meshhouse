@@ -1,15 +1,15 @@
 .vm--modal
-  background-color: $themeDarkMain !important
+  background-color: var(--blockColor) !important
   border-radius: 0 !important
-  color: $white
+  color: var(--textColor)
   padding: 1rem
   a
-    color: $white
+    color: var(--textColor)
 
 .modal
   display: flex
   flex-direction: column
-  color: $white
+  color: var(--textColor)
   &--about
     .logo
       display: block
@@ -41,7 +41,7 @@
             object-fit: cover
             height: 300px
   &_header
-    border-bottom: 2px solid lighten($themeDarkMain, 10%)
+    border-bottom: 2px solid var(--blockColorLighter)
     padding: 1rem
     padding-bottom: 1rem
     margin: -1rem
@@ -56,7 +56,7 @@
   &_actions
     display: flex
     justify-content: flex-end
-    border-top: 2px solid lighten($themeDarkMain, 10%)
+    border-top: 2px solid var(--blockColorLighter)
     margin: auto -1rem -1rem
     padding: 1rem
     .button
@@ -69,7 +69,7 @@
       width: 20rem
       height: 20rem
       border-radius: 50%
-      border: 2px solid lighten($themeDarkMain, 10%)
+      border: 2px solid var(--blockColorLighter)
       margin: 1rem auto 0
       align-items: center
       justify-content: center
@@ -88,14 +88,14 @@
       flex: 1 1 auto
     .modal
       &_tabs
-        background-color: lighten($themeDarkMain, 10%)
+        background-color: var(--blockColorLighter)
         margin: -1rem
         margin-right: 2rem
         flex: 0 0 300px
         label
           display: block
-          color: $white
-          background-color: $themeDarkMain
+          color: var(--textColor)
+          background-color: var(--blockColor)
           padding: 1rem
           font-weight: 100
         .button
@@ -104,8 +104,10 @@
           padding: 0.5rem 1rem
           text-transform: none
           letter-spacing: 0
+          color: var(--textColor)
           &:hover, &.active
             background-color: $primary
+            color: $white
       &_content
         height: 60vh
         margin-right: -1rem

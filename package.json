@@ -1,6 +1,6 @@
 {
   "name": "meshhouse",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "private": false,
   "description": "Open-source 3d models catalogizer",
   "author": {
@@ -34,6 +34,7 @@
     "uniqid": "^5.2.0",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
+    "vue-clickaway": "^2.2.2",
     "vue-context": "^5.1.0",
     "vue-fragment": "^1.5.1",
     "vue-i18n": "^8.17.4",
@@ -55,7 +56,7 @@
     "@vue/cli-service": "^3.12.1",
     "@vue/eslint-config-typescript": "^5.0.2",
     "aws-sdk": "^2.669.0",
-    "electron": "^6.1.11",
+    "electron": "^8.2.5",
     "electron-icon-builder": "^1.0.2",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.3",
