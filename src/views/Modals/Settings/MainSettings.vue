@@ -4,6 +4,7 @@
       <div class="tab">
         <language-selector />
         <theme-selector />
+        <last-page-selector />
       </div>
     </div>
   </div>
@@ -12,11 +13,13 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
+import LastPageSelector from '@/components/ComposedSettings/LastPageSelector.vue'
 import LanguageSelector from '@/components/ComposedSettings/LanguageSelector.vue'
 import ThemeSelector from '@/components/ComposedSettings/ThemeSelector.vue'
 
 @Component({
   components: {
+    LastPageSelector,
     LanguageSelector,
     ThemeSelector
   }

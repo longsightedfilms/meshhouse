@@ -80,11 +80,23 @@ export default class App extends Vue {
   }
 
   mounted(): void {
+    this.loadStartupSettings()
+  }
+
+  loadStartupSettings(): void {
     this.$i18n.locale = this.$settingsGet('language')
     const theme = this.$settingsGet('theme') || 'light'
     const lastOpened = this.$settingsGet('applicationWindow.lastOpened')
+    const pageOpened = this.$settingsGet('lastPage') || 'main'
+
     this.$store.commit('setTheme', theme)
-    this.$router.push(lastOpened)
+    this.$store.commit('setCurrentLastPage', pageOpened)
+
+    if (pageOpened === 'lastCatalog') {
+      this.$router.push(lastOpened)
+    } else {
+      this.$router.push('/')
+    }
   }
 }
 </script>

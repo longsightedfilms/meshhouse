@@ -10,13 +10,28 @@
         <vue-slider
           v-model="$store.state.controls.thumbnailSize"
           :drag-on-click="true"
-          :min="128"
+          :min="64"
           :max="512"
           tooltip="none"
           :interval="64"
           :marks="true"
+          hide-label
           @change="onSliderChange"
         />
+        <div class="labels">
+          <vue-icon
+            icon="list"
+            raster
+          />
+          <vue-icon
+            icon="four-squares"
+            raster
+          />
+          <vue-icon
+            icon="full-image"
+            raster
+          />
+        </div>
       </div>
     </div>
   </fragment>

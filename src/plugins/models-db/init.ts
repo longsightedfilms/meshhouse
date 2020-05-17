@@ -31,11 +31,20 @@ export async function initDatabases(): Promise<void> {
       const handleDB = handleDatabases(database)
 
       if (handleDB !== null) {
+        await handleDB.updateDatabaseVersion()
+
         let totalSize = 0
         const models = await handleDB.fetchItemsFromDatabase()
-        models.forEach((model: Model) => {
+        
+        models.forEach(async (model: Model) => {
           const stats = fs.statSync(model.path)
+          model.size = stats['size']
           totalSize += stats['size']
+
+          const query = `UPDATE models
+          SET ${handleDB.updateBuilder(model)}
+          WHERE id = ${model.id}`
+          await handleDB.runQuery(query)
         })
 
         db[index].count = models.length

@@ -29,6 +29,7 @@ type Model = {
   extension: string;
   path: string;
   category: string;
+  size?: number;
   image: string;
 }
 
@@ -53,6 +54,7 @@ type ControlsState = {
   databasesVisible: boolean;
   imageRandomizer: number;
   isLoaded: boolean;
+  lastPage: 'main' | 'lastCatalog';
   properties: ImageProperties;
   thumbnailSize: string | number;
   theme: string;

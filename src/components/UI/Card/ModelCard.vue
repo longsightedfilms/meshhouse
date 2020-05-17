@@ -11,6 +11,17 @@
     <div class="card_title">
       <p>{{ item.name }}</p>
     </div>
+    <div class="card_properties">
+      <p class="size">
+        {{ modelSize(item.size) }}
+      </p>
+      <p class="extension">
+        {{ $returnHumanLikeExtension(item.extension) }}
+      </p>
+      <p class="path">
+        {{ item.path }}
+      </p>
+    </div>
   </div>
 </template>
 
@@ -20,6 +31,7 @@ import Vue from 'vue'
 import VueContext from 'vue-context'
 import Component from 'vue-class-component'
 import ModelImage from '@/components/UI/Image/ModelImage.vue'
+import { formatBytes } from '../../../plugins/models-db/functions'
 
 @Component({
   components: {
@@ -31,6 +43,10 @@ import ModelImage from '@/components/UI/Image/ModelImage.vue'
   }
 })
 export default class ModelCard extends Vue {
+  modelSize(size: number): string {
+    return formatBytes(size)
+  }
+
   onRightClick(event: MouseEvent): void {
     (this.$parent.$refs.menu as any).open(event)
     this.$store.commit('setProperties', this.$props.item)

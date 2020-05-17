@@ -12,6 +12,7 @@ export default {
     databasesVisible: false,
     imageRandomizer: 0,
     isLoaded: false,
+    lastPage: 'main',
     properties: {},
     thumbnailSize: 256,
     theme: 'light'
@@ -19,6 +20,9 @@ export default {
   mutations: {
     incrementImageRandomizer(state: ControlsState): void {
       state.imageRandomizer++
+    },
+    setCurrentLastPage(state: ControlsState, payload: 'main' | 'lastCatalog'): void {
+      state.lastPage = payload
     },
     setThumbnailSize(state: ControlsState, size: number): void {
       state.thumbnailSize = size

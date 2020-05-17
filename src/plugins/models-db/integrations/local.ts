@@ -15,10 +15,21 @@ export default class Local extends Integration {
       "extension"	TEXT NOT NULL,
       "path"	TEXT NOT NULL UNIQUE,
       "category"	TEXT,
+      "size" INTEGER,
       "image"	TEXT
     )`
 
     return this.runQuery(query)
+  }
+
+  async updateDatabaseVersion(): Promise<any> {
+    const fieldsQuery = `PRAGMA table_info(models)`
+    const fields = await this.fetchQuery(fieldsQuery)
+
+    const sizeFieldExists = fields.find((field: any) => field.name === 'size') !== undefined
+    if (!sizeFieldExists) {
+      await this.runQuery(`ALTER TABLE models ADD 'size' INTEGER`)
+    }
   }
 
   runQuery(query: string): Promise<any> {
@@ -29,6 +40,19 @@ export default class Local extends Integration {
           reject(err)
         } else {
           resolve(true)
+        }
+      })
+    })
+  }
+
+  fetchQuery(query: string): Promise<any> {
+    return new Promise((resolve, reject): void => {
+      this.db.all(query, (err, rows) => {
+        if (err) {
+          console.log(err)
+          reject(err)
+        } else {
+          resolve(rows)
         }
       })
     })

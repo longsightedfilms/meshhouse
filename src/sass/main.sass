@@ -20,6 +20,7 @@ body
     --blockColorInvert: #{darken($themeLightMain, 7%)}
     --buttonHover: #{darken($themeLightMain, 7%)}
     --textColor: #{$black}
+    --scrollColor: #666666
   &.theme--dark
     --blockColorLighter: #{lighten($themeDarkMain, 10%)}
     --blockColorLight: #{lighten($themeDarkMain, 5%)}
@@ -29,6 +30,7 @@ body
     --blockColorInvert: #{lighten($themeDarkMain, 10%)}
     --buttonHover: #{lighten($themeDarkMain, 10%)}
     --textColor: #{$white}
+    --scrollColor: #aaaaaa
   &__content
     grid-area: Content
     background-color: var(--blockColorDark)
@@ -54,4 +56,5 @@ body
 @import 'UI/tab'
 
 // Pages
+@import 'Pages/home'
 @import 'Pages/models'

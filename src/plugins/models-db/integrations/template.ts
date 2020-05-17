@@ -26,6 +26,11 @@ export abstract class Integration {
    */
   abstract runQuery(query: string): Promise<any>
   /**
+   * Run query with rows feedback
+   * @param query - query string
+   */
+  abstract fetchQuery(query: string): Promise<any>
+  /**
    * Get all items from remote site
    * @param params - any parameters
    */

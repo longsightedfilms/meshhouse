@@ -1,6 +1,9 @@
 <template>
   <div class="home">
-    <p>Test</p>
+    <img
+      class="logo"
+      src="/assets/integrations/meshhouse.svg"
+    >
   </div>
 </template>
 

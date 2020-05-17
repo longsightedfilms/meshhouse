@@ -11,6 +11,13 @@ export default {
             dark: 'Dark',
             system: 'System settings (Windows 10, MacOS 10.14+)'
           }
+        },
+        openLastPage: {
+          title: 'After application startup open',
+          content: {
+            main: 'Index page',
+            lastCatalog: 'Last opened catalog'
+          }
         }
       }
     },

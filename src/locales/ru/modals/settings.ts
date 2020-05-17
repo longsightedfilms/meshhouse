@@ -11,6 +11,13 @@ export default {
             dark: 'Темная',
             system: 'Системные настройки (Windows 10, MacOS 10.14+)'
           }
+        },
+        openLastPage: {
+          title: 'При запуске программы открывать',
+          content: {
+            main: 'Начальную страницу',
+            lastCatalog: 'Последний открытый каталог'
+          }
         }
       }
     },

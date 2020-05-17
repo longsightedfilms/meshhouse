@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="$store.state.db.loadedData.length !== 0"
-    class="models-grid"
+    :class="gridClass"
     :style="dynamicGrid"
   >
     <model-card
@@ -53,10 +53,21 @@ export default class LocalDatabase extends Vue {
     this.$store.commit('setLoadedData', models)
   }
 
+  get gridClass(): string {
+    return `models-grid ${this.$store.state.controls.thumbnailSize === 64 ? 'models-grid--table' : ''}`
+  }
+
   get dynamicGrid(): object {
     const { thumbnailSize } = this.$store.state.controls
-    return {
-      gridTemplateColumns: `repeat(auto-fit, ${thumbnailSize}px)`,
+
+    if ( thumbnailSize === 64) {
+      return {
+        gridTemplateColumns: `100%`,
+      }
+    } else {
+      return {
+        gridTemplateColumns: `repeat(auto-fit, ${thumbnailSize}px)`,
+      }
     }
   }
 }

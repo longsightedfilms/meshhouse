@@ -7,9 +7,15 @@ const router = new Router({
   routes: [
     {
       path: '/',
-      name: 'home',
+      name: 'Home',
       component: (): Promise<any> =>
-        import(/* webpackChunkName: "about" */ './views/Home.vue'),
+        import(/* webpackChunkName: "Home" */ './views/Home.vue'),
+    },
+    {
+      path: '/updated-database',
+      name: 'Updated',
+      component: (): Promise<any> =>
+        import(/* webpackChunkName: "Updated" */ './views/Updated.vue'),
     },
     {
       path: '/db/local/:database',
@@ -42,7 +48,9 @@ router.beforeEach((to, from, next) => {
 
 router.afterEach((to, from) => {
   Vue.nextTick(() => {
-    router.app.$root.$settingsSet('applicationWindow.lastOpened', to.path)
+    if (to.name !== 'Home' && to.name !== 'Updated') {
+      router.app.$root.$settingsSet('applicationWindow.lastOpened', to.path)
+    }
   })
 })
 
