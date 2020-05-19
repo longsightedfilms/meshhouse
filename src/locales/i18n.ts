@@ -2,6 +2,7 @@
 import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 import messages from '@/locales/messages'
+import { configure } from 'vee-validate'
 
 Vue.use(VueI18n)
 
@@ -11,6 +12,12 @@ export const i18n = new VueI18n({
   messages,
 })
 
+configure({
+  defaultMessage: (field: string, values: any): string => {
+    values._field_ = i18n.t(`fields.${field}`)
+    return i18n.t(`validations.messages.${values._rule_}`, values).toString()
+  }
+})
 
 const defaultImpl = VueI18n.prototype.getChoiceIndex
 

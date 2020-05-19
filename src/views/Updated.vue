@@ -1,7 +1,11 @@
 <template>
   <div class="updated">
-    <h1>Обновление БД</h1>
-    <p>Мы обновили базу данных, чтобы вернуться обратно, выберите в боковой панели нужный каталог</p>
+    <h1>
+      {{ $t('views.catalog.updated.title') }}
+    </h1>
+    <p>
+      {{ $t('views.catalog.updated.description') }}
+    </p>
   </div>
 </template>
 

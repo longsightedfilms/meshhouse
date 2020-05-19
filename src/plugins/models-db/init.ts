@@ -34,8 +34,8 @@ export async function initDatabases(): Promise<void> {
         await handleDB.updateDatabaseVersion()
 
         let totalSize = 0
-        const models = await handleDB.fetchItemsFromDatabase()
-        
+        const models = await handleDB.fetchItemsFromDatabase(`SELECT * FROM 'models'`)
+
         models.forEach(async (model: Model) => {
           const stats = fs.statSync(model.path)
           model.size = stats['size']

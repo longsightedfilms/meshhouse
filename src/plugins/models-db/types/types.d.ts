@@ -51,6 +51,7 @@ type QueryFilters = {
 
 type ControlsState = {
   filters: Filters;
+  categoriesVisible: boolean;
   databasesVisible: boolean;
   imageRandomizer: number;
   isLoaded: boolean;
@@ -99,3 +100,13 @@ type Integrations = {
 }
 
 type PossibleIntegrations = any;
+
+type ModelsTablePragma = {
+  id: number;
+  name: string;
+  extension: string;
+  path: string;
+  category?: string | number;
+  size: number;
+  image: string;
+}

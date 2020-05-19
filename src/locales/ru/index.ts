@@ -9,6 +9,9 @@ import properties from './modals/properties'
 import DDMenu from './dropdowns/mainmenu'
 import navbarHint from './hints/navbar'
 
+import fields from './fields'
+import validationMessages from 'vee-validate/dist/locale/ru.json'
+
 export default {
   common: common,
   context: {
@@ -17,6 +20,7 @@ export default {
   dropdowns: {
     mainmenu: DDMenu
   },
+  fields: fields,
   hints: {
     navbar: navbarHint
   },
@@ -26,6 +30,7 @@ export default {
     settings: settings,
     properties: properties
   },
+  validations: validationMessages,
   views: {
     catalog: catalog
   },

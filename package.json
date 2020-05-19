@@ -24,6 +24,7 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@types/node": "12.12.39",
     "axios": "^0.19.2",
     "electron-store": "^4.0.0",
     "node-notifier": "^5.4.3",
@@ -32,6 +33,7 @@
     "sqlite3": "^4.2.0",
     "transliteration": "^2.1.9",
     "uniqid": "^5.2.0",
+    "vee-validate": "^3.3.0",
     "vue": "^2.6.11",
     "vue-class-component": "^7.2.3",
     "vue-clickaway": "^2.2.2",
