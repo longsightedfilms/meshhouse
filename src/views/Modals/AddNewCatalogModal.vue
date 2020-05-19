@@ -168,8 +168,3 @@ export default class AddNewCatalogModal extends Vue {
   }
 }
 </script>
-
-<style lang="sass">
-.v-card__text
-  box-sizing: border-box
-</style>

@@ -24,14 +24,21 @@
             v-model="properties.category"
             class="input"
           >
+            <option :value="null">
+              Без категории
+            </option>
             <option
-              v-for="(category, index) in $store.state.db.categories"
-              :key="index"
-              :value="category"
+              v-for="category in categories"
+              :key="category.id"
+              :value="category.id"
             >
-              {{ category }}
+              {{ rewriteOptionName(category) }}
             </option>
           </select>
+          <vue-icon
+            icon="caret-forward"
+            raster
+          />
         </div>
       </div>
       <div class="input-group">
@@ -88,6 +95,7 @@ import Integrations from '@/plugins/models-db/integrations/main'
 
 @Component({})
 export default class EditPropertiesModal extends Vue {
+  categories: any[] = []
   uploadImage = ''
   properties: ImageProperties = {
     category: '',
@@ -98,8 +106,30 @@ export default class EditPropertiesModal extends Vue {
     path: '',
   }
 
-  mounted(): void {
+  async mounted(): Promise<void> {
     this.properties = this.$store.state.controls.properties
+
+    const db = new Integrations.local(this.$route.params.database)
+    const categories = await db.fetchCategories(`SELECT * FROM 'categories'`)
+
+    this.categories = categories
+  }
+
+  rewriteOptionName(category: any): string {
+    return category.parentId !== -1
+    ? `${this.getParentName(category.parentId)}${category.name}`
+    : category.name
+  }
+
+  getParentName(parentId: number): string {
+    const matches: string[] = []
+
+    this.categories.forEach((item: any) => {
+      if (item.id === parentId) {
+        matches.push(item.name)
+      }
+    })
+    return matches.join('\\') + '\\'
   }
 
   forceReloadImage(image: string): string {

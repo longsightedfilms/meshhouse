@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import store from '@/store/main'
 import { Integration } from './template'
+import router from '@/router'
 
 export default class Local extends Integration {
   constructor(name: string) {
@@ -14,25 +15,72 @@ export default class Local extends Integration {
       "name"	TEXT NOT NULL,
       "extension"	TEXT NOT NULL,
       "path"	TEXT NOT NULL UNIQUE,
-      "category"	TEXT,
+      "category"	INTEGER,
       "size" INTEGER,
       "image"	TEXT
+    );
+    CREATE TABLE 'categories'(
+      "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+      "parentId"	INTEGER NOT NULL,
+      "slug"	TEXT NOT NULL,
+      "name"	TEXT NOT NULL
     )`
 
     return this.runQuery(query)
   }
 
-  async updateDatabaseVersion(): Promise<any> {
+  async updateDatabaseVersion(): Promise<void> {
     const fieldsQuery = `PRAGMA table_info(models)`
     const fields = await this.fetchQuery(fieldsQuery)
 
-    const sizeFieldExists = fields.find((field: any) => field.name === 'size') !== undefined
+    const sizeFieldExists = fields.find((field: ModelsTablePragma) => field.name === 'size') !== undefined
     if (!sizeFieldExists) {
       await this.runQuery(`ALTER TABLE models ADD 'size' INTEGER`)
+      router.push('/updated-database')
+    }
+
+    this.updateCategoriesTable()
+  }
+
+  async updateCategoriesTable(): Promise<void> {
+    const query = `PRAGMA table_info(categories)`
+    const fields = await this.fetchQuery(query)
+
+    // For some reason if running one query instead of multiple
+    // not all changes are applied
+    if (fields.length === 0) {
+      let query = `CREATE TABLE 'categories'(
+        "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        "parentId"	INTEGER NOT NULL,
+        "slug"	TEXT NOT NULL,
+        "name"	TEXT NOT NULL
+      );`
+      await this.runQuery(query)
+      query = `UPDATE 'models' SET category = NULL`
+      await this.runQuery(query)
+      query = `ALTER TABLE models RENAME to tmp`
+      await this.runQuery(query)
+      query = `CREATE TABLE 'models'(
+        "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+        "name"	TEXT NOT NULL,
+        "extension"	TEXT NOT NULL,
+        "path"	TEXT NOT NULL UNIQUE,
+        "category"	INTEGER,
+        "size" INTEGER,
+        "image"	TEXT
+      )`
+      await this.runQuery(query)
+      query = `INSERT INTO models(name, extension, path, category, size, image)
+      SELECT name, extension, path, category, size, image
+      FROM 'tmp'`
+      await this.runQuery(query)
+      query = `DROP TABLE 'tmp'`
+      await this.runQuery(query)
+      router.push('/updated-database')
     }
   }
 
-  runQuery(query: string): Promise<any> {
+  runQuery(query: string): Promise<boolean | Error> {
     return new Promise((resolve, reject): void => {
       this.db.run(query, (err: Error) => {
         if (err) {
@@ -45,7 +93,7 @@ export default class Local extends Integration {
     })
   }
 
-  fetchQuery(query: string): Promise<any> {
+  fetchQuery(query: string): Promise<any | Error> {
     return new Promise((resolve, reject): void => {
       this.db.all(query, (err, rows) => {
         if (err) {
@@ -62,12 +110,17 @@ export default class Local extends Integration {
     return Promise.resolve(true)
   }
 
-  fetchItemsFromDatabase(query?: string): Promise<any> {
+  fetchItemsFromDatabase(query?: string, category?: number): Promise<any> {
     const params = (store as any).state.controls.filters
+
+    if(category !== undefined) {
+      params.where.category = category
+    }
+
     let dbQuery = query
 
     if (dbQuery === undefined) {
-      dbQuery = `SELECT * FROM 'Models'`
+      dbQuery = `SELECT * FROM 'models'`
       dbQuery += this.dynamicQueryBuilder(params.where)
       dbQuery += ` ORDER BY name COLLATE NOCASE ${params.order}`
     }
@@ -84,22 +137,47 @@ export default class Local extends Integration {
     })
   }
 
+  fetchCategories(query?: string): Promise<any> {
+    let dbQuery = ''
+    const category = (store as any).state.controls.filters.where.category
+
+    if(query === undefined) {
+      dbQuery = `SELECT * FROM 'categories' WHERE parentId = ${category}`
+    } else {
+      dbQuery = query
+    }
+
+    return new Promise((resolve, reject): void => {
+      this.db.all(dbQuery, (err, rows) => {
+        if (err) {
+          console.log(err)
+          reject(err)
+        } else {
+          resolve(rows)
+        }
+      })
+    })
+  }
+
   dynamicQueryBuilder(params: QueryParameters): string {
     let query = ''
     let clause = ''
     const paramsEmpty: boolean[] = []
 
-    for (const [key, value] of Object.entries(params)) {
+    for (const [key, value] of Object.entries<string | number>(params)) {
       if (
         value !== '' &&
         value !== 'all' &&
         value !== 'none' &&
         value !== null &&
+        value !== -1 &&
         value !== undefined
       ) {
         paramsEmpty.push(true)
         if (key === 'name') {
           clause += `${key} LIKE '%${value}%'`
+        } else if (key === 'category') {
+          clause += `${key} = ${value}`
         } else {
           clause += `${key} = '${value}'`
         }

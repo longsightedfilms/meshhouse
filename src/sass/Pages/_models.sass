@@ -4,3 +4,65 @@
     grid-gap: 1rem
     padding: 1rem
     grid-auto-rows: 1fr
+  &-empty
+    display: flex
+    flex-direction: column
+    justify-content: center
+    align-items: center
+    color: var(--textColor)
+    .icon
+      width: 30rem
+      height: 30rem
+      margin-bottom: -3rem
+      filter: contrast(0.2) brightness(1.8)
+      &--inverted
+        filter: contrast(0.2) brightness(0.6)
+
+.categories
+  &-grid
+    display: grid
+    grid-gap: 1rem
+    padding: 1rem
+    grid-auto-flow: column
+    grid-auto-columns: 192px
+    overflow-x: auto
+    &::-webkit-scrollbar
+      height: 0.125rem
+    &::-webkit-scrollbar-thumb
+      height: 100%
+      background-color: var(--scrollColor)
+
+.category
+  display: flex
+  flex-direction: column
+  &__image
+    position: relative
+    margin-bottom: 1rem
+    &:before
+      display: block
+      content: ""
+      width: 100%
+      padding-top: (37 / 48) * 100%
+    .image
+      position: absolute
+      width: 100%
+      height: 100%
+      top: 0
+      left: 0
+      right: 0
+      bottom: 0
+      object-fit: contain
+      object-position: 50%
+      transition: all 0.15s ease
+  &__title
+    margin: 0
+    font-size: 1rem
+    font-weight: 600
+    text-align: center
+    color: var(--textColor)
+  &:focus
+    outline: 2px solid $primary
+    .category__image
+      .image
+        outline: none
+        filter: brightness(0.7) saturate(0.5)

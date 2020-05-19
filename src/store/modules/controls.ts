@@ -3,12 +3,13 @@ export default {
     filters: {
       order: 'ASC',
       where: {
-        category: '',
+        category: -1,
         extension: 'none',
         name: '',
         path: '',
       },
     },
+    categoriesVisible: true,
     databasesVisible: false,
     imageRandomizer: 0,
     isLoaded: false,
@@ -26,6 +27,9 @@ export default {
     },
     setThumbnailSize(state: ControlsState, size: number): void {
       state.thumbnailSize = size
+    },
+    setCategoriesVisibility(state: ControlsState, visibility: boolean): void {
+      state.categoriesVisible = visibility
     },
     setDBVisibility(state: ControlsState, visibility: boolean): void {
       state.databasesVisible = visibility

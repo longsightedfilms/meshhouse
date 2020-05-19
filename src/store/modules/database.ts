@@ -1,7 +1,7 @@
 export default {
   state: {
     databases: [],
-    categories: [''],
+    categories: [],
     loadedData: [],
   },
   mutations: {
@@ -9,17 +9,9 @@ export default {
       state.databases = payload
     },
     setCategories(state: any, payload: string[]): void {
-      state.pageCategories = payload
+      state.categories = payload
     },
     setLoadedData(state: any, payload: any): void {
-      const categories: string[] = []
-      payload.forEach((item: Model) => {
-        if (!categories.includes(item.category) && item.category != '') {
-          categories.push(item.category)
-        }
-      })
-
-      state.categories = categories
       state.loadedData = payload
     },
   }

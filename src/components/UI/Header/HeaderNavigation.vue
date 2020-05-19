@@ -120,6 +120,8 @@ import { handleDatabases, findDatabaseIndex } from '@/plugins/models-db/function
   }
 })
 export default class HeaderNavigation extends Vue {
+  title: string[] = []
+
   get selectedDB(): DatabaseItem {
     return this.$store.state.db.databases.find((db: DatabaseItem) => db.url == this.$route.params.database)
   }

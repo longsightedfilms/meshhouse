@@ -18,7 +18,7 @@ const router = new Router({
         import(/* webpackChunkName: "Updated" */ './views/Updated.vue'),
     },
     {
-      path: '/db/local/:database',
+      path: '/db/local/:database/:category?',
       name: 'LocalDatabase',
       component: (): Promise<any> =>
         import(
@@ -29,7 +29,7 @@ const router = new Router({
       }
     },
     {
-      path: '/db/remote/:database',
+      path: '/db/remote/:database/:category?',
       name: 'RemoteDatabase',
       component: (): Promise<any> =>
         import(
