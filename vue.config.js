@@ -31,7 +31,7 @@ module.exports = {
           license: './build/license.txt',
           allowToChangeInstallationDirectory: true
         }
-      }
+      },
     }
   },
 

@@ -1,7 +1,7 @@
 <template>
   <div class="modal modal--add-category">
     <header class="modal_header">
-      <h2>{{ $t('modals.addCategory.title') }}</h2>
+      <h2>{{ $t('modals.editCategory.title') }}</h2>
     </header>
     <div class="modal_content">
       <ValidationObserver ref="form">
@@ -30,7 +30,7 @@
         class="button button--primary"
         @click="onSubmit"
       >
-        {{ $t('common.buttons.add') }}
+        {{ $t('common.buttons.save') }}
       </button>
       <button
         class="button button--danger"
@@ -53,8 +53,12 @@ import { ValidationObserver } from 'vee-validate'
     ValidationObserver
   }
 })
-export default class AddCategoryModal extends Vue {
+export default class EditCategoryModal extends Vue {
   title = ''
+
+  mounted(): void {
+    this.title = this.$store.state.controls.properties.name
+  }
 
   onSubmit(): void {
     (this.$refs.form as InstanceType<typeof ValidationObserver>).validate()
@@ -63,15 +67,16 @@ export default class AddCategoryModal extends Vue {
           const db = new Integrations.local(this.$route.params.database)
           const { category } = this.$route.params
           const slug = this.$stringToSlug(this.title)
-          const parentId = category !== undefined ? parseInt(category, 10) : -1
+          const id = this.$store.state.controls.properties.id
 
-          const query = `INSERT INTO categories
-          VALUES (null, ${parentId}, '${slug}', '${this.title}')`
+          const query = `UPDATE categories
+          SET slug = '${slug}', name = '${this.title}'
+          WHERE id = ${id}`
 
           const result = await db.runQuery(query)
 
           if (result) {
-            const categories = await db.fetchItemsFromDatabase(`SELECT * FROM 'categories'`)
+            const categories = await db.fetchCategories()
             this.$store.commit('setCategories', categories)
             this.$emit('close')
           }

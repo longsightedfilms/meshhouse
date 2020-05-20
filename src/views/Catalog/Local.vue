@@ -1,8 +1,13 @@
 <template>
   <fragment>
     <categories-grid />
+    <vue-context ref="categoryMenu">
+      <category-context />
+    </vue-context>
     <div class="button button--grid">
-      <span>Модели</span>
+      <span>
+        {{ $t('views.catalog.models.title') }}
+      </span>
     </div>
     <div
       v-if="$store.state.db.loadedData.length !== 0"
@@ -42,6 +47,7 @@ import VueContext from 'vue-context'
 import { Fragment } from 'vue-fragment'
 import CategoriesGrid from './CategoriesGrid.vue'
 import EditPropertiesModal from '@/views/Modals/EditPropertiesModal.vue'
+import CategoryContext from '@/components/UI/Context/CategoryContext.vue'
 import ModelContext from '@/components/UI/Context/ModelContext.vue'
 import ModelCard from '@/components/UI/Card/ModelCard.vue'
 import Integrations from '@/plugins/models-db/integrations/main'
@@ -49,6 +55,7 @@ import Integrations from '@/plugins/models-db/integrations/main'
 @Component({
   components: {
     CategoriesGrid,
+    CategoryContext,
     Fragment,
     ModelCard,
     VueContext,

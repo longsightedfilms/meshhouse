@@ -1,6 +1,6 @@
 {
   "name": "meshhouse",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "private": false,
   "description": "Open-source 3d models catalogizer",
   "author": {
@@ -11,10 +11,10 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint --output-file './eslint.log'",
-    "electron:build": "vue-cli-service electron:build",
-    "electron:build:linux": "vue-cli-service electron:build --linux",
-    "electron:build:mac": "vue-cli-service electron:build --macos",
-    "electron:build:win": "vue-cli-service electron:build --windows",
+    "electron:build": "vue-cli-service electron:build --publish=always",
+    "electron:build:linux": "vue-cli-service electron:build --linux --publish=always",
+    "electron:build:mac": "vue-cli-service electron:build --macos --publish=always",
+    "electron:build:win": "vue-cli-service electron:build --windows --publish=always",
     "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
     "electron:serve": "vue-cli-service electron:serve",
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",

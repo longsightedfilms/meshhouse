@@ -4,6 +4,7 @@ export default {
     addCatalog: 'Add new catalog',
     cancel: 'Cancel',
     close: 'Close',
+    delete: 'Delete',
     save: 'Save',
     show: 'Show',
   },

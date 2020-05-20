@@ -2,6 +2,14 @@ export default {
   sidebar: {
     model: '0 моделей | {n} модель | {n} модели | {n} моделей'
   },
+  categories: {
+    title: 'Категории',
+    parent: 'На уровень выше',
+    new: 'Создать новую категорию'
+  },
+  models: {
+    title: 'Модели'
+  },
   filters: {
     dcc: 'Формат файла',
     thumbnailSize: 'Размер миниатюр',

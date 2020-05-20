@@ -2,6 +2,14 @@ export default {
   sidebar: {
     model: '0 models | 1 model | {n} models'
   },
+  categories: {
+    title: 'Categories',
+    parent: 'Parent category',
+    new: 'Add new category'
+  },
+  models: {
+    title: 'Models'
+  },
   filters: {
     dcc: 'File type',
     thumbnailSize: 'Thumbnail size',
