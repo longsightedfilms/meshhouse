@@ -31,7 +31,15 @@ module.exports = {
           license: './build/license.txt',
           allowToChangeInstallationDirectory: true
         }
-      }
+      },
+      publish: [
+        {
+          provider: "github",
+          owner: "longsightedfilms",
+          repo: "meshhouse",
+          releaseType: "draft"
+        }
+      ]
     }
   },
 

@@ -142,7 +142,7 @@ export default class Local extends Integration {
     const category = (store as any).state.controls.filters.where.category
 
     if(query === undefined) {
-      dbQuery = `SELECT * FROM 'categories' WHERE parentId = ${category}`
+      dbQuery = `SELECT * FROM 'categories' WHERE parentId = ${category} ORDER BY name ASC`
     } else {
       dbQuery = query
     }

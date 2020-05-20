@@ -1,21 +1,29 @@
+import common from './common'
+// Views
+import catalog from './views/catalog'
+// Modals
 import addCatalog from './modals/addCatalog'
 import settings from './modals/settings'
 import about from './modals/about'
-import catalog from './views/catalog'
-import model from './context/model'
-import common from './common'
 import properties from './modals/properties'
-
+import addCategory from './modals/addCategory'
+import deleteCategory from './modals/deleteCategory'
+import editCategory from './modals/editCategory'
+// Context menus
+import catalogContext from './context/catalog'
+import modelContext from './context/model'
+// Dropdown, hints
 import DDMenu from './dropdowns/mainmenu'
 import navbarHint from './hints/navbar'
-
+// Validation
 import fields from './fields'
 import validationMessages from 'vee-validate/dist/locale/ru.json'
 
 export default {
   common: common,
   context: {
-    model: model
+    catalog: catalogContext,
+    model: modelContext
   },
   dropdowns: {
     mainmenu: DDMenu
@@ -27,6 +35,9 @@ export default {
   modals: {
     about: about,
     addCatalog: addCatalog,
+    addCategory: addCategory,
+    deleteCategory: deleteCategory,
+    editCategory: editCategory,
     settings: settings,
     properties: properties
   },

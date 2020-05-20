@@ -29,7 +29,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import EditPropertiesModal from '@/views/Modals/EditPropertiesModal.vue'
+import EditPropertiesModal from '@/views/Modals/Edit/EditPropertiesModal.vue'
 import { Fragment } from 'vue-fragment'
 
 @Component({

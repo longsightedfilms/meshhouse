@@ -185,16 +185,18 @@ export default class EditPropertiesModal extends Vue {
             force: true
           })
           .toFile(imagePath)
-          .then(() => {
+          .then(async () => {
             this.$store.commit('incrementImageRandomizer')
             this.$updateItemInDatabase(this.$route.params.database, models[0])
-            this.$store.commit('setLoadedData', models)
+            const result = await db.fetchItemsFromDatabase()
+            this.$store.commit('setLoadedData', result)
             this.$emit('close')
           })
       })
     } else {
       this.$updateItemInDatabase(this.$route.params.database, models[0])
-      this.$store.commit('setLoadedData', models)
+      const result = await db.fetchItemsFromDatabase()
+      this.$store.commit('setLoadedData', result)
       this.$emit('close')
     }
   }

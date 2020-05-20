@@ -4,6 +4,7 @@ export default {
     addCatalog: 'Добавить новый каталог',
     cancel: 'Отмена',
     close: 'Закрыть',
+    delete: 'Удалить',
     save: 'Сохранить',
     show: 'Показать',
   },

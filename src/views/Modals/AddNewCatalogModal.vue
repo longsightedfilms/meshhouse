@@ -4,70 +4,112 @@
       <h2>{{ $t('modals.addCatalog.title') }}</h2>
     </header>
     <div class="modal_content">
-      <form>
-        <div class="catalog-preview">
-          <img
-            v-if="preview !== ''"
-            :src="preview"
+      <ValidationObserver ref="form">
+        <form>
+          <div
+            class="catalog-preview"
+            :style="catalogBackgroundColor"
           >
-          <span v-else>{{ title.substr(0, 1) }}</span>
-        </div>
-        <div class="input-group">
-          <label>{{ $t('modals.addCatalog.labels.name') }}</label>
-          <input
-            v-model="title"
-            type="text"
-            class="input"
-            :placeholder="$t('modals.addCatalog.hints.name')"
-            required
-          >
-        </div>
-        <div class="input-group">
-          <label>{{ $t('modals.addCatalog.labels.folder') }}</label>
-          <input
-            ref="directory"
-            type="file"
-            webkitdirectory
-            hidden
-            required
-            @change="handleDirectoryChange"
-          >
-          <button
-            class="input input--file"
-            @click.prevent="handleDirectoryInputClick"
-          >
-            <span v-if="path !== ''">{{ path }}</span>
-            <span
-              v-else
-              class="placeholder"
+            <img
+              v-if="preview !== ''"
+              :src="preview"
             >
-              {{ folderPlaceholder }}
-            </span>
-          </button>
-        </div>
-        <div class="input-group">
-          <label>{{ $t('modals.addCatalog.labels.image') }}</label>
-          <input
-            ref="image"
-            type="file"
-            accept=".jpg, .jpeg, .png, .svg, .webp"
-            hidden
-            @change="handleImageChange"
+            <span v-else>{{ title.substr(0, 1) }}</span>
+          </div>
+          <ValidationProvider
+            v-slot="{ errors }"
+            name="catalogTitle"
+            class="input-group"
+            rules="required"
+            immediate
           >
-          <button
-            class="input input--file"
-            @click.prevent="handleImageInputClick"
-          >
-            <span v-if="image !== ''">{{ image }}</span>
-            <span
-              v-else
-              class="placeholder"
+            <label>{{ $t('modals.addCatalog.labels.name') }}</label>
+            <input
+              v-model="title"
+              type="text"
+              class="input"
+              :placeholder="$t('modals.addCatalog.hints.name')"
             >
-              {{ $t('modals.addCatalog.hints.image') }}
+            <span class="input__message">
+              {{ errors[0] }}
             </span>
-          </button>
-        </div>
-      </form>
+          </ValidationProvider>
+          <ValidationProvider
+            ref="directoryProvider"
+            v-slot="{ validate, errors }"
+            name="catalogPath"
+            class="input-group"
+            rules="required"
+            immediate
+          >
+            <label>{{ $t('modals.addCatalog.labels.folder') }}</label>
+            <input
+              ref="directory"
+              type="file"
+              webkitdirectory
+              hidden
+              required
+              @change="handleDirectoryChange"
+            >
+            <button
+              class="input input--file"
+              @click.prevent="handleDirectoryInputClick"
+            >
+              <span v-if="path !== ''">{{ path }}</span>
+              <span
+                v-else
+                class="placeholder"
+              >
+                {{ folderPlaceholder }}
+              </span>
+            </button>
+            <span class="input__message">
+              {{ errors[0] }}
+            </span>
+          </ValidationProvider>
+          <ValidationProvider
+            ref="imageProvider"
+            v-slot="{ validate, errors }"
+            name="catalogImage"
+            class="input-group"
+            rules="image"
+            immediate
+          >
+            <label>{{ $t('modals.addCatalog.labels.image') }}</label>
+            <input
+              ref="image"
+              type="file"
+              accept=".jpg, .jpeg, .png, .svg, .webp"
+              hidden
+              @change="handleImageChange"
+            >
+            <button
+              class="input input--file"
+              @click.prevent="handleImageInputClick"
+            >
+              <span v-if="image !== ''">{{ image }}</span>
+              <span
+                v-else
+                class="placeholder"
+              >
+                {{ $t('modals.addCatalog.hints.image') }}
+              </span>
+            </button>
+            <span class="input__message">
+              {{ errors[0] }}
+            </span>
+          </ValidationProvider>
+          <div class="input-group">
+            <label>{{ $t('modals.addCatalog.labels.color') }}</label>
+            <input
+              v-model="color"
+              type="color"
+              class="input input--color"
+              :placeholder="$t('modals.addCatalog.hints.name')"
+            >
+          </div>
+        </form>
+      </ValidationObserver>
     </div>
     <div class="modal_actions">
       <button
@@ -90,11 +132,17 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { remote } from 'electron'
+import path from 'path'
+import { ValidationObserver } from 'vee-validate'
 
-@Component({})
+@Component({
+  components: {
+    ValidationObserver
+  }
+})
 export default class AddNewCatalogModal extends Vue {
   title = ''
-  color = ''
+  color = '#e66465'
   image = ''
   path = ''
   url = ''
@@ -114,57 +162,67 @@ export default class AddNewCatalogModal extends Vue {
     }
   }
 
+  get catalogBackgroundColor(): object {
+    return {
+      backgroundColor: this.color
+    }
+  }
+
   handleDirectoryInputClick(): void {
     (this.$refs.directory as HTMLInputElement).click()
   }
 
-  handleDirectoryChange(event: any): void {
-    const file = event.target.files[0]
-    this.path = file !== undefined ? file.path : ''
+  async handleDirectoryChange(event: any): Promise<void> {
+    const valid = await (this.$refs.directoryProvider as InstanceType<typeof ValidationObserver>).validate(event)
+    if (valid) {
+      const file = event.target.files[0]
+      this.path = file !== undefined ? path.dirname(event.target.files[0].path) : ''
+    }
   }
 
   handleImageInputClick(): void {
     (this.$refs.image as HTMLInputElement).click()
   }
 
-  handleImageChange(event: any): void {
-    const file = event.target.files[0]
-    this.image = file !== undefined ? file.path : ''
-    this.preview = ''
+  async handleImageChange(event: any): Promise<void> {
+    const valid = await (this.$refs.imageProvider as InstanceType<typeof ValidationObserver>).validate(event)
+    if (valid) {
+      const file = event.target.files[0]
+      this.image = file !== undefined ? path.dirname(event.target.files[0].path) : ''
+      this.preview = ''
 
-    // Handle preview image
-    const reader = new FileReader()
-    reader.onload = ((): void => {
-      if (typeof reader.result === 'string') {
-        this.preview = reader.result
+      // Handle preview image
+      const reader = new FileReader()
+      reader.onload = ((): void => {
+        if (typeof reader.result === 'string') {
+          this.preview = reader.result
+        }
+      })
+
+      if (file !== undefined) {
+        reader.readAsDataURL(file)
       }
-    })
-
-    if (file !== undefined) {
-      reader.readAsDataURL(file)
     }
   }
 
   submitNewCatalog(): void {
-    if ((this.$refs.form as Vue & { validate: () => boolean }).validate()) {
-      const catalog = {
-        title: this.title,
-        color: this.color,
-        url: this.$stringToSlug(this.title),
-        path: this.path,
-        localDB: true,
-        disabled: false
-      }
-      this.url = catalog.url
+    (this.$refs.form as InstanceType<typeof ValidationObserver>).validate()
+      .then(async (success: boolean) => {
+        if (success) {
+          const catalog = {
+            title: this.title,
+            color: this.color,
+            url: this.$stringToSlug(this.title),
+            path: this.path,
+            localDB: true,
+            disabled: false
+          }
+          this.url = catalog.url
 
-      this.$addDatabase(catalog)
-        .then(() => {
+          await this.$addDatabase(catalog)
           this.$emit('close')
-        })
-        .catch((err: Error) => {
-          console.log(err)
-        })
-    }
+        }
+      })
   }
 }
 </script>
