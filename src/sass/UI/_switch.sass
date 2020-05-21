@@ -1,4 +1,16 @@
 .vue-js-switch
+  border: 2px solid var(--textColor)
+  border-radius: 10px
+  .v-switch
+    &-core
+      margin: -1px !important
+      background-color: rgba(0,0,0,0) !important
+    &-button
+      background-color: var(--textColor) !important
   &.toggled
-    .v-switch-core
-      background-color: $primary !important
+    border-color: $primary
+    .v-switch
+      &-core
+        background-color: $primary !important
+      &-button
+        background-color: $white !important

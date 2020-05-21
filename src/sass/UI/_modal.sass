@@ -1,3 +1,7 @@
+.application
+  &.theme--light
+    .vm--overlay
+      background: rgba(255,255,255,0.7)
 .vm--modal
   background-color: var(--blockColor) !important
   border-radius: 0 !important
@@ -65,10 +69,13 @@
       &:last-child
         margin-right: 0
   &--add-catalog
+    .form-header
+      display: flex
+      align-items: flex-start
     .catalog-preview
       display: flex
-      width: 20rem
-      height: 20rem
+      width: 15rem
+      height: 15rem
       border-radius: 50%
       border: 2px solid var(--blockColorLighter)
       margin: 1rem auto 0
@@ -77,11 +84,11 @@
       overflow: hidden
       img
         display: block
-        width: 20rem
-        height: 20rem
+        width: 15rem
+        height: 15rem
         object-fit: cover
       span
-        font-size: 10rem
+        font-size: 7rem
         vertical-align: middle
   &--delete-category
     .modal_content

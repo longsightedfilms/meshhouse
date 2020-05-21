@@ -6,21 +6,39 @@
     <div class="modal_content">
       <ValidationObserver ref="form">
         <form>
-          <div
-            class="catalog-preview"
-            :style="catalogBackgroundColor"
-          >
-            <img
-              v-if="preview !== ''"
-              :src="preview"
+          <div class="form-header">
+            <div
+              class="catalog-preview"
+              :style="catalogBackgroundColor"
             >
-            <span v-else>{{ title.substr(0, 1) }}</span>
+              <img
+                v-if="preview !== ''"
+                :src="preview"
+              >
+              <span
+                v-else
+                :class="avatarTextColorClass"
+              >
+                {{ title.substr(0, 1).toUpperCase() }}
+              </span>
+            </div>
+            <div class="input-group input-group--column">
+              <label>{{ $t('modals.addCatalog.labels.color') }}</label>
+              <color-picker
+                class="input--color"
+                :value="color"
+                @input="handleUpdateColor"
+              />
+            </div>
           </div>
           <ValidationProvider
             v-slot="{ errors }"
             name="catalogTitle"
             class="input-group"
-            rules="required"
+            :rules="{
+              required: true,
+              alpha_spaces: true
+            }"
             immediate
           >
             <label>{{ $t('modals.addCatalog.labels.name') }}</label>
@@ -48,6 +66,7 @@
             >
             <label>{{ $t('modals.addCatalog.labels.folder') }}</label>
             <button
+              :title="path"
               class="input input--file"
               @click.prevent="handleDirectoryInputClick"
             >
@@ -95,15 +114,6 @@
               {{ errors[0] }}
             </span>
           </ValidationProvider>
-          <div class="input-group">
-            <label>{{ $t('modals.addCatalog.labels.color') }}</label>
-            <input
-              v-model="color"
-              type="color"
-              class="input input--color"
-              :placeholder="$t('modals.addCatalog.hints.name')"
-            >
-          </div>
         </form>
       </ValidationObserver>
     </div>
@@ -129,10 +139,13 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { remote } from 'electron'
 import path from 'path'
+import { Chrome as ColorPicker } from 'vue-color'
 import { ValidationObserver, validate } from 'vee-validate'
+import { colorContrast } from '@/plugins/models-db/functions'
 
 @Component({
   components: {
+    ColorPicker,
     ValidationObserver
   }
 })
@@ -164,6 +177,10 @@ export default class AddNewCatalogModal extends Vue {
     }
   }
 
+  get avatarTextColorClass(): string {
+    return colorContrast(this.color)
+  }
+
   async handleDirectoryInputClick(): Promise<void> {
     const dialog = await remote.dialog.showOpenDialog({
       properties: ['openDirectory']
@@ -179,11 +196,15 @@ export default class AddNewCatalogModal extends Vue {
     (this.$refs.image as HTMLInputElement).click()
   }
 
+  handleUpdateColor(color: any): void {
+    this.color = color.hex
+  }
+
   async handleImageChange(event: any): Promise<void> {
     const valid = await (this.$refs.imageProvider as InstanceType<typeof ValidationObserver>).validate(event)
     if (valid) {
       const file = event.target.files[0]
-      this.image = file !== undefined ? path.dirname(event.target.files[0].path) : ''
+      this.image = file !== undefined ? event.target.files[0].path : ''
       this.preview = ''
 
       // Handle preview image

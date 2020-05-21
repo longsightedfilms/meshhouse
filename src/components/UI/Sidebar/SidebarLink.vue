@@ -13,8 +13,11 @@
         v-if="navlink.icon !== ''"
         :src="retrieveImage(navlink.icon)"
       >
-      <p v-else>
-        {{ navlink.title.substr(0, 1) }}
+      <p
+        v-else
+        :class="avatarTextColorClass"
+      >
+        {{ navlink.title.substr(0, 1).toUpperCase() }}
       </p>
     </div>
     <div class="info">
@@ -36,7 +39,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { formatBytes } from '@/plugins/models-db/functions'
+import { colorContrast, formatBytes } from '@/plugins/models-db/functions'
 
 @Component({
   props: {
@@ -70,6 +73,10 @@ export default class SidebarLink extends Vue {
         localDB: this.$props.navlink.localDB
       }
     }
+  }
+
+  get avatarTextColorClass(): string {
+    return colorContrast(this.$props.navlink.color)
   }
 
   computeFileSize(bytes: number): string {

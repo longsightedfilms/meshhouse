@@ -8,8 +8,8 @@
               <label class="title">Autodesk 3DS Max</label>
               <toggle-button
                 :value="dccForm.adsk3dsmax.useSystemAssociation"
-                :width="64"
-                :height="32"
+                :width="42"
+                :height="18"
                 :sync="true"
                 @change="(event) => handleSliderChange(event, 'adsk3dsmax')"
               />
@@ -47,8 +47,8 @@
               <label class="title">Autodesk Maya</label>
               <toggle-button
                 :value="dccForm.adskMaya.useSystemAssociation"
-                :width="64"
-                :height="32"
+                :width="42"
+                :height="18"
                 :sync="true"
                 @change="(event) => handleSliderChange(event, 'adskMaya')"
               />
@@ -86,8 +86,8 @@
               <label class="title">Blender</label>
               <toggle-button
                 :value="dccForm.blender.useSystemAssociation"
-                :width="64"
-                :height="32"
+                :width="42"
+                :height="18"
                 :sync="true"
                 @change="(event) => handleSliderChange(event, 'blender')"
               />
@@ -125,8 +125,8 @@
               <label class="title">Cinema 4D</label>
               <toggle-button
                 :value="dccForm.cinema4d.useSystemAssociation"
-                :width="64"
-                :height="32"
+                :width="42"
+                :height="18"
                 :sync="true"
                 @change="(event) => handleSliderChange(event, 'cinema4d')"
               />
@@ -164,8 +164,8 @@
               <label class="title">Houdini</label>
               <toggle-button
                 :value="dccForm.houdini.useSystemAssociation"
-                :width="64"
-                :height="32"
+                :width="42"
+                :height="18"
                 :sync="true"
                 @change="(event) => handleSliderChange(event, 'houdini')"
               />
@@ -203,8 +203,8 @@
               <label class="title">Modo</label>
               <toggle-button
                 :value="dccForm.modo.useSystemAssociation"
-                :width="64"
-                :height="32"
+                :width="42"
+                :height="18"
                 :sync="true"
                 @change="(event) => handleSliderChange(event, 'modo')"
               />

@@ -86,6 +86,12 @@ type ImageProperties = {
   path: string;
 }
 
+type ColorRGB = {
+  r: number;
+  g: number;
+  b: number;
+}
+
 // Integration types
 
 type QueryParameters = {

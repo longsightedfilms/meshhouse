@@ -15,6 +15,8 @@
           tooltip="none"
           :interval="64"
           :marks="true"
+          :dot-size="[8, 24]"
+          :height="2"
           hide-label
           @change="onSliderChange"
         />
