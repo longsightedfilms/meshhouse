@@ -42,15 +42,11 @@
             rules="required"
             immediate
           >
-            <label>{{ $t('modals.addCatalog.labels.folder') }}</label>
             <input
-              ref="directory"
-              type="file"
-              webkitdirectory
-              hidden
-              required
-              @change="handleDirectoryChange"
+              v-model="path"
+              type="hidden"
             >
+            <label>{{ $t('modals.addCatalog.labels.folder') }}</label>
             <button
               class="input input--file"
               @click.prevent="handleDirectoryInputClick"
@@ -133,7 +129,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { remote } from 'electron'
 import path from 'path'
-import { ValidationObserver } from 'vee-validate'
+import { ValidationObserver, validate } from 'vee-validate'
 
 @Component({
   components: {
@@ -168,16 +164,15 @@ export default class AddNewCatalogModal extends Vue {
     }
   }
 
-  handleDirectoryInputClick(): void {
-    (this.$refs.directory as HTMLInputElement).click()
-  }
-
-  async handleDirectoryChange(event: any): Promise<void> {
-    const valid = await (this.$refs.directoryProvider as InstanceType<typeof ValidationObserver>).validate(event)
-    if (valid) {
-      const file = event.target.files[0]
-      this.path = file !== undefined ? path.dirname(event.target.files[0].path) : ''
-    }
+  async handleDirectoryInputClick(): Promise<void> {
+    const dialog = await remote.dialog.showOpenDialog({
+      properties: ['openDirectory']
+    })
+    const folderPath = dialog.filePaths.length !== 0 ? dialog.filePaths[0].toString() : ''
+    const validation = await validate(folderPath, 'required', {
+      name: 'catalogPath'
+    })
+    this.path = validation.valid ? path.dirname(folderPath)  : ''
   }
 
   handleImageInputClick(): void {
@@ -213,6 +208,7 @@ export default class AddNewCatalogModal extends Vue {
             title: this.title,
             color: this.color,
             url: this.$stringToSlug(this.title),
+            icon: this.image,
             path: this.path,
             localDB: true,
             disabled: false

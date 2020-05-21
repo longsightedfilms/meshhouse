@@ -36,14 +36,13 @@ before_cache:
 
 deploy:
   provider: releases
-  token: $GH_TOKEN
+  api_key:
+    secure: $GH_TOKEN
   file:
     - ./dist-electron/*.exe
     - ./dist-electron/*.dmg
     - ./dist-electron/*.AppImage
-    - ./dist-electron/*.deb
-    - ./dist-electron/*.rpm
-  skip-cleanup: true
+  skip_cleanup: true
   draft: true
   on:
     tags: true
