@@ -41,6 +41,8 @@ body
     grid-template-areas: "Sidebar Content"
     grid-area: Main
     background-color: var(--blockColor)
+  &--linux, &--mac
+    grid-template-rows: 4rem calc(100vh - 4rem)
 // UI
 @import 'UI/button'
 @import 'UI/card'

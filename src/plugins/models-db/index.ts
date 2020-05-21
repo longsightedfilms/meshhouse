@@ -59,7 +59,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
     return image !== '' ? image + '?v=' + (store as any).state.controls.imageRandomizer : image
   }
 
-  Vue.prototype.$addDatabase = function(db: DatabaseItem): Promise<void> {
+  Vue.prototype.$addDatabase = async function(db: DatabaseItem): Promise<void> {
     const file = path.join(
       remote.app.getPath('userData'),
       `/databases/${db.url}.sqlite3`
@@ -67,7 +67,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
 
     if (!fs.existsSync(file)) {
       const database = new Integration.local(db.url)
-      database.initializeLocalDatabase()
+      await database.initializeLocalDatabase()
 
       return this.$indexFolderRecursive(db.path).then((files: string[]) => {
         const models: string[] = []

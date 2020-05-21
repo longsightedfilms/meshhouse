@@ -5,10 +5,10 @@ declare const __static: string
 import path from 'path'
 import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
+import ElectronStore from 'electron-store'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 
-const ElectronStore = require('electron-store')
-const settings = new ElectronStore({
+const settings: ElectronStore<any> = new ElectronStore({
   name: 'settings',
 })
 
@@ -17,8 +17,8 @@ const applicationOptions = {
   height: settings.get('applicationWindow.height') || 768,
   minWidth: 1024,
   minHeight: 768,
-  icon: path.join(__static, 'icon.png'),
-  frame: false,
+  icon: path.join(__static, '../build/icons', '512x512.png'),
+  frame: process.platform === 'win32' ? false : true,
   show: false,
   resizable: true,
   backgroundColor: '#2e3131',

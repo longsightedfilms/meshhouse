@@ -5,13 +5,13 @@
   align-items: flex-end
   background-color: var(--blockColor)
   color: var(--textColor)
-  padding: 2rem 0 0.5rem 1rem
+  padding: 0 0 0.5rem 1rem
   z-index: 10
   &:after
     content: ''
     top: 6px
     left: 6px
-    display: block
+    display: none
     position: absolute
     width: calc(100% - 144px)
     height: calc(100% - 64px)
@@ -36,11 +36,12 @@
     margin-right: 1rem
   &-buttons
     -webkit-app-region: no-drag
+    display: none
   &-navigation
     -webkit-app-region: no-drag
     display: flex
     align-items: center
-    flex: 0 0 100%
+    flex: 1 0 auto
     .breadcrumbs
       flex: 1 5 50%
       background-color: var(--blockColorDark)
@@ -57,6 +58,9 @@
             margin-right: 0
 .application--windows
   .application__header
+    padding: 2rem 0 0.5rem 1rem
+    &:after
+      display: block
     &-navigation
       flex: 1 0 auto
     &-buttons

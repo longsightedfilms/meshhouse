@@ -25,21 +25,19 @@ module.exports = {
           category: 'public.app-category.graphics-design',
           target: 'dmg'
         },
+        linux: {
+          category: 'Graphics',
+          executableName: 'MeshHouse',
+          icon: './build/icons/512x512.png',
+          target: 'AppImage'
+        },
         nsis: {
           oneClick: false,
           installerIcon: './build/icons/icon.ico',
           license: './build/license.txt',
           allowToChangeInstallationDirectory: true
         }
-      },
-      publish: [
-        {
-          provider: "github",
-          owner: "longsightedfilms",
-          repo: "meshhouse",
-          releaseType: "draft"
-        }
-      ]
+      }
     }
   },
 

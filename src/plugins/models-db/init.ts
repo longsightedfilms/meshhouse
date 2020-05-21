@@ -13,10 +13,7 @@ const dcc: ElectronStore<any> = new ElectronStore({ name: 'dcc-config' })
 export async function initDatabases(): Promise<void> {
   if (
     !fs.existsSync(
-      path.join(
-        remote.app.getPath('userData'),
-        path.normalize('\\databases.json')
-      )
+      path.join(remote.app.getPath('userData'), 'databases.json')
     )
   ) {
     databases.set({
@@ -59,7 +56,7 @@ export async function initDatabases(): Promise<void> {
 export function initAppSettings(): void {
   if (
     !fs.existsSync(
-      path.join(remote.app.getPath('userData'), path.normalize('\\settings.json'))
+      path.join(remote.app.getPath('userData'), 'settings.json')
     )
   ) {
     settings.set({
@@ -75,10 +72,7 @@ export function initAppSettings(): void {
 export function initDCCSettings(): void {
   if (
     !fs.existsSync(
-      path.join(
-        remote.app.getPath('userData'),
-        path.normalize('\\dcc-config.json')
-      )
+      path.join(remote.app.getPath('userData'), 'dcc-config.json')
     )
   ) {
     dcc.set({

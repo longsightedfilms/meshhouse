@@ -9,8 +9,8 @@ export default class Local extends Integration {
     super(name)
   }
 
-  initializeLocalDatabase(): Promise<Error | boolean> {
-    const query = `CREATE TABLE 'models'(
+  async initializeLocalDatabase(): Promise<boolean> {
+    let query = `CREATE TABLE 'models'(
       "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
       "name"	TEXT NOT NULL,
       "extension"	TEXT NOT NULL,
@@ -18,15 +18,17 @@ export default class Local extends Integration {
       "category"	INTEGER,
       "size" INTEGER,
       "image"	TEXT
-    );
-    CREATE TABLE 'categories'(
+    )`
+    await this.runQuery(query)
+    query = `CREATE TABLE 'categories'(
       "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
       "parentId"	INTEGER NOT NULL,
       "slug"	TEXT NOT NULL,
       "name"	TEXT NOT NULL
     )`
+    await this.runQuery(query)
 
-    return this.runQuery(query)
+    return Promise.resolve(true)
   }
 
   async updateDatabaseVersion(): Promise<void> {
