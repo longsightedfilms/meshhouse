@@ -15,23 +15,19 @@
       <div class="nav-container">
         <div>
           <label>{{ $t('common.types.databases.remote') }}</label>
-          <div
-            v-for="(item, index) in $store.state.db.databases"
-            :key="'remote-' + item.title"
-          >
+          <div>
             <sidebar-link
-              v-if="!item.localDB"
+              v-for="(item, index) in filteredRemoteDB"
+              :key="'remote-' + item.title"
               :navlink="item"
               :progress="computeProgressLength(index)"
             />
           </div>
           <label>{{ $t('common.types.databases.local') }}</label>
-          <div
-            v-for="(item, index) in $store.state.db.databases"
-            :key="'local-' + item.title"
-          >
+          <div>
             <sidebar-link
-              v-if="item.localDB"
+              v-for="(item, index) in filteredLocalDB"
+              :key="'local-' + item.title"
               :navlink="item"
               :progress="computeProgressLength(index)"
             />
@@ -64,6 +60,14 @@ export default class ApplicationSidebar extends Vue {
     return !databasesVisible ? {
       transform: `translateX(-1px) rotate(180deg)`
     } : {}
+  }
+
+  get filteredRemoteDB(): DatabaseItem[] {
+    return this.$store.state.db.databases.filter((db: DatabaseItem) => db.localDB === false)
+  }
+
+  get filteredLocalDB(): DatabaseItem[] {
+    return this.$store.state.db.databases.filter((db: DatabaseItem) => db.localDB === true)
   }
 
   computeProgressLength(idx: number): number {

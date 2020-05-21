@@ -172,7 +172,7 @@ export default class AddNewCatalogModal extends Vue {
     const validation = await validate(folderPath, 'required', {
       name: 'catalogPath'
     })
-    this.path = validation.valid ? path.dirname(folderPath)  : ''
+    this.path = validation.valid ? folderPath : ''
   }
 
   handleImageInputClick(): void {
