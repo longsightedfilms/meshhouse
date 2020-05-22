@@ -82,6 +82,7 @@ export default class SidebarLink extends Vue {
   computeFileSize(bytes: number): string {
     return formatBytes(bytes)
   }
+
   avatarStyle(navlink: DatabaseItem): object {
     return navlink.localDB ? { backgroundColor: navlink.color } : {}
   }

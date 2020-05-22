@@ -59,6 +59,10 @@ type ControlsState = {
   properties: ImageProperties;
   thumbnailSize: string | number;
   theme: string;
+  updates: {
+    downloading: boolean;
+    downloaded: boolean;
+  };
 }
 
 type Filters = {

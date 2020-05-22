@@ -9,6 +9,7 @@ import properties from './modals/properties'
 import addCategory from './modals/addCategory'
 import deleteCategory from './modals/deleteCategory'
 import editCategory from './modals/editCategory'
+import updater from './modals/updater'
 // Context menus
 import catalogContext from './context/catalog'
 import modelContext from './context/model'
@@ -39,7 +40,8 @@ export default {
     deleteCategory: deleteCategory,
     editCategory: editCategory,
     settings: settings,
-    properties: properties
+    properties: properties,
+    updater: updater
   },
   validations: validationMessages,
   views: {

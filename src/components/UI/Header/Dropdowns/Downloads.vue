@@ -24,16 +24,10 @@
       </div>
       <div class="buttons">
         <button class="button button--flat">
-          <vue-icon
-            icon="settings"
-            inverted
-          />
+          <vue-icon icon="settings" />
         </button>
         <button class="button button--flat button--flat-danger">
-          <vue-icon
-            icon="delete"
-            inverted
-          />
+          <vue-icon icon="delete" />
         </button>
       </div>
     </div>

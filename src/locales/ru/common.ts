@@ -5,6 +5,8 @@ export default {
     cancel: 'Отмена',
     close: 'Закрыть',
     delete: 'Удалить',
+    download: 'Загрузить',
+    install: 'Установить',
     save: 'Сохранить',
     show: 'Показать',
   },

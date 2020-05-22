@@ -7,7 +7,6 @@
       <vue-icon
         :style="flipIcon"
         icon="caret-back"
-        inverted
         raster
       />
     </button>

@@ -9,6 +9,7 @@ import properties from './modals/properties'
 import addCategory from './modals/addCategory'
 import deleteCategory from './modals/deleteCategory'
 import editCategory from './modals/editCategory'
+import updater from './modals/updater'
 // Context menus
 import catalogContext from './context/catalog'
 import modelContext from './context/model'
@@ -40,6 +41,7 @@ export default {
     editCategory: editCategory,
     properties: properties,
     settings: settings,
+    updater: updater
   },
   validations: validationMessages,
   views: {

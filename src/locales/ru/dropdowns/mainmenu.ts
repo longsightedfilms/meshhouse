@@ -1,4 +1,5 @@
 export default {
   settings: '@:modals.settings.title',
-  aboutProgram: 'О программе'
+  aboutProgram: 'О программе',
+  checkUpdates: 'Проверить наличие обновлений'
 }

@@ -4,6 +4,11 @@
   color: $white
   font-size: 1rem
   font-weight: 100
+  &:disabled
+    cursor: not-allowed
+    background-color: var(--buttonHover)
+    &:hover
+      background-color: var(--buttonHover)
   &--primary
     background-color: $primary
     &:hover

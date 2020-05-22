@@ -5,6 +5,8 @@ export default {
     cancel: 'Cancel',
     close: 'Close',
     delete: 'Delete',
+    download: 'Download',
+    install: 'Install',
     save: 'Save',
     show: 'Show',
   },

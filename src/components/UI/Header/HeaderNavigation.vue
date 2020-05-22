@@ -5,10 +5,7 @@
       class="button button--flat"
       @click="showNewCatalog"
     >
-      <vue-icon
-        icon="add"
-        inverted
-      />
+      <vue-icon icon="add" />
     </button>
     <div class="breadcrumbs">
       <span
@@ -30,7 +27,6 @@
           :icon="$store.state.controls.filters.order === 'ASC'
             ? 'sort-alpha-down'
             : 'sort-alpha-up'"
-          inverted
           raster
         />
       </button>
@@ -39,7 +35,6 @@
       <vue-icon
         class="decor"
         icon="search"
-        inverted
       />
       <input
         type="text"
@@ -57,7 +52,6 @@
       >
         <vue-icon
           icon="clear"
-          inverted
           raster
         />
       </button>
@@ -70,7 +64,6 @@
         <template slot="button">
           <vue-icon
             icon="adjust"
-            inverted
             raster
           />
         </template>
@@ -83,18 +76,14 @@
         <template slot="button">
           <vue-icon
             icon="downloads"
-            inverted
             raster
           />
         </template>
         <downloads-dropdown />
       </vue-dropdown>
-      <vue-dropdown>
+      <vue-dropdown close-by-click>
         <template slot="button">
-          <vue-icon
-            icon="menu"
-            inverted
-          />
+          <vue-icon icon="menu" />
         </template>
         <main-menu-dropdown />
       </vue-dropdown>

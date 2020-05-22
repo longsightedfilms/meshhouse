@@ -16,7 +16,11 @@ export default {
     lastPage: 'main',
     properties: {},
     thumbnailSize: 256,
-    theme: 'light'
+    theme: 'light',
+    updates: {
+      downloading: false,
+      downloaded: false
+    }
   },
   mutations: {
     incrementImageRandomizer(state: ControlsState): void {
@@ -52,6 +56,12 @@ export default {
     },
     setTheme(state: ControlsState, payload: string): void {
       state.theme = payload
+    },
+    setUpdateDownload(state: ControlsState, payload: boolean): void {
+      state.updates.downloading = payload
+    },
+    setUpdateDownloadComplete(state: ControlsState, payload: boolean): void {
+      state.updates.downloaded = payload
     }
   },
 }

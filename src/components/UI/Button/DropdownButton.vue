@@ -4,6 +4,7 @@
     class="dropdown"
   >
     <button
+      v-on-clickaway="onClickedInside"
       class="button button--flat"
       :title="hint"
       @click="toggleDropdown"
@@ -36,6 +37,11 @@ import { mixin as clickaway } from 'vue-clickaway'
       type: String,
       required: false,
       default: ''
+    },
+    closeByClick: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   }
 })
@@ -52,6 +58,12 @@ export default class DropdownButton extends Vue {
 
   onClickedOutside(event: any): void {
     this.toggled = false
+  }
+
+  onClickedInside(event: any): void {
+    if (this.$props.closeByClick === true) {
+      this.toggled = false
+    }
   }
 }
 </script>

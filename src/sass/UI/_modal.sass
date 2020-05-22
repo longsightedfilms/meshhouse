@@ -126,3 +126,21 @@
         padding: 0.625rem 1rem
       &_header, &_actions
         margin-left: -2rem
+  &--updater
+    .modal
+      &_content
+        padding-top: 1rem
+        .updater
+          p
+            text-align: center
+          .progress
+            grid-area: Progress
+            display: block
+            -webkit-appearance: none
+            -moz-appearance: none
+            appearance: none
+            width: 100%
+            height: 0.5rem
+            margin: 0.5rem 0
+            &::-webkit-progress-value
+              background-color: $primary
