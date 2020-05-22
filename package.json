@@ -24,11 +24,10 @@
   },
   "main": "background.js",
   "dependencies": {
-    "@types/node": "12.12.39",
     "axios": "^0.19.2",
     "electron-store": "^4.0.0",
     "electron-updater": "^4.3.1",
-    "node-notifier": "^5.4.3",
+    "node-notifier": "^7.0.0",
     "recursive-readdir": "^2.2.2",
     "sharp": "^0.25.2",
     "sqlite3": "^4.2.0",
@@ -52,6 +51,8 @@
   },
   "devDependencies": {
     "@intlify/vue-i18n-loader": "^1.0.0",
+    "@types/node": "^12.12.39",
+    "@types/node-notifier": "^6.0.1",
     "@types/sharp": "^0.25.0",
     "@types/sqlite3": "^3.1.6",
     "@types/vue-color": "^2.4.2",

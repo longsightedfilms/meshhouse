@@ -12,7 +12,9 @@
         <img :src="download.img">
       </div>
       <div class="content">
-        <p class="title">{{ download.title }}</p>
+        <p class="title">
+          {{ download.title }}
+        </p>
         <progress
           class="progress"
           max="100"

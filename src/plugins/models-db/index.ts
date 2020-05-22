@@ -138,7 +138,6 @@ export function ModelsDB(Vue: typeof _Vue): void {
   }
 
   Vue.prototype.$deleteDatabase = function(database: string): Promise<boolean> {
-    console.log('deleted')
     return Promise.resolve(true)
   }
 

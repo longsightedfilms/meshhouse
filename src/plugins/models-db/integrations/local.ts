@@ -86,7 +86,6 @@ export default class Local extends Integration {
     return new Promise((resolve, reject): void => {
       this.db.run(query, (err: Error) => {
         if (err) {
-          console.log(err)
           reject(err)
         } else {
           resolve(true)
@@ -99,7 +98,6 @@ export default class Local extends Integration {
     return new Promise((resolve, reject): void => {
       this.db.all(query, (err, rows) => {
         if (err) {
-          console.log(err)
           reject(err)
         } else {
           resolve(rows)
@@ -130,7 +128,6 @@ export default class Local extends Integration {
     return new Promise((resolve, reject): void => {
       this.db.all(dbQuery as string, (err, rows) => {
         if (err) {
-          console.log(err)
           reject(err)
         } else {
           resolve(rows)
@@ -152,7 +149,6 @@ export default class Local extends Integration {
     return new Promise((resolve, reject): void => {
       this.db.all(dbQuery, (err, rows) => {
         if (err) {
-          console.log(err)
           reject(err)
         } else {
           resolve(rows)

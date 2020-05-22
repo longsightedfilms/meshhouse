@@ -19,66 +19,70 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from 'vue'
+import Component from 'vue-class-component'
 import notifier from 'node-notifier'
 import path from 'path'
 import { spawn } from 'child_process'
 import { remote, shell } from 'electron'
 
-export default {
-  name: "About",
-  computed: {
-    returnAppPath() {
-      return remote.app.getPath('userData')
-    },
-    returnDocsPath() {
-      return remote.app.getPath('documents')
-    },
-    returnExecutablePath() {
-      return remote.app.getAppPath()
-    },
-    returnUserOS() {
-      let os
-      switch(remote.process.platform) {
-        case "win32":
-          os = 'Windows '
-          break
-        case "linux":
-          os = 'Linux '
-          break
-        case "darwin":
-          os = 'Mac OSX '
-          break
-      }
-      return os + remote.process.getSystemVersion()
+@Component({})
+export default class About extends Vue {
+  get returnAppPath(): string {
+    return remote.app.getPath('userData')
+  }
+
+  get returnDocsPath(): string {
+    return remote.app.getPath('documents')
+  }
+
+  get returnExecutablePath(): string {
+    return remote.app.getAppPath()
+  }
+
+  get returnUserOS(): string {
+    let os
+    switch(remote.process.platform) {
+      case "win32":
+        os = 'Windows '
+        break
+      case "linux":
+        os = 'Linux '
+        break
+      case "darwin":
+        os = 'Mac OSX '
+        break
     }
-  },
-  mounted: function() {
+    return os + remote.process.getSystemVersion()
+  }
+
+  mounted(): void {
     const router = this.$router
     const notifierObject = {
       appName: "com.longsightedfilms.meshhouse",
       title: 'My notification',
       message: 'Hello, there!',
-      icon: path.join(__static, 'icon.png'),
+      icon: 'icon.png',
       wait: true
     }
-    notifier.notify(notifierObject, (err, response) => {})
-    notifier.on('click', function(notifierObject, options) {
-      console.log("Toast clicked!");
+    /*notifier.notify(notifierObject, (err: any, response: any) => {
+      console.log('test')
+    })*/
+    notifier.on('click', function(notifierObject: any, options: any) {
       router.push('/')
       remote.getCurrentWindow().show();
     });
-  },
-  methods: {
-    runApp() {
-      const max = this.$dccGetConfig().adsk_3dsmax
+  }
 
-      if(max.useSystemAssociation === true) {
-        shell.openItem(path.join(this.returnDocsPath, path.normalize("\\3dsmax\\scenes\\Studio_scene_share.max")))
-      } else {
-        spawn(max.customPath, [ path.join(this.returnDocsPath, path.normalize("\\3dsmax\\scenes\\Studio_scene_share.max")) ])
-      }
+  runApp(): void {
+    const max = (this.$dccGetConfig() as any).adsk_3dsmax
+
+    if(max.useSystemAssociation === true) {
+      shell.openItem(path.join(this.returnDocsPath, path.normalize("\\3dsmax\\scenes\\Studio_scene_share.max")))
+    } else {
+      spawn(max.customPath, [ path.join(this.returnDocsPath, path.normalize("\\3dsmax\\scenes\\Studio_scene_share.max")) ])
     }
-  },
+  }
 }
 </script>
