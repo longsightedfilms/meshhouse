@@ -18,10 +18,16 @@ import {
   filterByModels,
   modelsExtensions,
   formatBytes,
-  findDatabaseIndex
+  findDatabaseIndex,
+  updateDatabases,
+  watchDatabases
 } from './functions'
 
-import { initDatabases, initAppSettings, initDCCSettings } from './init'
+import {
+  initDatabases,
+  initAppSettings,
+  initDCCSettings,
+} from './init'
 
 initDatabases()
 initAppSettings()
@@ -101,6 +107,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
   }
 
   Vue.prototype.$reindexCatalog = function(db: DatabaseItem): Promise<void> {
+    store.commit('setLoadingStatus', false)
     const database = new Integration.local(db.url)
 
     return this.$indexFolderRecursive(db.path)
@@ -114,6 +121,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
             databases.set('databases', list)
           }
           store.commit('setApplicationDatabases', databases.get('databases'))
+          store.commit('setLoadingStatus', true)
         })
     })
   }
@@ -143,6 +151,14 @@ export function ModelsDB(Vue: typeof _Vue): void {
 
   Vue.prototype.$deleteDatabase = function(database: string): Promise<boolean> {
     return Promise.resolve(true)
+  }
+
+  Vue.prototype.$initDatabases = async function(): Promise<void> {
+    await updateDatabases()
+  }
+
+  Vue.prototype.$watchDatabases = async function(): Promise<void> {
+    await watchDatabases()
   }
 
   Vue.prototype.$indexFolderRecursive = function(

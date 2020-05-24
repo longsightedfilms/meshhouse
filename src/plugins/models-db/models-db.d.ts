@@ -21,6 +21,8 @@ declare module 'vue/types/vue' {
       model?: Model
     ): Promise<string | boolean>;
     $deleteDatabase(database: string): Promise<boolean>;
+    $initDatabases(): Promise<void>;
+    $watchDatabases(): Promise<void>;
     $indexFolderRecursive(folder: string): Promise<string[]>;
     $openItem(file: string): void;
     $openFolder(folder: string): void;

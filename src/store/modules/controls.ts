@@ -48,7 +48,7 @@ export default {
       state.filters = payload
       return Promise.resolve(true)
     },
-    setLoadStatus(state: ControlsState, status: boolean): void {
+    setLoadingStatus(state: ControlsState, status: boolean): void {
       state.isLoaded = status
     },
     setProperties(state: ControlsState, payload: ImageProperties): void {

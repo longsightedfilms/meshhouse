@@ -1,7 +1,12 @@
+import eventBus from '@/eventBus'
+import store from '@/store/main'
+import router from '@/router'
 import fs from 'fs'
 import path from 'path'
 import ElectronStore from 'electron-store'
 import Integrations from './integrations/main'
+import recursive from 'recursive-readdir'
+import chokidar from 'chokidar'
 
 const dcc: ElectronStore<any> = new ElectronStore({ name: 'dcc-config' })
 const databases: ElectronStore<any> = new ElectronStore({ name: 'databases' })
@@ -59,8 +64,20 @@ export function filterByModels(file: string, stats: fs.Stats): boolean {
   )
 }
 
+export function generateIncludePattern(path: string): string[] {
+  const array: string[] = []
+
+  Object.keys(modelsExtensions).forEach((extension: string) => {
+    array.push(`${path}/**/*${extension}`)
+  })
+
+  return array
+}
+
 export function getParameterByExtension(extension: string, param: string): string {
   switch (extension) {
+    case '.3b':
+      return dcc.get('threedCoat.' + param)
     case '.max':
       return dcc.get('adsk3dsmax.' + param)
     case '.ma':
@@ -76,8 +93,10 @@ export function getParameterByExtension(extension: string, param: string): strin
       return dcc.get('houdini.' + param)
     case '.lxo':
       return dcc.get('modo.' + param)
+    case '.spp':
+      return dcc.get('substancePainter.' + param)
     default:
-      return ''
+      return 'nondefault'
   }
 }
 export function formatBytes(bytes: number, decimals = 2): string {
@@ -111,8 +130,6 @@ export function colorContrast(hex: string): string {
   }
 }
 
-
-
 // Database handling
 
 export function findDatabaseIndex(url: string): number {
@@ -130,4 +147,86 @@ export function handleDatabases(database: DatabaseItem | string): PossibleIntegr
   const dbType = searchableDB.localDB ? 'local' : searchableDB.url
 
   return dbType === 'local' ? new Integrations.local(searchableDB.url) : null//new Integrations[dbType]()
+}
+
+
+export async function updateDatabases(): Promise<boolean> {
+  const db = databases.get('databases')
+
+  // Update model count and total size
+  for await (const [index, database] of db.entries()) {
+    const handleDB = handleDatabases(database)
+
+    if (handleDB !== null) {
+      await handleDB.updateDatabaseVersion()
+
+      let totalSize = 0
+      const files = await recursive(database.path, [filterByModels])
+      await handleDB.reindexCatalog(files)
+      const models = await handleDB.fetchItemsFromDatabase(`SELECT * FROM 'models'`)
+
+      models.forEach(async (model: Model) => {
+        const stats = fs.statSync(model.path)
+        model.size = stats['size']
+        totalSize += stats['size']
+
+        const query = `UPDATE models
+        SET ${handleDB.updateBuilder(model)}
+        WHERE id = ${model.id}`
+        await handleDB.runQuery(query)
+      })
+
+      db[index].count = models.length
+      db[index].totalsize = totalSize
+    }
+  }
+  databases.store = { databases: db }
+  store.commit('setApplicationDatabases', db)
+  return Promise.resolve(true)
+}
+
+function handleUpdate(database: DatabaseItem, handleDB: any, db: any, index: number): Promise<void> {
+  return recursive(database.path, [filterByModels])
+    .then((files: string[]) => {
+      return handleDB.reindexCatalog(files)
+    })
+    .then((items: any) => {
+      db[index].count = items.count
+      db[index].totalsize = items.totalSize
+
+      databases.store = { databases: db }
+      store.commit('setApplicationDatabases', db)
+      eventBus.$emit('file-event', database)
+    })
+}
+
+export async function watchDatabases(): Promise<boolean> {
+  const db = databases.get('databases')
+
+  for await (const [index, database] of db.entries()) {
+    const handleDB = handleDatabases(database)
+
+
+    if (handleDB !== null) {
+      const paths = generateIncludePattern(database.path)
+      const watcher = chokidar.watch(paths)
+
+      watcher
+        .on('add', ((path: string) => {
+          handleUpdate(database, handleDB, db, index)
+            .then(() => {
+              store.commit('setApplicationDatabases', db)
+              eventBus.$emit('file-event', database)
+            })
+        }))
+        .on('unlink', ((path: string) => {
+          handleUpdate(database, handleDB, db, index)
+            .then(() => {
+              store.commit('setApplicationDatabases', db)
+              eventBus.$emit('file-event', database)
+            })
+        }))
+    }
+  }
+  return Promise.resolve(true)
 }

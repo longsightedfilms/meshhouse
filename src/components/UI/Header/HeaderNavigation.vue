@@ -14,6 +14,12 @@
       >
         {{ selectedDB.title }}
       </span>
+      <div
+        v-if="!$store.state.controls.isLoaded"
+        class="progress__container"
+      >
+        <div class="progress" />
+      </div>
     </div>
     <div class="buttons">
       <button

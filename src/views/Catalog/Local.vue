@@ -49,6 +49,7 @@
 </template>
 
 <script lang="ts">
+import eventBus from '@/eventBus'
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Watch } from 'vue-property-decorator'
@@ -104,6 +105,14 @@ export default class LocalDatabase extends Vue {
     this.$reindexCatalog(db).then(async () => {
       await this.databaseInitialize()
     })
+  }
+
+  mounted(): void {
+    eventBus.$on('file-event', (async (database: DatabaseItem) => {
+      if (database.url === this.$route.params.database) {
+        await this.databaseInitialize()
+      }
+    }))
   }
 
   get gridClass(): string {

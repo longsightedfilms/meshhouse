@@ -209,20 +209,31 @@ export default class Local extends Integration {
     let query = `SELECT path FROM 'models'`
     const result: Model[] = await this.fetchItemsFromDatabase(query)
 
-    const res = result.map((item: Model) => item.path)
-    const diff: string[] = []
+    const existsModelPaths: string[] = result.map((item: Model) => item.path)
+    const diffInsert: string[] = []
+
     files.forEach((file: string) => {
-      if (!res.includes(file)) {
+      if (!existsModelPaths.includes(file)) {
         const size = fs.statSync(file)['size']
-        diff.push(
+        diffInsert.push(
           `(null, '${path.parse(file).name}', '${
             path.parse(file).ext
           }', '${file}', '', '${size}', '')`
         )
       }
     })
-    if (diff.length > 0) {
-      const query = `INSERT INTO 'models' VALUES ${diff}`
+
+    existsModelPaths.forEach((file: string) => {
+      if (!files.includes(file)) {
+        const query = `DELETE FROM 'models' WHERE path='${file}'`
+        this.runQuery(query).then(() => {
+          return
+        })
+      }
+    })
+
+    if (diffInsert.length > 0) {
+      const query = `INSERT INTO 'models' VALUES ${diffInsert}`
       await this.runQuery(query)
     }
 

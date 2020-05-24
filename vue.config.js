@@ -14,7 +14,7 @@ module.exports = {
       enableInSFC: true
     },
     electronBuilder: {
-      externals: ['node-notifier', 'electron-store', 'sqlite3', 'sharp', 'axios'],
+      externals: ['node-notifier', 'electron-store', 'sqlite3', 'sharp', 'axios', 'chokidar'],
       nodeModulesPath: ['../../node_modules', './node_modules'],
       builderOptions: {
         appId: 'com.longsightedfilms.meshhouse',
@@ -28,7 +28,7 @@ module.exports = {
         linux: {
           category: 'Graphics',
           executableName: 'MeshHouse',
-          icon: './build/icons/512x512.png',
+          icon: './build/icons/256x256.png',
           target: 'AppImage'
         },
         nsis: {

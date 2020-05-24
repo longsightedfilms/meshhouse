@@ -4,13 +4,24 @@ import path from 'path'
 import ElectronStore from 'electron-store'
 import { remote } from 'electron'
 import { databaseDefault } from './defaults'
-import { handleDatabases } from './functions'
 
-const settings: ElectronStore<any> = new ElectronStore({ name: 'settings' })
-const databases: ElectronStore<any> = new ElectronStore({ name: 'databases' })
-const dcc: ElectronStore<any> = new ElectronStore({ name: 'dcc-config' })
+import dccMigrations from './migrations/dccSettings'
 
-export async function initDatabases(): Promise<void> {
+const settings: ElectronStore<any> = new ElectronStore({
+  name: 'settings',
+  projectVersion: process.env.VUE_APP_VERSION
+} as any)
+const databases: ElectronStore<any> = new ElectronStore({
+  name: 'databases',
+  projectVersion: process.env.VUE_APP_VERSION
+} as any)
+const dcc: ElectronStore<any> = new ElectronStore({
+  name: 'dcc-config',
+  migrations: dccMigrations,
+  projectVersion: process.env.VUE_APP_VERSION
+} as any)
+
+export function initDatabases(): void {
   if (
     !fs.existsSync(
       path.join(remote.app.getPath('userData'), 'databases.json')
@@ -20,36 +31,6 @@ export async function initDatabases(): Promise<void> {
       databases: databaseDefault,
     })
     store.commit('setApplicationDatabases', databases.get('databases'))
-  } else {
-    const db = databases.get('databases')
-
-    // Update model count and total size
-    for await (const [index, database] of db.entries()) {
-      const handleDB = handleDatabases(database)
-
-      if (handleDB !== null) {
-        await handleDB.updateDatabaseVersion()
-
-        let totalSize = 0
-        const models = await handleDB.fetchItemsFromDatabase(`SELECT * FROM 'models'`)
-
-        models.forEach(async (model: Model) => {
-          const stats = fs.statSync(model.path)
-          model.size = stats['size']
-          totalSize += stats['size']
-
-          const query = `UPDATE models
-          SET ${handleDB.updateBuilder(model)}
-          WHERE id = ${model.id}`
-          await handleDB.runQuery(query)
-        })
-
-        db[index].count = models.length
-        db[index].totalsize = totalSize
-      }
-    }
-    databases.store = { databases: db }
-    store.commit('setApplicationDatabases', db)
   }
 }
 
@@ -70,36 +51,46 @@ export function initAppSettings(): void {
 }
 
 export function initDCCSettings(): void {
+  const defaults = {
+    adsk3dsmax: {
+      useSystemAssociation: true,
+      customPath: '',
+    },
+    adskMaya: {
+      useSystemAssociation: true,
+      customPath: '',
+    },
+    blender: {
+      useSystemAssociation: true,
+      customPath: '',
+    },
+    cinema4d: {
+      useSystemAssociation: true,
+      customPath: '',
+    },
+    houdini: {
+      useSystemAssociation: true,
+      customPath: '',
+    },
+    modo: {
+      useSystemAssociation: true,
+      customPath: '',
+    },
+    threedCoat: {
+      useSystemAssociation: true,
+      customPath: ''
+    },
+    substancePainter: {
+      useSystemAssociation: true,
+      customPath: ''
+    }
+  }
+
   if (
     !fs.existsSync(
       path.join(remote.app.getPath('userData'), 'dcc-config.json')
     )
   ) {
-    dcc.set({
-      adsk3dsmax: {
-        useSystemAssociation: true,
-        customPath: '',
-      },
-      adskMaya: {
-        useSystemAssociation: true,
-        customPath: '',
-      },
-      blender: {
-        useSystemAssociation: true,
-        customPath: '',
-      },
-      cinema4d: {
-        useSystemAssociation: true,
-        customPath: '',
-      },
-      houdini: {
-        useSystemAssociation: true,
-        customPath: '',
-      },
-      modo: {
-        useSystemAssociation: true,
-        customPath: '',
-      },
-    })
+    dcc.set(defaults)
   }
 }

@@ -83,7 +83,7 @@ export default class App extends Vue {
     this.loadStartupSettings()
   }
 
-  loadStartupSettings(): void {
+  async loadStartupSettings(): Promise<void> {
     this.$i18n.locale = this.$settingsGet('language')
     const theme = this.$settingsGet('theme') || 'light'
     const lastOpened = this.$settingsGet('applicationWindow.lastOpened')
@@ -91,6 +91,9 @@ export default class App extends Vue {
 
     this.$store.commit('setTheme', theme)
     this.$store.commit('setCurrentLastPage', pageOpened)
+
+    await this.$initDatabases()
+    await this.$watchDatabases()
 
     if (pageOpened === 'lastCatalog') {
       this.$router.push(lastOpened)
