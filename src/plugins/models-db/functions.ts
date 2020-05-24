@@ -7,42 +7,50 @@ const dcc: ElectronStore<any> = new ElectronStore({ name: 'dcc-config' })
 const databases: ElectronStore<any> = new ElectronStore({ name: 'databases' })
 
 export const modelsExtensions: Extension = {
+  '.3b': {
+    title: '3DCoat Scene',
+    icon: '3b'
+  },
   '.max': {
     title: '3ds Max Scene',
     icon: 'max',
   },
   '.ma': {
     title: 'Maya ASCII Scene',
-    icon: 'maya',
+    icon: 'ma',
   },
   '.mb': {
     title: 'Maya Binary Scene',
-    icon: 'maya',
+    icon: 'mb',
   },
   '.blend': {
     title: 'Blender Scene',
-    icon: 'blender',
+    icon: 'blend',
   },
   '.c4d': {
     title: 'Cinema 4D Scene',
-    icon: 'cinema4d',
+    icon: 'c4d',
   },
   '.hip': {
     title: 'Houdini Scene',
-    icon: 'houdini',
+    icon: 'hip',
   },
   '.hiplc': {
     title: 'Houdini Scene',
-    icon: 'houdini',
+    icon: 'hiplc',
   },
   '.hipnc': {
     title: 'Houdini Scene',
-    icon: 'houdini',
+    icon: 'hipnc',
   },
   '.lxo': {
     title: 'Modo Scene',
-    icon: 'modo',
+    icon: 'lxo',
   },
+  '.spp': {
+    title: 'Substance Painter Scene',
+    icon: 'spp'
+  }
 }
 
 export function filterByModels(file: string, stats: fs.Stats): boolean {

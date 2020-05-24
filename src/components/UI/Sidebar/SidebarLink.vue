@@ -30,7 +30,7 @@
       />
       <p class="count">
         {{ $tc('views.catalog.sidebar.model', navlink.count) }}
-        <span>{{ computeFileSize(navlink.totalsize) }}</span>
+        <span>{{ $formatSize(navlink.totalsize) }}</span>
       </p>
     </div>
   </router-link>
@@ -39,7 +39,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { colorContrast, formatBytes } from '@/plugins/models-db/functions'
+import { colorContrast } from '@/plugins/models-db/functions'
 
 @Component({
   props: {
@@ -77,10 +77,6 @@ export default class SidebarLink extends Vue {
 
   get avatarTextColorClass(): string {
     return colorContrast(this.$props.navlink.color)
-  }
-
-  computeFileSize(bytes: number): string {
-    return formatBytes(bytes)
   }
 
   avatarStyle(navlink: DatabaseItem): object {

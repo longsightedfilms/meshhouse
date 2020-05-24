@@ -1,13 +1,13 @@
 <template>
   <div class="card_image">
     <img
-      class="image"
+      :class="imageClass(src)"
       :src="retrieveImage(src)"
     >
     <img
       v-if="src !== ''"
       class="icon"
-      :src="`/assets/files/${extension.substr(1)}.svg`"
+      :src="`/assets/dcc/${extension.substr(1)}.svg`"
     >
   </div>
 </template>
@@ -35,6 +35,10 @@ export default class ModelImage extends Vue {
     return src !== ''
       ? this.$forceReloadImage(src)
       : `/assets/files/${this.$props.extension.substr(1)}.svg`
+  }
+
+  imageClass(src: string): string {
+    return `image ${src === '' ? 'image--icon' : ''}`
   }
 }
 </script>

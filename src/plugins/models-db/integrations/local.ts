@@ -205,7 +205,7 @@ export default class Local extends Integration {
     return query
   }
 
-  async reindexCatalog(files: string[]): Promise<Model[]> {
+  async reindexCatalog(files: string[]): Promise<any> {
     let query = `SELECT path FROM 'models'`
     const result: Model[] = await this.fetchItemsFromDatabase(query)
 
@@ -223,10 +223,10 @@ export default class Local extends Integration {
     })
     if (diff.length > 0) {
       const query = `INSERT INTO 'models' VALUES ${diff}`
-      this.runQuery(query)
+      await this.runQuery(query)
     }
 
-    query = `SELECT size FROM 'models'`
+    query = `SELECT * FROM 'models'`
     const items = await this.fetchItemsFromDatabase(query)
     const infoUpdate = {
       count: 0,
@@ -237,6 +237,6 @@ export default class Local extends Integration {
       infoUpdate.count++
       infoUpdate.totalSize += fs.statSync(element.path)['size']
     })
-    return items
+    return infoUpdate
   }
 }

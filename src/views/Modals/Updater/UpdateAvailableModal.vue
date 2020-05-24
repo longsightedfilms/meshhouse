@@ -14,7 +14,7 @@
           max="100"
           :value="progress.percent"
         />
-        <p>{{ computeFileSize(progress.transferred) }}/{{ computeFileSize(progress.total) }}</p>
+        <p>{{ $formatSize(progress.transferred) }}/{{ $formatSize(progress.total) }}</p>
       </div>
     </div>
     <div class="modal_actions">
@@ -46,7 +46,6 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { formatBytes } from '@/plugins/models-db/functions'
 import { ipcRenderer } from 'electron'
 
 @Component({})
@@ -68,10 +67,6 @@ export default class UpdateAvailableModal extends Vue {
       this.$store.commit('setUpdateDownload', false)
       this.$store.commit('setUpdateDownloadComplete', true)
     })
-  }
-
-  computeFileSize(bytes: number): string {
-    return formatBytes(bytes)
   }
 
   downloadUpdate(): void {

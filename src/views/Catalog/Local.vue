@@ -8,6 +8,15 @@
       <span>
         {{ $t('views.catalog.models.title') }}
       </span>
+      <button
+        class="button button--flat"
+        @click="reindexCatalog"
+      >
+        <vue-icon
+          icon="update"
+          raster
+        />
+      </button>
     </div>
     <div
       v-if="$store.state.db.loadedData.length !== 0"
@@ -16,7 +25,7 @@
     >
       <model-card
         v-for="item in $store.state.db.loadedData"
-        :key="item.name + item.index"
+        :key="item.name + item.index + item.extension"
         :item="item"
         tabindex="0"
       />
@@ -51,6 +60,7 @@ import CategoryContext from '@/components/UI/Context/CategoryContext.vue'
 import ModelContext from '@/components/UI/Context/ModelContext.vue'
 import ModelCard from '@/components/UI/Card/ModelCard.vue'
 import Integrations from '@/plugins/models-db/integrations/main'
+import { findDatabaseIndex } from '@/plugins/models-db/functions'
 
 @Component({
   components: {
@@ -86,6 +96,14 @@ export default class LocalDatabase extends Vue {
     const categories = await db.fetchCategories()
     this.$store.commit('setLoadedData', models)
     this.$store.commit('setCategories', categories)
+  }
+
+  reindexCatalog(): void {
+    const dbIndex = findDatabaseIndex(this.$route.params.database)
+    const db = this.$store.state.db.databases[dbIndex]
+    this.$reindexCatalog(db).then(async () => {
+      await this.databaseInitialize()
+    })
   }
 
   get gridClass(): string {

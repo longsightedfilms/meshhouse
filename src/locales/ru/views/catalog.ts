@@ -5,10 +5,13 @@ export default {
   categories: {
     title: 'Категории',
     parent: 'На уровень выше',
-    new: 'Создать новую категорию'
+    new: 'Создать новую категорию',
+    noCategory: 'Без категории'
   },
   models: {
-    title: 'Модели'
+    title: 'Модели',
+    path: 'Путь к модели',
+    size: 'Размер файла'
   },
   filters: {
     dcc: 'Формат файла',

@@ -37,14 +37,41 @@
     padding-bottom: 2rem
     .modal
       &_content
-        .modal
+        display: flex
+        flex-direction: column
+        height: 100%
+        max-height: calc(100% - 5rem)
+        .card
           &_image
             display: block
             margin: 0 -1rem
             max-width: 200%
             width: calc(100% + 2rem)
-            object-fit: cover
             height: 300px
+            &:before
+              display: none
+            .image
+              object-fit: cover
+              object-position: top center
+              &--icon
+                object-fit: contain
+            .icon
+              width: 6rem
+              height: 6rem
+        .info
+          margin-top: 1rem
+          display: flex
+          align-items: center
+          dd
+            flex: 0 0 calc(30% + 1rem)
+          dt
+            flex: 0 0 calc(70% - 1rem)
+            word-break: break-all
+        .errors
+          text-align: center
+          color: $danger
+          font-weight: 700
+          margin-top: auto
   &_header
     border-bottom: 2px solid var(--blockColorLighter)
     padding: 1rem

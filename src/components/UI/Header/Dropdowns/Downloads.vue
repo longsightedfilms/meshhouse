@@ -48,7 +48,7 @@ import { formatBytes } from '@/plugins/models-db/functions'
   }
 })
 export default class DownloadsDropdown extends Vue {
-  computeProgress(item: any): number {
+  computeProgress(item: Download): number {
     return item.totalSize / 100 * item.downloadedSize
   }
 

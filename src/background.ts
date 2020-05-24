@@ -130,7 +130,7 @@ autoUpdater.on('update-not-available', (info) => {
   appWin.webContents.send('update-not-available')
 })
 
-autoUpdater.on('download-progress', (progressObj) => {
+autoUpdater.on('download-progress', (progressObj: ProgressInfo) => {
   appWin.webContents.send('download-progress', progressObj)
 })
 

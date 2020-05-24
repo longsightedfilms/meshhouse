@@ -42,6 +42,7 @@ export default class ModelContext extends Vue {
     this.$openPropertiesModal(this.$store.state.controls.properties).then(() => {
       this.$modal.show(EditPropertiesModal, {}, {
         clickToClose: true,
+        width: '450px',
         height: 'auto',
         pivotX: 1.0,
         pivotY: 1.0,

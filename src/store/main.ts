@@ -6,7 +6,7 @@ import downloads from './modules/downloads'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+export default new Vuex.Store<ApplicationStore>({
   modules: {
     controls,
     db: database,

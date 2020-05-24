@@ -16,7 +16,9 @@ const dcc: ElectronStore<any> = new ElectronStore({ name: 'dcc-config' })
 import {
   getParameterByExtension,
   filterByModels,
-  modelsExtensions
+  modelsExtensions,
+  formatBytes,
+  findDatabaseIndex
 } from './functions'
 
 import { initDatabases, initAppSettings, initDCCSettings } from './init'
@@ -101,13 +103,15 @@ export function ModelsDB(Vue: typeof _Vue): void {
   Vue.prototype.$reindexCatalog = function(db: DatabaseItem): Promise<void> {
     const database = new Integration.local(db.url)
 
-    return this.$indexFolderRecursive(db.path).then((files: string[]) => {
-      database.reindexCatalog(files).then((items: DatabaseItem) => {
+    return this.$indexFolderRecursive(db.path)
+      .then((files: string[]) => {
+      return database.reindexCatalog(files).then((items: any) => {
           const list = databases.get('databases')
+          const dbIndex = findDatabaseIndex(db.url)
           if (list) {
-            db.count = items.count
-            db.totalsize = items.totalsize
-            databases.set('databases', list.concat(db))
+            list[dbIndex].count = items.count
+            list[dbIndex].totalsize = items.totalSize
+            databases.set('databases', list)
           }
           store.commit('setApplicationDatabases', databases.get('databases'))
         })
@@ -167,15 +171,15 @@ export function ModelsDB(Vue: typeof _Vue): void {
   ): Promise<boolean> {
     const properties: ImageProperties = {
       imageChanged: false,
-      name: model.name,
-      category: model.category,
-      image: model.image,
-      extension: model.extension,
-      path: model.path,
+      ...model
     }
 
     store.commit('setProperties', properties)
 
     return Promise.resolve(true)
+  }
+
+  Vue.prototype.$formatSize = function(size: number): string {
+    return formatBytes(size)
   }
 }

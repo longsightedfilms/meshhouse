@@ -1,11 +1,3 @@
-type downloadsState = {
-  img: string;
-  title: string;
-  path: string;
-  totalSize: string;
-  progress: number;
-}
-
 export default {
   state: [
     {
@@ -17,10 +9,10 @@ export default {
     },
   ],
   mutations: {
-    clearDownloadsList(state: downloadsState[]): void {
+    clearDownloadsList(state: Download[]): void {
       state = []
     },
-    deleteDownloadItem(state: downloadsState[], index: number): void {
+    deleteDownloadItem(state: Download[], index: number): void {
       state.splice(index, 1)
     },
   }

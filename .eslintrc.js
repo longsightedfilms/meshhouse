@@ -31,7 +31,8 @@ module.exports = {
     // we should always disable console logs and debugging in production
     '@typescript-eslint/no-empty-interface': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
-    '@typescript-eslint/unbound-method': 'off'
+    '@typescript-eslint/unbound-method': 'off',
+    'no-console': 'off'
   },
 
   'extends': [

@@ -5,10 +5,13 @@ export default {
   categories: {
     title: 'Categories',
     parent: 'Parent category',
-    new: 'Add new category'
+    new: 'Add new category',
+    noCategory: 'Category not set'
   },
   models: {
-    title: 'Models'
+    title: 'Models',
+    path: 'Path to model',
+    size: 'File size'
   },
   filters: {
     dcc: 'File type',

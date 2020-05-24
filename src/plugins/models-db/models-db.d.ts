@@ -25,5 +25,6 @@ declare module 'vue/types/vue' {
     $openItem(file: string): void;
     $openFolder(folder: string): void;
     $openPropertiesModal(model: Model): Promise<boolean>;
+    $formatSize(size: number): string;
   }
 }

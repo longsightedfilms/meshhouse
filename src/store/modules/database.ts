@@ -5,13 +5,13 @@ export default {
     loadedData: [],
   },
   mutations: {
-    setApplicationDatabases(state: any, payload: any): void {
+    setApplicationDatabases(state: DatabaseState, payload: DatabaseItem[]): void {
       state.databases = payload
     },
-    setCategories(state: any, payload: string[]): void {
+    setCategories(state: DatabaseState, payload: Category[]): void {
       state.categories = payload
     },
-    setLoadedData(state: any, payload: any): void {
+    setLoadedData(state: DatabaseState, payload: Model | Model[]): void {
       state.loadedData = payload
     },
   }

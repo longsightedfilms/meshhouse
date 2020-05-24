@@ -1,13 +1,15 @@
 .input
   display: block
   width: 100%
-  border: 2px solid var(--blockColorDarker)
+  border: 2px solid var(--buttonHover)
   padding: 0.625rem 1rem
   transition: all 0.3s ease
   color: var(--textColor)
   &:focus
     outline: 0
     border-color: $primary
+  &.invalid
+    border-color: $danger
   &-group
     display: flex
     flex-wrap: wrap
@@ -21,7 +23,8 @@
       flex: 0 1 calc(70% - 1rem)
     .input--select
       width: calc(70% - 1rem)
-      flex: 1 1 calc(70% - 1rem)
+      .input
+        width: 100%
     &--column
       align-items: flex-start
       flex-direction: column

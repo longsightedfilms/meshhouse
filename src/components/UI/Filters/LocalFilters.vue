@@ -14,9 +14,9 @@
           <option
             v-for="(sceneType, index) in sceneTypes"
             :key="index"
-            :value="sceneType.value"
+            :value="`.${sceneType.icon}`"
           >
-            {{ sceneType.text }}
+            {{ sceneType.title }} (.{{ sceneType.icon }})
           </option>
         </select>
         <vue-icon
@@ -33,7 +33,7 @@
 import Vue from 'vue'
 import Component from 'vue-class-component'
 import { Fragment } from 'vue-fragment'
-import { handleDatabases, findDatabaseIndex } from '@/plugins/models-db/functions'
+import { handleDatabases, findDatabaseIndex, modelsExtensions } from '@/plugins/models-db/functions'
 
 @Component({
   components: {
@@ -42,44 +42,7 @@ import { handleDatabases, findDatabaseIndex } from '@/plugins/models-db/function
 })
 export default class LocalFilters extends Vue {
   scene = 'none'
-  sceneTypes = [
-    {
-      text: '3ds Max Scene (.max)',
-      value: '.max',
-    },
-    {
-      text: 'Maya ASCII Scene (.ma)',
-      value: '.ma',
-    },
-    {
-      text: 'Maya Binary Scene (.mb)',
-      value: '.mb',
-    },
-    {
-      text: 'Blender Scene (.blend)',
-      value: '.blend',
-    },
-    {
-      text: 'Cinema 4D Scene (.c4d)',
-      value: '.c4d',
-    },
-    {
-      text: 'Houdini Scene (.hip)',
-      value: '.hip',
-    },
-    {
-      text: 'Houdini Scene (.hiplc)',
-      value: '.hiplc',
-    },
-    {
-      text: 'Houdini Scene (.hipnc)',
-      value: '.hipnc',
-    },
-    {
-      text: 'Modo Scene (.lxo)',
-      value: '.lxo',
-    },
-  ]
+  sceneTypes: any[] = Object.values(modelsExtensions)
 
   mounted(): void {
     if(this.$settingsGet('thumbnailSize') !== undefined) {
