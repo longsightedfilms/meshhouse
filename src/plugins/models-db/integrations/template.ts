@@ -11,9 +11,7 @@ export abstract class Integration {
     if (!fs.existsSync(this.directory)) {
       fs.mkdirSync(this.directory)
     }
-    this.db = new (sqlite3.cached.Database as any)(
-      path.resolve(`${this.directory}`, `${name}.sqlite3`)
-    )
+    this.db = sqlite3.cached.Database(path.resolve(`${this.directory}`, `${name}.sqlite3`))
   }
 
   /**
@@ -24,27 +22,22 @@ export abstract class Integration {
    * Run query without rows feedback
    * @param query - query string
    */
-  abstract runQuery(query: string): Promise<any>
+  abstract runQuery(query: string): Promise<boolean | Error>
   /**
    * Run query with rows feedback
    * @param query - query string
    */
-  abstract fetchQuery(query: string): Promise<any>
-  /**
-   * Get all items from remote site
-   * @param params - any parameters
-   */
-  abstract fetchItemsRemote(params: any): Promise<any>
+  abstract fetchQuery(query: string): Promise<Model[] | Error>
   /**
    * Get all items from database
    * @param query - query string
    */
-  abstract fetchItemsFromDatabase(query: string): Promise<any>
+  abstract fetchItemsFromDatabase(query: string): Promise<Model[] | Error>
   /**
    * Dynamic SQL query builder if user set filters
    * @param params - query object
    */
-  abstract dynamicQueryBuilder(params: any): string
+  abstract dynamicQueryBuilder(params: QueryParameters): string
   /**
    * Destructurize model object to SQL 'UPDATE' string
    * @param model - model object
@@ -54,5 +47,5 @@ export abstract class Integration {
    * Incremental reindex catalog (inserts only difference)
    * @param files - files array
    */
-  abstract async reindexCatalog(files: string[]): Promise<any>
+  abstract async reindexCatalog(files: string[]): Promise<DatabaseUpdateInformation>
 }

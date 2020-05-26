@@ -46,9 +46,11 @@ export default class LanguageSelector extends Vue {
     this.currentLang = this.$i18n.locale
   }
 
-  onChange(event: any): void {
-    this.$i18n.locale = event.target.value
-    this.$settingsSet('language', event.target.value)
+  onChange(event: Event): void {
+    const target = (event.target as HTMLInputElement)
+
+    this.$i18n.locale = target.value
+    this.$settingsSet('language', target.value)
   }
 }
 </script>

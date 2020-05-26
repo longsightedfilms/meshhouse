@@ -46,7 +46,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import Component from 'vue-class-component'
-import { ipcRenderer } from 'electron'
+import { ipcRenderer, IpcRendererEvent } from 'electron'
 
 @Component({})
 export default class UpdateAvailableModal extends Vue {
@@ -58,7 +58,7 @@ export default class UpdateAvailableModal extends Vue {
   }
 
   mounted(): void {
-    ipcRenderer.on('download-progress', (progress: any) => {
+    ipcRenderer.on('download-progress', (event: IpcRendererEvent, progress: ProgressInfo): void => {
       this.$store.commit('setUpdateDownload', true)
       this.progress = progress
     })

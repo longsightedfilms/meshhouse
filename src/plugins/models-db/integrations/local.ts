@@ -35,13 +35,16 @@ export default class Local extends Integration {
     const fieldsQuery = `PRAGMA table_info(models)`
     const fields = await this.fetchQuery(fieldsQuery)
 
-    const sizeFieldExists = fields.find((field: ModelsTablePragma) => field.name === 'size') !== undefined
-    if (!sizeFieldExists) {
-      await this.runQuery(`ALTER TABLE models ADD 'size' INTEGER`)
-      router.push('/updated-database')
-    }
+    if (fields instanceof Array) {
+      const sizeFieldExists = (fields as ModelsTablePragma[])
+        .find((field: ModelsTablePragma) => field.name === 'size') !== undefined
+      if (!sizeFieldExists) {
+        await this.runQuery(`ALTER TABLE models ADD 'size' INTEGER`)
+        router.push('/updated-database')
+      }
 
-    this.updateCategoriesTable()
+      this.updateCategoriesTable()
+    }
   }
 
   async updateCategoriesTable(): Promise<void> {
@@ -50,7 +53,7 @@ export default class Local extends Integration {
 
     // For some reason if running one query instead of multiple
     // not all changes are applied
-    if (fields.length === 0) {
+    if (fields instanceof Array && fields.length === 0) {
       let query = `CREATE TABLE 'categories'(
         "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         "parentId"	INTEGER NOT NULL,
@@ -94,7 +97,7 @@ export default class Local extends Integration {
     })
   }
 
-  fetchQuery(query: string): Promise<any | Error> {
+  fetchQuery(query: string): Promise<Model[] | Error> {
     return new Promise((resolve, reject): void => {
       this.db.all(query, (err, rows) => {
         if (err) {
@@ -106,12 +109,8 @@ export default class Local extends Integration {
     })
   }
 
-  fetchItemsRemote(params: any): Promise<boolean> {
-    return Promise.resolve(true)
-  }
-
-  fetchItemsFromDatabase(query?: string, category?: number): Promise<any> {
-    const params = (store as any).state.controls.filters
+  fetchItemsFromDatabase(query?: string, category?: number): Promise<Model[] | Error> {
+    const params = store.state.controls.filters
 
     if(category !== undefined) {
       params.where.category = category
@@ -136,9 +135,9 @@ export default class Local extends Integration {
     })
   }
 
-  fetchCategories(query?: string): Promise<any> {
+  fetchCategories(query?: string): Promise<Category[] | Error> {
     let dbQuery = ''
-    const category = (store as any).state.controls.filters.where.category
+    const category = store.state.controls.filters.where.category
 
     if(query === undefined) {
       dbQuery = `SELECT * FROM 'categories' WHERE parentId = ${category} ORDER BY name ASC`
@@ -205,49 +204,55 @@ export default class Local extends Integration {
     return query
   }
 
-  async reindexCatalog(files: string[]): Promise<any> {
+  async reindexCatalog(files: string[]): Promise<DatabaseUpdateInformation> {
     let query = `SELECT path FROM 'models'`
-    const result: Model[] = await this.fetchItemsFromDatabase(query)
+    const result = await this.fetchItemsFromDatabase(query)
 
-    const existsModelPaths: string[] = result.map((item: Model) => item.path)
-    const diffInsert: string[] = []
+    if (result instanceof Array) {
+      const existsModelPaths: string[] = result.map((item: Model) => item.path)
+      const diffInsert: string[] = []
 
-    files.forEach((file: string) => {
-      if (!existsModelPaths.includes(file)) {
-        const size = fs.statSync(file)['size']
-        diffInsert.push(
-          `(null, '${path.parse(file).name}', '${
-            path.parse(file).ext
-          }', '${file}', '', '${size}', '')`
-        )
+      files.forEach((file: string) => {
+        if (!existsModelPaths.includes(file)) {
+          const size = fs.statSync(file)['size']
+          diffInsert.push(
+            `(null, '${path.parse(file).name}', '${
+              path.parse(file).ext
+            }', '${file}', '', '${size}', '')`
+          )
+        }
+      })
+
+      existsModelPaths.forEach((file: string) => {
+        if (!files.includes(file)) {
+          const query = `DELETE FROM 'models' WHERE path='${file}'`
+          this.runQuery(query).then(() => {
+            return
+          })
+        }
+      })
+
+      if (diffInsert.length > 0) {
+        const query = `INSERT INTO 'models' VALUES ${diffInsert}`
+        await this.runQuery(query)
       }
-    })
-
-    existsModelPaths.forEach((file: string) => {
-      if (!files.includes(file)) {
-        const query = `DELETE FROM 'models' WHERE path='${file}'`
-        this.runQuery(query).then(() => {
-          return
-        })
-      }
-    })
-
-    if (diffInsert.length > 0) {
-      const query = `INSERT INTO 'models' VALUES ${diffInsert}`
-      await this.runQuery(query)
     }
 
     query = `SELECT * FROM 'models'`
+
     const items = await this.fetchItemsFromDatabase(query)
-    const infoUpdate = {
+    const infoUpdate: DatabaseUpdateInformation = {
       count: 0,
       totalSize: 0
     }
 
-    items.forEach((element: Model) => {
-      infoUpdate.count++
-      infoUpdate.totalSize += fs.statSync(element.path)['size']
-    })
+    if (items instanceof Array) {
+      items.forEach((element: Model) => {
+        infoUpdate.count++
+        infoUpdate.totalSize += fs.statSync(element.path)['size']
+      })
+    }
+
     return infoUpdate
   }
 }

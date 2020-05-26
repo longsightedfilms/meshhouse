@@ -48,6 +48,10 @@ import CategoryCard from '@/components/UI/Card/CategoryCard.vue'
   },
 })
 export default class CategoriesGrid extends Vue {
+  $refs!: {
+    categoryGrid: HTMLElement;
+  }
+
   get flipIcon(): object {
     const { categoriesVisible } = this.$store.state.controls
     return !categoriesVisible ? {
@@ -63,8 +67,8 @@ export default class CategoriesGrid extends Vue {
     this.$parent.$parent.$forceUpdate()
   }
 
-  onScroll(event: any): void {
-    (this.$refs.categoryGrid as HTMLElement).scrollLeft -= event.wheelDelta
+  onScroll(event: WheelEvent): void {
+    this.$refs.categoryGrid.scrollLeft += event.deltaY
     event.preventDefault()
   }
 

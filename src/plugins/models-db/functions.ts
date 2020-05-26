@@ -1,15 +1,15 @@
 import eventBus from '@/eventBus'
 import store from '@/store/main'
-import router from '@/router'
 import fs from 'fs'
 import path from 'path'
-import ElectronStore from 'electron-store'
 import Integrations from './integrations/main'
 import recursive from 'recursive-readdir'
 import chokidar from 'chokidar'
 
-const dcc: ElectronStore<any> = new ElectronStore({ name: 'dcc-config' })
-const databases: ElectronStore<any> = new ElectronStore({ name: 'databases' })
+import {
+  dcc,
+  databases
+} from './init'
 
 export const modelsExtensions: Extension = {
   '.3b': {
@@ -136,11 +136,11 @@ export function findDatabaseIndex(url: string): number {
   return databases.get('databases').findIndex((db: DatabaseItem) => db.url === url)
 }
 
-export function handleDatabases(database: DatabaseItem | string): PossibleIntegrations {
+export function handleDatabases(database: DatabaseItem | string): Integrations {
   let searchableDB
 
   if (typeof database === 'string') {
-    searchableDB =  databases.get('databases')[findDatabaseIndex(database)]
+    searchableDB = databases.get('databases')[findDatabaseIndex(database)]
   } else {
     searchableDB = database
   }
@@ -185,12 +185,12 @@ export async function updateDatabases(): Promise<boolean> {
   return Promise.resolve(true)
 }
 
-function handleUpdate(database: DatabaseItem, handleDB: any, db: any, index: number): Promise<void> {
+function handleUpdate(database: DatabaseItem, handleDB: Integrations, db: DatabaseItem[], index: number): Promise<void> {
   return recursive(database.path, [filterByModels])
     .then((files: string[]) => {
       return handleDB.reindexCatalog(files)
     })
-    .then((items: any) => {
+    .then((items: DatabaseUpdateInformation) => {
       db[index].count = items.count
       db[index].totalsize = items.totalSize
 
@@ -208,18 +208,21 @@ export async function watchDatabases(): Promise<boolean> {
 
 
     if (handleDB !== null) {
-      const paths = generateIncludePattern(database.path)
-      const watcher = chokidar.watch(paths)
+      const paths = generateIncludePattern(String(database.path))
+      const watcher = chokidar.watch(paths, {
+        ignoreInitial: true,
+        awaitWriteFinish: true
+      })
 
       watcher
-        .on('add', ((path: string) => {
+        .on('add', (() => {
           handleUpdate(database, handleDB, db, index)
             .then(() => {
               store.commit('setApplicationDatabases', db)
               eventBus.$emit('file-event', database)
             })
         }))
-        .on('unlink', ((path: string) => {
+        .on('unlink', (() => {
           handleUpdate(database, handleDB, db, index)
             .then(() => {
               store.commit('setApplicationDatabases', db)

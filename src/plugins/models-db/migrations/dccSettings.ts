@@ -1,5 +1,7 @@
+import ElectronStore from 'electron-store'
+
 export default {
-  '>=0.2.6': ((dcc: any): void => {
+  '>=0.2.6': ((dcc: ElectronStore<DCCSettings>): void => {
     dcc.set('threedCoat.useSystemAssociation', true)
     dcc.set('threedCoat.customPath', '')
     dcc.set('substancePainter.useSystemAssociation', true)

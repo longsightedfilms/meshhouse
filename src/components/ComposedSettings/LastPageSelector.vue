@@ -36,9 +36,11 @@ export default class LastPageSelector extends Vue {
     this.currentLastPage = this.$store.state.controls.lastPage
   }
 
-  onChange(event: any): void {
-    this.$store.commit('setCurrentLastPage', event.target.value)
-    this.$settingsSet('lastPage', event.target.value)
+  onChange(event: Event): void {
+    const target = (event.target as HTMLInputElement)
+
+    this.$store.commit('setCurrentLastPage', target.value)
+    this.$settingsSet('lastPage', target.value)
   }
 }
 </script>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 type ApplicationStore = {
   controls: ControlsState;
   db: DatabaseState;
@@ -13,12 +14,14 @@ type ControlsState = {
   lastPage: 'main' | 'lastCatalog';
   properties: ImageProperties;
   thumbnailSize: string | number;
-  theme: string;
+  theme: Theme;
   updates: {
     downloading: boolean;
     downloaded: boolean;
   };
 }
+
+type Theme = 'system' | 'light' | 'dark'
 
 type DatabaseState = {
   databases: DatabaseItem[];
@@ -30,7 +33,7 @@ type Filters = {
   order: string;
     where: {
       [key: string]: any;
-      category: string;
+      category: string | number;
       extension: string;
       name: string;
       path: string;
@@ -64,20 +67,27 @@ type DatabaseItem =  {
   color: string;
   icon?: string;
   url: string;
-  path: string | undefined;
+  path?: string | null;
   count?: string | number;
   localDB: boolean;
   totalsize?: string | number;
   disabled: boolean;
 }
 
+type DatabaseUpdateInformation = {
+  count: number;
+  totalSize: number;
+}
+
 // Common types
 
 type Extension = {
-  [properties: string]: {
-    title: string;
-    icon: string;
-  };
+  [properties: string]: ExtensionProperty;
+}
+
+type ExtensionProperty = {
+  title: string;
+  icon: string;
 }
 
 type Language = {
@@ -132,7 +142,7 @@ type Category = {
 // Integration types
 
 type QueryParameters = {
-  category: string;
+  category: number | string;
   extension: string;
   name: string;
   path: string;
@@ -152,4 +162,68 @@ type ModelsTablePragma = {
   category?: string | number;
   size: number;
   image: string;
+}
+
+// Settings
+
+type StoreSettings = {
+  [key: string]: any;
+}
+
+type MigrationSchema = {
+  __internal__: {
+		migrations: {
+			version: string;
+		};
+	};
+}
+
+type DCCSetting = {
+  useSystemAssociation: boolean;
+  customPath: string;
+}
+
+type Settings = {
+  language: string;
+  applicationWindow: {
+    width: number;
+    height: number;
+    lastOpened: string;
+  };
+  thumbnailSize: number;
+  databasesVisible: boolean;
+  theme: string;
+  lastPage: 'main' | 'lastCatalog' | string;
+  categoriesVisible: boolean;
+}
+
+type ApplicationSettings = {
+  [key: string]: Settings | any;
+}
+
+type DCCSettings = {
+  [key: string]: DCCSetting | MigrationSchema | any;
+}
+
+type DatabaseSettings = {
+  [key: string]: any;
+  databases: DatabaseItem[];
+}
+
+
+type VueColor = {
+  hsl: string;
+  hex: string;
+  hex8: string;
+  rgba: string;
+  hsv: string;
+  oldHue: string;
+  source: string;
+  a: string;
+}
+
+type VueToggleChangeEvent = {
+  value: boolean;
+  tag: string;
+  srcEvent: InputEvent;
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue, { VNode } from 'vue'
 
 declare global {

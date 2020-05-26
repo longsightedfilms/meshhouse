@@ -43,11 +43,11 @@ export default class App extends Vue {
 
   get applicationClass(): string {
     let bodyClass = 'application'
-    const systemThemeDark = (remote as any).nativeTheme.shouldUseDarkColors
+    const systemThemeDark = remote.nativeTheme.shouldUseDarkColors
     const theme = this.$settingsGet('theme') || 'light'
     let cssTheme = '';
 
-    (remote as any).nativeTheme.themeSource = this.$store.state.controls.theme
+    remote.nativeTheme.themeSource = this.$store.state.controls.theme
 
     if (theme !== 'system') {
       cssTheme = this.$store.state.controls.theme === 'light' ? 'theme--light' : 'theme--dark'
@@ -92,7 +92,6 @@ export default class App extends Vue {
     this.$store.commit('setTheme', theme)
     this.$store.commit('setCurrentLastPage', pageOpened)
 
-    await this.$initDatabases()
     await this.$watchDatabases()
 
     if (pageOpened === 'lastCatalog') {

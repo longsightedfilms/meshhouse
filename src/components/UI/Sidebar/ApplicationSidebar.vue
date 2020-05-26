@@ -72,7 +72,7 @@ export default class ApplicationSidebar extends Vue {
   computeProgressLength(idx: number): number {
     let totalSpace = 0
     const { databases } = this.$store.state.db
-    databases.forEach((db: any) => {
+    databases.forEach((db: DatabaseItem) => {
       totalSpace += Number(db.totalsize)
     })
     return 100 / (totalSpace / Number(databases[idx].totalsize))

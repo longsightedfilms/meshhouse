@@ -62,6 +62,7 @@ import ModelContext from '@/components/UI/Context/ModelContext.vue'
 import ModelCard from '@/components/UI/Card/ModelCard.vue'
 import Integrations from '@/plugins/models-db/integrations/main'
 import { findDatabaseIndex } from '@/plugins/models-db/functions'
+import { Route } from 'vue-router'
 
 @Component({
   components: {
@@ -72,7 +73,7 @@ import { findDatabaseIndex } from '@/plugins/models-db/functions'
     VueContext,
     ModelContext
   },
-  async beforeRouteEnter(to: any, from: any, next: any) {
+  async beforeRouteEnter(to: Route, from: Route, next: Function) {
     const db = new Integrations.local(to.params.database)
     const models = await db.fetchItemsFromDatabase(undefined, to.params.category)
 

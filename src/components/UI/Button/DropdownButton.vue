@@ -7,7 +7,7 @@
       v-on-clickaway="onClickedInside"
       class="button button--flat"
       :title="hint"
-      @click="toggleDropdown"
+      @click.prevent="toggleDropdown"
     >
       <slot name="button">
         Dropdown
@@ -52,15 +52,15 @@ export default class DropdownButton extends Vue {
     return `dropdown__menu ${this.toggled ? 'show' : ''}`
   }
 
-  toggleDropdown(event: any): void {
+  toggleDropdown(): void {
     this.toggled = !this.toggled
   }
 
-  onClickedOutside(event: any): void {
+  onClickedOutside(): void {
     this.toggled = false
   }
 
-  onClickedInside(event: any): void {
+  onClickedInside(): void {
     if (this.$props.closeByClick === true) {
       this.toggled = false
     }

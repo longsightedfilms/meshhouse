@@ -42,7 +42,7 @@ import { handleDatabases, findDatabaseIndex, modelsExtensions } from '@/plugins/
 })
 export default class LocalFilters extends Vue {
   scene = 'none'
-  sceneTypes: any[] = Object.values(modelsExtensions)
+  sceneTypes: ExtensionProperty[] = Object.values(modelsExtensions)
 
   mounted(): void {
     if(this.$settingsGet('thumbnailSize') !== undefined) {
@@ -50,10 +50,10 @@ export default class LocalFilters extends Vue {
     }
   }
 
-  handleDccSelect(event: any): void {
+  handleDccSelect(event: Event): void {
     this.$store.commit('setFilter', {
       field: 'extension',
-      value: event.target.value
+      value: (event.target as HTMLInputElement).value
     })
     this.setFilters()
   }

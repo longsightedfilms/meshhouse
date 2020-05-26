@@ -1,4 +1,4 @@
-export const databaseDefault = [
+export default [
   {
     title: "MeshHouse",
     color: "#32a5e3",

@@ -139,7 +139,7 @@ import Vue from 'vue'
 import Component from 'vue-class-component'
 import { remote } from 'electron'
 import path from 'path'
-import { Chrome as ColorPicker } from 'vue-color'
+import ColorPicker from 'vue-color/src/components/Chrome.vue'
 import { ValidationObserver, validate } from 'vee-validate'
 import { colorContrast } from '@/plugins/models-db/functions'
 
@@ -150,6 +150,12 @@ import { colorContrast } from '@/plugins/models-db/functions'
   }
 })
 export default class AddNewCatalogModal extends Vue {
+  $refs!: {
+    form: InstanceType<typeof ValidationObserver>;
+    image: HTMLInputElement;
+    imageProvider: InstanceType<typeof ValidationObserver>;
+  }
+
   title = ''
   color = '#e66465'
   image = ''
@@ -193,18 +199,19 @@ export default class AddNewCatalogModal extends Vue {
   }
 
   handleImageInputClick(): void {
-    (this.$refs.image as HTMLInputElement).click()
+    this.$refs.image.click()
   }
 
-  handleUpdateColor(color: any): void {
+  handleUpdateColor(color: VueColor): void {
     this.color = color.hex
   }
 
-  async handleImageChange(event: any): Promise<void> {
-    const valid = await (this.$refs.imageProvider as InstanceType<typeof ValidationObserver>).validate(event)
+  async handleImageChange(event: Event): Promise<void> {
+    const valid = await this.$refs.imageProvider.validate()
     if (valid) {
-      const file = event.target.files[0]
-      this.image = file !== undefined ? event.target.files[0].path : ''
+      const target = event.target as HTMLInputElement
+      const file = (target.files as FileList)[0]
+      this.image = file !== undefined ? file.path : ''
       this.preview = ''
 
       // Handle preview image
@@ -222,7 +229,7 @@ export default class AddNewCatalogModal extends Vue {
   }
 
   submitNewCatalog(): void {
-    (this.$refs.form as InstanceType<typeof ValidationObserver>).validate()
+    this.$refs.form.validate()
       .then(async (success: boolean) => {
         if (success) {
           const catalog = {

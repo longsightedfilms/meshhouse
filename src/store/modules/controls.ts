@@ -54,7 +54,7 @@ export default {
     setProperties(state: ControlsState, payload: ImageProperties): void {
       state.properties = payload
     },
-    setTheme(state: ControlsState, payload: string): void {
+    setTheme(state: ControlsState, payload: Theme): void {
       state.theme = payload
     },
     setUpdateDownload(state: ControlsState, payload: boolean): void {

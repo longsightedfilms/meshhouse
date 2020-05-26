@@ -26,7 +26,7 @@
               <button
                 v-if="dccForm.adsk3dsmax.useSystemAssociation === false"
                 class="input input--file"
-                @click.prevent="(event) => handleDirectoryClick(event, 'adsk3dsmax')"
+                @click.prevent="() => handleDirectoryClick('adsk3dsmax')"
               >
                 <span v-if="dccForm.adsk3dsmax.customPath !== ''">
                   {{ dccForm.adsk3dsmax.customPath }}
@@ -65,7 +65,7 @@
               <button
                 v-if="dccForm.adskMaya.useSystemAssociation === false"
                 class="input input--file"
-                @click.prevent="(event) => handleDirectoryClick(event, 'adskMaya')"
+                @click.prevent="() => handleDirectoryClick('adskMaya')"
               >
                 <span v-if="dccForm.adskMaya.customPath !== ''">
                   {{ dccForm.adskMaya.customPath }}
@@ -104,7 +104,7 @@
               <button
                 v-if="dccForm.blender.useSystemAssociation === false"
                 class="input input--file"
-                @click.prevent="(event) => handleDirectoryClick(event, 'blender')"
+                @click.prevent="() => handleDirectoryClick('blender')"
               >
                 <span v-if="dccForm.blender.customPath !== ''">
                   {{ dccForm.blender.customPath }}
@@ -143,7 +143,7 @@
               <button
                 v-if="dccForm.cinema4d.useSystemAssociation === false"
                 class="input input--file"
-                @click.prevent="(event) => handleDirectoryClick(event, 'cinema4d')"
+                @click.prevent="() => handleDirectoryClick('cinema4d')"
               >
                 <span v-if="dccForm.cinema4d.customPath !== ''">
                   {{ dccForm.cinema4d.customPath }}
@@ -182,7 +182,7 @@
               <button
                 v-if="dccForm.houdini.useSystemAssociation === false"
                 class="input input--file"
-                @click.prevent="(event) => handleDirectoryClick(event, 'houdini')"
+                @click.prevent="() => handleDirectoryClick('houdini')"
               >
                 <span v-if="dccForm.houdini.customPath !== ''">
                   {{ dccForm.houdini.customPath }}
@@ -221,7 +221,7 @@
               <button
                 v-if="dccForm.modo.useSystemAssociation === false"
                 class="input input--file"
-                @click.prevent="(event) => handleDirectoryClick(event, 'modo')"
+                @click.prevent="() => handleDirectoryClick('modo')"
               >
                 <span v-if="dccForm.modo.customPath !== ''">
                   {{ dccForm.modo.customPath }}
@@ -254,54 +254,30 @@ import { ToggleButton } from 'vue-js-toggle-button'
 })
 
 export default class ProgramSettings extends Vue {
-  dccForm: object = {
-    adsk3dsmax: {
-      useSystemAssociation: true,
-      customPath: '',
-    },
-    adskMaya: {
-      useSystemAssociation: true,
-      customPath: '',
-    },
-    blender: {
-      useSystemAssociation: true,
-      customPath: '',
-    },
-    cinema4d: {
-      useSystemAssociation: true,
-      customPath: '',
-    },
-    houdini: {
-      useSystemAssociation: true,
-      customPath: '',
-    },
-    modo: {
-      useSystemAssociation: true,
-      customPath: '',
-    },
+  $refs!: {
+    [key: string]: HTMLInputElement;
   }
 
-  mounted(): void {
-    this.dccForm = this.$dccGetConfig()
-  }
+  dccForm: DCCSettings = this.$dccGetConfig()
 
   saveSettingToFile(): void {
     this.$dccSetConfig(this.dccForm)
     this.$emit('close')
   }
 
-  handleSliderChange(event: any, dcc: string): void {
-    (this as any).dccForm[dcc].useSystemAssociation = event.value
+  handleSliderChange(event: VueToggleChangeEvent, dcc: string): void {
+    this.dccForm[dcc].useSystemAssociation = event.value
     this.$dccSetConfig(this.dccForm)
   }
 
-  handleDirectoryChange(event: any, dcc: string): void {
-    const file = event.target.files[0];
-    (this as any).dccForm[dcc].customPath = file !== undefined ? file.path : ''
+  handleDirectoryChange(event: Event, dcc: string): void {
+    const target = event.target as HTMLInputElement
+    const file = (target.files as FileList)[0]
+    this.dccForm[dcc].customPath = file !== undefined ? file.path : ''
   }
 
-  handleDirectoryClick(event: any, dcc: string): void {
-    (this.$refs[dcc] as HTMLInputElement).click()
+  handleDirectoryClick(dcc: string): void {
+    this.$refs[dcc].click()
   }
 }
 </script>

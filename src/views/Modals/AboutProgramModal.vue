@@ -68,9 +68,10 @@ export default class AboutProgramModal extends Vue {
     return this.$t('modals.about.textContributors') + contrib
   }
 
-  openLink(event: any): void {
+  openLink(event: Event): void {
+    const target = (event.target as HTMLAnchorElement)
+    shell.openExternal(target.href)
     event.preventDefault()
-    shell.openExternal(event.target.href)
   }
 }
 </script>

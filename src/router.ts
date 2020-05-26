@@ -9,19 +9,19 @@ const router = new Router({
     {
       path: '/',
       name: 'Home',
-      component: (): Promise<any> =>
+      component: (): Promise<typeof import('*.vue')> =>
         import(/* webpackChunkName: "Home" */ './views/Home.vue'),
     },
     {
       path: '/updated-database',
       name: 'Updated',
-      component: (): Promise<any> =>
+      component: (): Promise<typeof import('*.vue')> =>
         import(/* webpackChunkName: "Updated" */ './views/Updated.vue'),
     },
     {
       path: '/db/local/:database/:category?',
       name: 'LocalDatabase',
-      component: (): Promise<any> =>
+      component: (): Promise<typeof import('*.vue')> =>
         import(
           /* webpackChunkName: "LocalDatabase" */ './views/Catalog/Local.vue'
         ),
@@ -32,7 +32,7 @@ const router = new Router({
     {
       path: '/db/remote/:database/:category?',
       name: 'RemoteDatabase',
-      component: (): Promise<any> =>
+      component: (): Promise<typeof import('*.vue')> =>
         import(
           /* webpackChunkName: "LocalDatabase" */ './views/Catalog/Remote.vue'
         ),

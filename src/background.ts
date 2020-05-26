@@ -3,13 +3,9 @@ declare const __static: string
 import path from 'path'
 import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
-import ElectronStore from 'electron-store'
 import { autoUpdater } from 'electron-updater'
+import { settings } from './plugins/models-db/init'
 const isDevelopment = process.env.NODE_ENV !== 'production'
-
-const settings: ElectronStore<any> = new ElectronStore({
-  name: 'settings',
-})
 
 const applicationOptions = {
   width: settings.get('applicationWindow.width') || 1024,
@@ -29,7 +25,7 @@ const applicationOptions = {
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let appWin: any = null
+let appWin: BrowserWindow | null = null
 let createdAppProtocol = false
 
 // Scheme must be registered before the app is ready
@@ -60,8 +56,8 @@ function createWindow(
   }
 
   appWin.on('close', () => {
-    settings.set('applicationWindow.width', appWin.getBounds().width)
-    settings.set('applicationWindow.height', appWin.getBounds().height)
+    settings.set('applicationWindow.width', appWin?.getBounds().width ?? 1024)
+    settings.set('applicationWindow.height', appWin?.getBounds().height ?? 768)
   })
 
   appWin.on('closed', () => {
@@ -69,7 +65,7 @@ function createWindow(
   })
 
   appWin.once('ready-to-show', () => {
-    appWin.show()
+    appWin?.show()
   })
   return appWin
 }
@@ -123,15 +119,15 @@ app.allowRendererProcessReuse = false
 autoUpdater.autoDownload = false
 
 autoUpdater.on('update-available', (info) => {
-  appWin.webContents.send('update-available', info)
+  appWin?.webContents.send('update-available', info)
 })
 
 autoUpdater.on('update-not-available', (info) => {
-  appWin.webContents.send('update-not-available')
+  appWin?.webContents.send('update-not-available')
 })
 
 autoUpdater.on('download-progress', (progressObj: ProgressInfo) => {
-  appWin.webContents.send('download-progress', progressObj)
+  appWin?.webContents.send('download-progress', progressObj)
 })
 
 ipcMain.on('check-update', () => {

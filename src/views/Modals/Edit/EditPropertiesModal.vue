@@ -173,8 +173,9 @@ export default class EditPropertiesModal extends Vue {
       : image
   }
 
-  handleFileChange(event: any): void {
-    const file = event.target.files[0]
+  handleFileChange(event: Event): void {
+    const target = (event.target as HTMLInputElement)
+    const file = (target.files as FileList)[0]
     this.uploadImage = file != undefined ? file.path : ''
     this.properties.imageChanged = file != undefined
   }

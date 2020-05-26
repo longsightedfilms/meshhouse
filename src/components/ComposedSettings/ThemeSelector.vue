@@ -39,10 +39,13 @@ export default class ThemeSelector extends Vue {
     this.currentTheme = this.$store.state.controls.theme
   }
 
-  onChange(event: any): void {
-    (remote as any).nativeTheme.themeSource = event.target.value
-    this.$store.commit('setTheme', event.target.value)
-    this.$settingsSet('theme', event.target.value)
+  onChange(event: Event): void {
+    const target = (event.target as HTMLInputElement);
+    const theme = (target.value as Theme)
+
+    remote.nativeTheme.themeSource = theme
+    this.$store.commit('setTheme', theme)
+    this.$settingsSet('theme', theme)
   }
 }
 </script>

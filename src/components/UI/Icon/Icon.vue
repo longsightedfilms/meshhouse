@@ -26,12 +26,12 @@ import { remote } from 'electron'
   }
 })
 export default class Icon extends Vue {
-  useInvertedIcon = (remote as any).nativeTheme.shouldUseDarkColors === true
+  useInvertedIcon = remote.nativeTheme.shouldUseDarkColors === true
     || this.$store.state.controls.theme === 'dark'
 
   @Watch('$store.state.controls.theme')
-  onThemeChanged(val: any): void {
-    this.useInvertedIcon = (remote as any).nativeTheme.shouldUseDarkColors === true
+  onThemeChanged(val: string): void {
+    this.useInvertedIcon = remote.nativeTheme.shouldUseDarkColors === true
     || val === 'dark'
   }
 

@@ -6,12 +6,12 @@ import { spawn } from 'child_process'
 import { transliterate as tr, slugify } from 'transliteration'
 import store from '@/store/main'
 import Integration from '@/plugins/models-db/integrations/main'
-// Initializing storages
 import recursive from 'recursive-readdir'
-import ElectronStore from 'electron-store'
-const settings: ElectronStore<any> = new ElectronStore({ name: 'settings' })
-const databases: ElectronStore<any> = new ElectronStore({ name: 'databases' })
-const dcc: ElectronStore<any> = new ElectronStore({ name: 'dcc-config' })
+import {
+  settings,
+  databases,
+  dcc
+} from './init'
 
 import {
   getParameterByExtension,
@@ -19,7 +19,6 @@ import {
   modelsExtensions,
   formatBytes,
   findDatabaseIndex,
-  updateDatabases,
   watchDatabases
 } from './functions'
 
@@ -64,7 +63,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
   }
 
   Vue.prototype.$forceReloadImage = function(image: string): string {
-    return image !== '' ? image + '?v=' + (store as any).state.controls.imageRandomizer : image
+    return image !== '' ? image + '?v=' + store.state.controls.imageRandomizer : image
   }
 
   Vue.prototype.$addDatabase = async function(db: DatabaseItem): Promise<void> {
@@ -112,7 +111,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
 
     return this.$indexFolderRecursive(db.path)
       .then((files: string[]) => {
-      return database.reindexCatalog(files).then((items: any) => {
+      return database.reindexCatalog(files).then((items: DatabaseUpdateInformation) => {
           const list = databases.get('databases')
           const dbIndex = findDatabaseIndex(db.url)
           if (list) {
@@ -144,17 +143,13 @@ export function ModelsDB(Vue: typeof _Vue): void {
     setting: string,
     value: string
   ): Promise<boolean> {
-    databases.set('databases.' + database + '.' + setting, value)
+    databases.set(`databases.${database}.${setting}`, value)
     store.commit('setApplicationDatabases', databases.get('databases'))
     return Promise.resolve(true)
   }
 
   Vue.prototype.$deleteDatabase = function(database: string): Promise<boolean> {
     return Promise.resolve(true)
-  }
-
-  Vue.prototype.$initDatabases = async function(): Promise<void> {
-    await updateDatabases()
   }
 
   Vue.prototype.$watchDatabases = async function(): Promise<void> {
