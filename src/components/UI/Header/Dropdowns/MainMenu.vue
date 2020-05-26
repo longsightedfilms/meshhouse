@@ -36,15 +36,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Fragment } from 'vue-fragment'
-import SettingsModal from '@/views/Modals/SettingsModal.vue'
-import AboutProgramModal from '@/views/Modals/AboutProgramModal.vue'
-import UpdateAvailableModal from '@/views/Modals/Updater/UpdateAvailableModal.vue'
-import UpdateNotAvailableModal from '@/views/Modals/Updater/UpdateNotAvailableModal.vue'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { Fragment } from 'vue-fragment';
+import SettingsModal from '@/views/Modals/SettingsModal.vue';
+import AboutProgramModal from '@/views/Modals/AboutProgramModal.vue';
+import UpdateAvailableModal from '@/views/Modals/Updater/UpdateAvailableModal.vue';
+import UpdateNotAvailableModal from '@/views/Modals/Updater/UpdateNotAvailableModal.vue';
 
-import { shell, ipcRenderer } from 'electron'
+import { shell, ipcRenderer } from 'electron';
 
 @Component({
   components: {
@@ -55,25 +55,25 @@ export default class MainMenuDropdown extends Vue {
 
   mounted(): void {
     ipcRenderer.on('update-available', () => {
-      ipcRenderer.removeAllListeners('update-available')
+      ipcRenderer.removeAllListeners('update-available');
       this.$modal.show(UpdateAvailableModal, {}, {
         clickToClose: true,
         height: 'auto'
-      })
-    })
+      });
+    });
 
     ipcRenderer.on('update-not-available', () => {
-      ipcRenderer.removeAllListeners('update-not-available')
+      ipcRenderer.removeAllListeners('update-not-available');
       this.$modal.show(UpdateNotAvailableModal, {}, {
         clickToClose: true,
         height: 'auto'
-      })
-    })
+      });
+    });
   }
 
   destroyed(): void {
-    ipcRenderer.removeAllListeners('update-available')
-    ipcRenderer.removeAllListeners('update-not-available')
+    ipcRenderer.removeAllListeners('update-available');
+    ipcRenderer.removeAllListeners('update-not-available');
   }
 
   showSettings(): void {
@@ -82,27 +82,27 @@ export default class MainMenuDropdown extends Vue {
       clickToClose: true,
       width: '1024px',
       height: 'auto',
-    })
+    });
   }
 
   showAbout(): void {
     this.$modal.show(AboutProgramModal, {}, {
       clickToClose: true,
       height: 'auto'
-    })
+    });
   }
 
   openHelp(): void {
-    shell.openExternal('https://github.com/longsightedfilms/meshhouse/wiki')
+    shell.openExternal('https://github.com/longsightedfilms/meshhouse/wiki');
   }
 
   openReleaseNotes(): void {
-    const version = process.env.VUE_APP_VERSION !== undefined ? process.env.VUE_APP_VERSION : '0.0.0'
-    shell.openExternal(`https://github.com/longsightedfilms/meshhouse/releases/tag/v${version}`)
+    const version = process.env.VUE_APP_VERSION !== undefined ? process.env.VUE_APP_VERSION : '0.0.0';
+    shell.openExternal(`https://github.com/longsightedfilms/meshhouse/releases/tag/v${version}`);
   }
 
   checkUpdates(): void {
-    ipcRenderer.send('check-update')
+    ipcRenderer.send('check-update');
   }
 }
 </script>

@@ -13,8 +13,8 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+import Vue from 'vue';
+import Component from 'vue-class-component';
 
 @Component({
   props: {
@@ -34,11 +34,11 @@ export default class ModelImage extends Vue {
   retrieveImage(src: string): string {
     return src !== ''
       ? this.$forceReloadImage(src)
-      : `/assets/files/${this.$props.extension.substr(1)}.svg`
+      : `/assets/files/${this.$props.extension.substr(1)}.svg`;
   }
 
   imageClass(src: string): string {
-    return `image ${src === '' ? 'image--icon' : ''}`
+    return `image ${src === '' ? 'image--icon' : ''}`;
   }
 }
 </script>

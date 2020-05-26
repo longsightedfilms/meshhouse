@@ -43,10 +43,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import Integrations from '@/plugins/models-db/integrations/main'
-import { ValidationObserver } from 'vee-validate'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import Integrations from '@/plugins/models-db/integrations/main';
+import { ValidationObserver } from 'vee-validate';
 
 @Component({
   components: {
@@ -57,31 +57,31 @@ export default class EditCategoryModal extends Vue {
   title = ''
 
   mounted(): void {
-    this.title = this.$store.state.controls.properties.name
+    this.title = this.$store.state.controls.properties.name;
   }
 
   onSubmit(): void {
     (this.$refs.form as InstanceType<typeof ValidationObserver>).validate()
-      .then(async (success: boolean) => {
+      .then(async(success: boolean) => {
         if (success) {
-          const db = new Integrations.local(this.$route.params.database)
-          const { category } = this.$route.params
-          const slug = this.$stringToSlug(this.title)
-          const id = this.$store.state.controls.properties.id
+          const db = new Integrations.local(this.$route.params.database);
+          const { category } = this.$route.params;
+          const slug = this.$stringToSlug(this.title);
+          const id = this.$store.state.controls.properties.id;
 
           const query = `UPDATE categories
           SET slug = '${slug}', name = '${this.title}'
-          WHERE id = ${id}`
+          WHERE id = ${id}`;
 
-          const result = await db.runQuery(query)
+          const result = await db.runQuery(query);
 
           if (result) {
-            const categories = await db.fetchCategories()
-            this.$store.commit('setCategories', categories)
-            this.$emit('close')
+            const categories = await db.fetchCategories();
+            this.$store.commit('setCategories', categories);
+            this.$emit('close');
           }
         }
-      })
+      });
   }
 }
 </script>

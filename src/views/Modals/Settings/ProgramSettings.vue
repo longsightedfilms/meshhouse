@@ -243,9 +243,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { ToggleButton } from 'vue-js-toggle-button'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { ToggleButton } from 'vue-js-toggle-button';
 
 @Component({
   components: {
@@ -261,23 +261,23 @@ export default class ProgramSettings extends Vue {
   dccForm: DCCSettings = this.$dccGetConfig()
 
   saveSettingToFile(): void {
-    this.$dccSetConfig(this.dccForm)
-    this.$emit('close')
+    this.$dccSetConfig(this.dccForm);
+    this.$emit('close');
   }
 
   handleSliderChange(event: VueToggleChangeEvent, dcc: string): void {
-    this.dccForm[dcc].useSystemAssociation = event.value
-    this.$dccSetConfig(this.dccForm)
+    this.dccForm[dcc].useSystemAssociation = event.value;
+    this.$dccSetConfig(this.dccForm);
   }
 
   handleDirectoryChange(event: Event, dcc: string): void {
-    const target = event.target as HTMLInputElement
-    const file = (target.files as FileList)[0]
-    this.dccForm[dcc].customPath = file !== undefined ? file.path : ''
+    const target = event.target as HTMLInputElement;
+    const file = (target.files as FileList)[0];
+    this.dccForm[dcc].customPath = file !== undefined ? file.path : '';
   }
 
   handleDirectoryClick(dcc: string): void {
-    this.$refs[dcc].click()
+    this.$refs[dcc].click();
   }
 }
 </script>

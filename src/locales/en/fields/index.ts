@@ -3,4 +3,4 @@ export default {
   catalogPath: '@:modals.addCatalog.labels.folder',
   categoryTitle: 'Category title',
   modelTitle: '@:modals.properties.title'
-}
+};

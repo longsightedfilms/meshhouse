@@ -1,12 +1,12 @@
-import fs from 'fs'
-import path from 'path'
-import store from '@/store/main'
-import { Integration } from './template'
-import router from '@/router'
+import fs from 'fs';
+import path from 'path';
+import store from '@/store/main';
+import { Integration } from './template';
+import router from '@/router';
 
 export default class Local extends Integration {
   constructor(name: string) {
-    super(name)
+    super(name);
   }
 
   async initializeLocalDatabase(): Promise<boolean> {
@@ -18,38 +18,38 @@ export default class Local extends Integration {
       "category"	INTEGER,
       "size" INTEGER,
       "image"	TEXT
-    )`
-    await this.runQuery(query)
+    )`;
+    await this.runQuery(query);
     query = `CREATE TABLE 'categories'(
       "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
       "parentId"	INTEGER NOT NULL,
       "slug"	TEXT NOT NULL,
       "name"	TEXT NOT NULL
-    )`
-    await this.runQuery(query)
+    )`;
+    await this.runQuery(query);
 
-    return Promise.resolve(true)
+    return Promise.resolve(true);
   }
 
   async updateDatabaseVersion(): Promise<void> {
-    const fieldsQuery = `PRAGMA table_info(models)`
-    const fields = await this.fetchQuery(fieldsQuery)
+    const fieldsQuery = 'PRAGMA table_info(models)';
+    const fields = await this.fetchQuery(fieldsQuery);
 
     if (fields instanceof Array) {
       const sizeFieldExists = (fields as ModelsTablePragma[])
-        .find((field: ModelsTablePragma) => field.name === 'size') !== undefined
+        .find((field: ModelsTablePragma) => field.name === 'size') !== undefined;
       if (!sizeFieldExists) {
-        await this.runQuery(`ALTER TABLE models ADD 'size' INTEGER`)
-        router.push('/updated-database')
+        await this.runQuery('ALTER TABLE models ADD \'size\' INTEGER');
+        router.push('/updated-database');
       }
 
-      this.updateCategoriesTable()
+      this.updateCategoriesTable();
     }
   }
 
   async updateCategoriesTable(): Promise<void> {
-    const query = `PRAGMA table_info(categories)`
-    const fields = await this.fetchQuery(query)
+    const query = 'PRAGMA table_info(categories)';
+    const fields = await this.fetchQuery(query);
 
     // For some reason if running one query instead of multiple
     // not all changes are applied
@@ -59,12 +59,12 @@ export default class Local extends Integration {
         "parentId"	INTEGER NOT NULL,
         "slug"	TEXT NOT NULL,
         "name"	TEXT NOT NULL
-      );`
-      await this.runQuery(query)
-      query = `UPDATE 'models' SET category = NULL`
-      await this.runQuery(query)
-      query = `ALTER TABLE models RENAME to tmp`
-      await this.runQuery(query)
+      );`;
+      await this.runQuery(query);
+      query = 'UPDATE \'models\' SET category = NULL';
+      await this.runQuery(query);
+      query = 'ALTER TABLE models RENAME to tmp';
+      await this.runQuery(query);
       query = `CREATE TABLE 'models'(
         "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
         "name"	TEXT NOT NULL,
@@ -73,15 +73,15 @@ export default class Local extends Integration {
         "category"	INTEGER,
         "size" INTEGER,
         "image"	TEXT
-      )`
-      await this.runQuery(query)
+      )`;
+      await this.runQuery(query);
       query = `INSERT INTO models(name, extension, path, category, size, image)
       SELECT name, extension, path, category, size, image
-      FROM 'tmp'`
-      await this.runQuery(query)
-      query = `DROP TABLE 'tmp'`
-      await this.runQuery(query)
-      router.push('/updated-database')
+      FROM 'tmp'`;
+      await this.runQuery(query);
+      query = 'DROP TABLE \'tmp\'';
+      await this.runQuery(query);
+      router.push('/updated-database');
     }
   }
 
@@ -89,77 +89,77 @@ export default class Local extends Integration {
     return new Promise((resolve, reject): void => {
       this.db.run(query, (err: Error) => {
         if (err) {
-          reject(err)
+          reject(err);
         } else {
-          resolve(true)
+          resolve(true);
         }
-      })
-    })
+      });
+    });
   }
 
   fetchQuery(query: string): Promise<Model[] | Error> {
     return new Promise((resolve, reject): void => {
       this.db.all(query, (err, rows) => {
         if (err) {
-          reject(err)
+          reject(err);
         } else {
-          resolve(rows)
+          resolve(rows);
         }
-      })
-    })
+      });
+    });
   }
 
   fetchItemsFromDatabase(query?: string, category?: number): Promise<Model[] | Error> {
-    const params = store.state.controls.filters
+    const params = store.state.controls.filters;
 
     if(category !== undefined) {
-      params.where.category = category
+      params.where.category = category;
     }
 
-    let dbQuery = query
+    let dbQuery = query;
 
     if (dbQuery === undefined) {
-      dbQuery = `SELECT * FROM 'models'`
-      dbQuery += this.dynamicQueryBuilder(params.where)
-      dbQuery += ` ORDER BY name COLLATE NOCASE ${params.order}`
+      dbQuery = 'SELECT * FROM \'models\'';
+      dbQuery += this.dynamicQueryBuilder(params.where);
+      dbQuery += ` ORDER BY name COLLATE NOCASE ${params.order}`;
     }
 
     return new Promise((resolve, reject): void => {
       this.db.all(dbQuery as string, (err, rows) => {
         if (err) {
-          reject(err)
+          reject(err);
         } else {
-          resolve(rows)
+          resolve(rows);
         }
-      })
-    })
+      });
+    });
   }
 
   fetchCategories(query?: string): Promise<Category[] | Error> {
-    let dbQuery = ''
-    const category = store.state.controls.filters.where.category
+    let dbQuery = '';
+    const category = store.state.controls.filters.where.category;
 
     if(query === undefined) {
-      dbQuery = `SELECT * FROM 'categories' WHERE parentId = ${category} ORDER BY name ASC`
+      dbQuery = `SELECT * FROM 'categories' WHERE parentId = ${category} ORDER BY name ASC`;
     } else {
-      dbQuery = query
+      dbQuery = query;
     }
 
     return new Promise((resolve, reject): void => {
       this.db.all(dbQuery, (err, rows) => {
         if (err) {
-          reject(err)
+          reject(err);
         } else {
-          resolve(rows)
+          resolve(rows);
         }
-      })
-    })
+      });
+    });
   }
 
   dynamicQueryBuilder(params: QueryParameters): string {
-    let query = ''
-    let clause = ''
-    const paramsEmpty: boolean[] = []
+    let query = '';
+    let clause = '';
+    const paramsEmpty: boolean[] = [];
 
     for (const [key, value] of Object.entries<string | number>(params)) {
       if (
@@ -170,89 +170,89 @@ export default class Local extends Integration {
         value !== -1 &&
         value !== undefined
       ) {
-        paramsEmpty.push(true)
+        paramsEmpty.push(true);
         if (key === 'name') {
-          clause += `${key} LIKE '%${value}%'`
+          clause += `${key} LIKE '%${value}%'`;
         } else if (key === 'category') {
-          clause += `${key} = ${value}`
+          clause += `${key} = ${value}`;
         } else {
-          clause += `${key} = '${value}'`
+          clause += `${key} = '${value}'`;
         }
-        clause += ` AND `
+        clause += ' AND ';
       } else {
-        paramsEmpty.push(false)
+        paramsEmpty.push(false);
       }
     }
-    clause = clause.substr(0, clause.length - 5)
+    clause = clause.substr(0, clause.length - 5);
     if (paramsEmpty.includes(true) !== false) {
-      query = ' WHERE ' + clause
+      query = ' WHERE ' + clause;
     }
-    return query
+    return query;
   }
 
   updateBuilder(model: Model): string {
-    let query = ''
+    let query = '';
 
     for (const [key, value] of Object.entries(model)) {
       if (key !== 'id') {
-        query += `${key} = '${value}'`
-        query += ', '
+        query += `${key} = '${value}'`;
+        query += ', ';
       }
     }
 
-    query = query.substr(0, query.length - 2)
-    return query
+    query = query.substr(0, query.length - 2);
+    return query;
   }
 
   async reindexCatalog(files: string[]): Promise<DatabaseUpdateInformation> {
-    let query = `SELECT path FROM 'models'`
-    const result = await this.fetchItemsFromDatabase(query)
+    let query = 'SELECT path FROM \'models\'';
+    const result = await this.fetchItemsFromDatabase(query);
 
     if (result instanceof Array) {
-      const existsModelPaths: string[] = result.map((item: Model) => item.path)
-      const diffInsert: string[] = []
+      const existsModelPaths: string[] = result.map((item: Model) => item.path);
+      const diffInsert: string[] = [];
 
       files.forEach((file: string) => {
         if (!existsModelPaths.includes(file)) {
-          const size = fs.statSync(file)['size']
+          const size = fs.statSync(file)['size'];
           diffInsert.push(
             `(null, '${path.parse(file).name}', '${
               path.parse(file).ext
             }', '${file}', '', '${size}', '')`
-          )
+          );
         }
-      })
+      });
 
       existsModelPaths.forEach((file: string) => {
         if (!files.includes(file)) {
-          const query = `DELETE FROM 'models' WHERE path='${file}'`
+          const query = `DELETE FROM 'models' WHERE path='${file}'`;
           this.runQuery(query).then(() => {
-            return
-          })
+            return;
+          });
         }
-      })
+      });
 
       if (diffInsert.length > 0) {
-        const query = `INSERT INTO 'models' VALUES ${diffInsert}`
-        await this.runQuery(query)
+        const query = `INSERT INTO 'models' VALUES ${diffInsert}`;
+        await this.runQuery(query);
       }
     }
 
-    query = `SELECT * FROM 'models'`
+    query = 'SELECT * FROM \'models\'';
 
-    const items = await this.fetchItemsFromDatabase(query)
+    const items = await this.fetchItemsFromDatabase(query);
     const infoUpdate: DatabaseUpdateInformation = {
       count: 0,
       totalSize: 0
-    }
+    };
 
     if (items instanceof Array) {
       items.forEach((element: Model) => {
-        infoUpdate.count++
-        infoUpdate.totalSize += fs.statSync(element.path)['size']
-      })
+        infoUpdate.count++;
+        infoUpdate.totalSize += fs.statSync(element.path)['size'];
+      });
     }
 
-    return infoUpdate
+    return infoUpdate;
   }
 }

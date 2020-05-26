@@ -1,7 +1,7 @@
 export default {
   tabs: {
     common: {
-      title: "Основные настройки",
+      title: 'Основные настройки',
       content: {
         language: 'Язык',
         theme: {
@@ -22,7 +22,7 @@ export default {
       }
     },
     dcc: {
-      title: "Настройка запуска программ",
+      title: 'Настройка запуска программ',
       content: {
         currentPath: 'Текущий путь к программе: ',
         useSystemAssociation: 'Использовать системную ассоциацию',
@@ -32,4 +32,4 @@ export default {
     }
   },
   title: 'Настройки MeshHouse',
-}
+};

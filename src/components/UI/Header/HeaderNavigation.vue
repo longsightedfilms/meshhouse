@@ -98,14 +98,14 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import AddNewCatalogModal from '@/views/Modals/AddNewCatalogModal.vue'
-import FiltersDropdown from '@/components/UI/Header/Dropdowns/Filters.vue'
-import DownloadsDropdown from '@/components/UI/Header/Dropdowns/Downloads.vue'
-import MainMenuDropdown from '@/components/UI/Header/Dropdowns/MainMenu.vue'
-import { remote } from 'electron'
-import { handleDatabases, findDatabaseIndex } from '@/plugins/models-db/functions'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import AddNewCatalogModal from '@/views/Modals/AddNewCatalogModal.vue';
+import FiltersDropdown from '@/components/UI/Header/Dropdowns/Filters.vue';
+import DownloadsDropdown from '@/components/UI/Header/Dropdowns/Downloads.vue';
+import MainMenuDropdown from '@/components/UI/Header/Dropdowns/MainMenu.vue';
+import { remote } from 'electron';
+import { handleDatabases, findDatabaseIndex } from '@/plugins/models-db/functions';
 
 @Component({
   components: {
@@ -118,7 +118,7 @@ export default class HeaderNavigation extends Vue {
   title: string[] = []
 
   get selectedDB(): DatabaseItem {
-    return this.$store.state.db.databases.find((db: DatabaseItem) => db.url == this.$route.params.database)
+    return this.$store.state.db.databases.find((db: DatabaseItem) => db.url == this.$route.params.database);
   }
 
   showNewCatalog(): void {
@@ -126,44 +126,44 @@ export default class HeaderNavigation extends Vue {
       clickToClose: true,
       width: '800px',
       height: 'auto'
-    })
+    });
   }
 
   updateItems(): void {
-    const db = handleDatabases(this.$route.params.database)
+    const db = handleDatabases(this.$route.params.database);
 
     db.fetchItemsFromDatabase().then((result: Model[]): void => {
-      this.$store.commit('setLoadedData', result)
-    })
+      this.$store.commit('setLoadedData', result);
+    });
   }
 
   handleChangeOrder(): void {
-    const order = this.$store.state.controls.filters.order
-    this.$store.commit('setFilterOrder', order === 'ASC' ? 'DESC' : 'ASC')
-    this.updateItems()
+    const order = this.$store.state.controls.filters.order;
+    this.$store.commit('setFilterOrder', order === 'ASC' ? 'DESC' : 'ASC');
+    this.updateItems();
   }
 
   handleSearchField(event: KeyboardEvent): void {
     this.$store.commit('setFilter', {
       field: 'name',
       value: (event.target as HTMLInputElement).value
-    })
-    this.updateItems()
+    });
+    this.updateItems();
   }
 
   handleSearchInput(event: KeyboardEvent): void {
     this.$store.commit('setFilter', {
       field: 'name',
       value: (event.target as HTMLInputElement).value
-    })
+    });
   }
 
   clearSearchField(): void {
     this.$store.commit('setFilter', {
       field: 'name',
       value: ''
-    })
-    this.updateItems()
+    });
+    this.updateItems();
   }
 }
 </script>

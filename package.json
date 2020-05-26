@@ -10,7 +10,7 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint --output-file './eslint.log'",
+    "lint": "vue-cli-service lint --output-file ./eslint/eslint.html",
     "electron:build": "vue-cli-service electron:build --publish=always",
     "electron:build:linux": "vue-cli-service electron:build --linux --publish=always",
     "electron:build:mac": "vue-cli-service electron:build --macos --publish=always",

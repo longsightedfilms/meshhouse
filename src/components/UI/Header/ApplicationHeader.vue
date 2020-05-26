@@ -11,10 +11,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import HeaderNavigation from '@/components/UI/Header/HeaderNavigation.vue'
-import HeaderWindowButtons from '@/components/UI/Header/HeaderWindowButtons.vue'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import HeaderNavigation from '@/components/UI/Header/HeaderNavigation.vue';
+import HeaderWindowButtons from '@/components/UI/Header/HeaderWindowButtons.vue';
 
 @Component({
   inject: {

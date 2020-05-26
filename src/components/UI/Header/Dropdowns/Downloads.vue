@@ -37,10 +37,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Fragment } from 'vue-fragment'
-import { formatBytes } from '@/plugins/models-db/functions'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { Fragment } from 'vue-fragment';
+import { formatBytes } from '@/plugins/models-db/functions';
 
 @Component({
   components: {
@@ -49,11 +49,11 @@ import { formatBytes } from '@/plugins/models-db/functions'
 })
 export default class DownloadsDropdown extends Vue {
   computeProgress(item: Download): number {
-    return item.totalSize / 100 * item.downloadedSize
+    return item.totalSize / 100 * item.downloadedSize;
   }
 
   computeFileSize(bytes: number): string {
-    return formatBytes(bytes)
+    return formatBytes(bytes);
   }
 }
 </script>

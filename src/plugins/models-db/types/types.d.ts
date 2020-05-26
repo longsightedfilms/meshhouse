@@ -62,7 +62,7 @@ type DatatableHeader = {
   value: string;
 }
 
-type DatabaseItem =  {
+type DatabaseItem = {
   title: string;
   color: string;
   icon?: string;

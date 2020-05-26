@@ -4,4 +4,4 @@ export default {
   sortDESC: 'Сортировка по убыванию',
   filters: 'Фильтры',
   downloads: 'Загрузки'
-}
+};

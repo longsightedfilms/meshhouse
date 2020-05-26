@@ -90,13 +90,13 @@
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Vue from 'vue'
-import VueContext from 'vue-context'
-import Component from 'vue-class-component'
-import ModelImage from '@/components/UI/Image/ModelImage.vue'
-import AddCategoryModal from '@/views/Modals/AddCategoryModal.vue'
-import { formatBytes } from '@/plugins/models-db/functions'
-import Integrations from '@/plugins/models-db/integrations/main'
+import Vue from 'vue';
+import VueContext from 'vue-context';
+import Component from 'vue-class-component';
+import ModelImage from '@/components/UI/Image/ModelImage.vue';
+import AddCategoryModal from '@/views/Modals/AddCategoryModal.vue';
+import { formatBytes } from '@/plugins/models-db/functions';
+import Integrations from '@/plugins/models-db/integrations/main';
 
 @Component({
   components: {
@@ -107,13 +107,13 @@ import Integrations from '@/plugins/models-db/integrations/main'
     item: {
       type: Object,
       required: false,
-      default (): object {
+      default(): object {
         return {
           id: 0,
           parentId: -1,
           slug: '',
           name: ''
-        }
+        };
       }
     },
     type: {
@@ -126,51 +126,51 @@ import Integrations from '@/plugins/models-db/integrations/main'
 export default class CategoryCard extends Vue {
   get categoryName(): string {
     if (this.$props.type === 'parent') {
-      return this.$i18n.t('views.catalog.categories.parent').toString()
+      return this.$i18n.t('views.catalog.categories.parent').toString();
     } else if (this.$props.type === 'new') {
-      return this.$i18n.t('views.catalog.categories.new').toString()
+      return this.$i18n.t('views.catalog.categories.new').toString();
     } else {
-      return this.$props.item.name
+      return this.$props.item.name;
     }
   }
 
   onDoubleClick(): void | Promise<void> {
     if (this.$props.type === 'parent') {
-      return this.getParentLevelLink()
+      return this.getParentLevelLink();
     } else if (this.$props.type === 'simple') {
-      return this.getRouterLink()
+      return this.getRouterLink();
     } else {
-      return this.showModal()
+      return this.showModal();
     }
   }
 
   async getParentLevelLink(): Promise<void> {
     const query = `SELECT * FROM 'categories'
-    WHERE id = ${this.$route.params.category}`
+    WHERE id = ${this.$route.params.category}`;
 
-    const db = new Integrations.local(this.$route.params.database)
-    const categories = await db.fetchCategories(query)
+    const db = new Integrations.local(this.$route.params.database);
+    const categories = await db.fetchCategories(query);
 
-    const parentId = categories[0].parentId
+    const parentId = categories[0].parentId;
 
     this.$store.commit('setFilter', {
       field: 'category',
       value: parentId
-    })
+    });
     this.$router.push({
       path: `/db/local/${this.$route.params.database}${parentId !== -1 ? `/${parentId}` : ''}`
-    })
+    });
   }
 
   getRouterLink(): void {
-    const { id } = this.$props.item
+    const { id } = this.$props.item;
     this.$store.commit('setFilter', {
       field: 'category',
       value: id !== undefined ? id : ''
-    })
+    });
     this.$router.push({
       path: `/db/local/${this.$route.params.database}${id !== undefined ? `/${id}` : ''}`
-    })
+    });
   }
 
   onRightClick(event: MouseEvent): void {
@@ -179,7 +179,7 @@ export default class CategoryCard extends Vue {
       if (this.$parent.$parent.$refs.menu !== undefined) {
         (this.$parent.$parent.$refs.menu as any).close(event);
       }
-      this.$store.commit('setProperties', this.$props.item)
+      this.$store.commit('setProperties', this.$props.item);
     }
   }
 
@@ -187,7 +187,7 @@ export default class CategoryCard extends Vue {
     this.$modal.show(AddCategoryModal, {}, {
       clickToClose: true,
       height: 'auto'
-    })
+    });
   }
 
 }

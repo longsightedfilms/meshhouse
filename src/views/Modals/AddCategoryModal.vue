@@ -43,10 +43,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import Integrations from '@/plugins/models-db/integrations/main'
-import { ValidationObserver } from 'vee-validate'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import Integrations from '@/plugins/models-db/integrations/main';
+import { ValidationObserver } from 'vee-validate';
 
 @Component({
   components: {
@@ -58,25 +58,25 @@ export default class AddCategoryModal extends Vue {
 
   onSubmit(): void {
     (this.$refs.form as InstanceType<typeof ValidationObserver>).validate()
-      .then(async (success: boolean) => {
+      .then(async(success: boolean) => {
         if (success) {
-          const db = new Integrations.local(this.$route.params.database)
-          const { category } = this.$route.params
-          const slug = this.$stringToSlug(this.title)
-          const parentId = category !== undefined ? parseInt(category, 10) : -1
+          const db = new Integrations.local(this.$route.params.database);
+          const { category } = this.$route.params;
+          const slug = this.$stringToSlug(this.title);
+          const parentId = category !== undefined ? parseInt(category, 10) : -1;
 
           const query = `INSERT INTO categories
-          VALUES (null, ${parentId}, '${slug}', '${this.title}')`
+          VALUES (null, ${parentId}, '${slug}', '${this.title}')`;
 
-          const result = await db.runQuery(query)
+          const result = await db.runQuery(query);
 
           if (result) {
-            const categories = await db.fetchItemsFromDatabase(`SELECT * FROM 'categories'`)
-            this.$store.commit('setCategories', categories)
-            this.$emit('close')
+            const categories = await db.fetchItemsFromDatabase('SELECT * FROM \'categories\'');
+            this.$store.commit('setCategories', categories);
+            this.$emit('close');
           }
         }
-      })
+      });
   }
 }
 </script>

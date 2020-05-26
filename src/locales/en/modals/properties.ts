@@ -3,4 +3,4 @@ export default {
   image: 'Thumbnail',
   title: 'Model name',
   noCategory: 'Category isn\'t set',
-}
+};

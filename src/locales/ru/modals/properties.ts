@@ -3,4 +3,4 @@ export default {
   image: 'Миниатюра',
   title: 'Название модели',
   noCategory: 'Категория не установлена',
-}
+};

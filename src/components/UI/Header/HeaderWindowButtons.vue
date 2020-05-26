@@ -61,9 +61,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { remote } from 'electron'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { remote } from 'electron';
 
 @Component({})
 export default class HeaderWindowButtons extends Vue {
@@ -72,21 +72,21 @@ export default class HeaderWindowButtons extends Vue {
   maximized = false
 
   minimize(): void {
-    this.appWindow.minimize()
+    this.appWindow.minimize();
   }
 
   maximize(): void {
     if (this.appWindow.isMaximized()) {
-      this.appWindow.unmaximize()
-      this.maximized = false
+      this.appWindow.unmaximize();
+      this.maximized = false;
     } else {
-      this.appWindow.maximize()
-      this.maximized = true
+      this.appWindow.maximize();
+      this.maximized = true;
     }
   }
 
   close(): void {
-    this.appWindow.close()
+    this.appWindow.close();
   }
 }
 </script>

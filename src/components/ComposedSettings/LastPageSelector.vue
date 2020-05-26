@@ -23,24 +23,24 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { remote } from 'electron'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { remote } from 'electron';
 
 @Component({})
 
 export default class LastPageSelector extends Vue {
-  currentLastPage =  ''
+  currentLastPage = ''
 
   mounted(): void {
-    this.currentLastPage = this.$store.state.controls.lastPage
+    this.currentLastPage = this.$store.state.controls.lastPage;
   }
 
   onChange(event: Event): void {
-    const target = (event.target as HTMLInputElement)
+    const target = (event.target as HTMLInputElement);
 
-    this.$store.commit('setCurrentLastPage', target.value)
-    this.$settingsSet('lastPage', target.value)
+    this.$store.commit('setCurrentLastPage', target.value);
+    this.$settingsSet('lastPage', target.value);
   }
 }
 </script>

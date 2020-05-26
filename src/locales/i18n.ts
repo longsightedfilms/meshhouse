@@ -1,25 +1,25 @@
 /* eslint-disable prefer-rest-params */
-import Vue from 'vue'
-import VueI18n from 'vue-i18n'
-import messages from '@/locales/messages'
-import { configure } from 'vee-validate'
+import Vue from 'vue';
+import VueI18n from 'vue-i18n';
+import messages from '@/locales/messages';
+import { configure } from 'vee-validate';
 
-Vue.use(VueI18n)
+Vue.use(VueI18n);
 
 export const i18n = new VueI18n({
   locale: 'en',
   fallbackLocale: 'en',
   messages,
-})
+});
 
 configure({
   defaultMessage: (field: string, values: any): string => {
-    values._field_ = i18n.t(`fields.${field}`)
-    return i18n.t(`validations.messages.${values._rule_}`, values).toString()
+    values._field_ = i18n.t(`fields.${field}`);
+    return i18n.t(`validations.messages.${values._rule_}`, values).toString();
   }
-})
+});
 
-const defaultImpl = VueI18n.prototype.getChoiceIndex
+const defaultImpl = VueI18n.prototype.getChoiceIndex;
 
 /**
  * @param choice {number} a choice index given by the input to $tc: `$tc('path.to.rule', choiceIndex)`
@@ -27,9 +27,9 @@ const defaultImpl = VueI18n.prototype.getChoiceIndex
  * @returns a final choice index to select plural word by
 **/
 
-VueI18n.prototype.getChoiceIndex = function (choice, choicesLength): number {
+VueI18n.prototype.getChoiceIndex = function(choice, choicesLength): number {
   if (this.locale !== 'ru') {
-    return defaultImpl.apply(this, (arguments as any))
+    return defaultImpl.apply(this, (arguments as any));
   }
 
   if (choice === 0) {
@@ -48,4 +48,4 @@ VueI18n.prototype.getChoiceIndex = function (choice, choicesLength): number {
   }
 
   return (choicesLength < 4) ? 2 : 3;
-}
+};

@@ -37,9 +37,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { colorContrast } from '@/plugins/models-db/functions'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { colorContrast } from '@/plugins/models-db/functions';
 
 @Component({
   props: {
@@ -72,22 +72,22 @@ export default class SidebarLink extends Vue {
         title: this.$props.navlink.title,
         localDB: this.$props.navlink.localDB
       }
-    }
+    };
   }
 
   get avatarTextColorClass(): string {
-    return colorContrast(this.$props.navlink.color)
+    return colorContrast(this.$props.navlink.color);
   }
 
   avatarStyle(navlink: DatabaseItem): object {
-    return navlink.localDB ? { backgroundColor: navlink.color } : {}
+    return navlink.localDB ? { backgroundColor: navlink.color } : {};
   }
 
   retrieveImage(src: string): string {
     if (!this.$props.navlink.icon.includes('@/')) {
-      return this.$forceReloadImage(this.$props.navlink.icon)
+      return this.$forceReloadImage(this.$props.navlink.icon);
     } else {
-      return `/assets/integrations/${this.$props.navlink.icon.substr(2)}`
+      return `/assets/integrations/${this.$props.navlink.icon.substr(2)}`;
     }
   }
 }

@@ -36,10 +36,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Fragment } from 'vue-fragment'
-import CategoryCard from '@/components/UI/Card/CategoryCard.vue'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { Fragment } from 'vue-fragment';
+import CategoryCard from '@/components/UI/Card/CategoryCard.vue';
 
 @Component({
   components: {
@@ -53,23 +53,23 @@ export default class CategoriesGrid extends Vue {
   }
 
   get flipIcon(): object {
-    const { categoriesVisible } = this.$store.state.controls
+    const { categoriesVisible } = this.$store.state.controls;
     return !categoriesVisible ? {
-      transform: `rotate(90deg) translateX(3px)`
+      transform: 'rotate(90deg) translateX(3px)'
     } : {
-      transform: `rotate(-90deg)`
-    }
+      transform: 'rotate(-90deg)'
+    };
   }
 
   toggleVisibility(): void {
-    this.$store.commit('setCategoriesVisibility', !this.$store.state.controls.categoriesVisible)
-    this.$settingsSet('categoriesVisible', this.$store.state.controls.categoriesVisible)
-    this.$parent.$parent.$forceUpdate()
+    this.$store.commit('setCategoriesVisibility', !this.$store.state.controls.categoriesVisible);
+    this.$settingsSet('categoriesVisible', this.$store.state.controls.categoriesVisible);
+    this.$parent.$parent.$forceUpdate();
   }
 
   onScroll(event: WheelEvent): void {
-    this.$refs.categoryGrid.scrollLeft += event.deltaY
-    event.preventDefault()
+    this.$refs.categoryGrid.scrollLeft += event.deltaY;
+    event.preventDefault();
   }
 
 }

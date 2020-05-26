@@ -26,12 +26,12 @@
 </style>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import ApplicationHeader from '@/components/UI/Header/ApplicationHeader.vue'
-import ApplicationSidebar from '@/components/UI/Sidebar/ApplicationSidebar.vue'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import ApplicationHeader from '@/components/UI/Header/ApplicationHeader.vue';
+import ApplicationSidebar from '@/components/UI/Sidebar/ApplicationSidebar.vue';
 
-import { remote } from 'electron'
+import { remote } from 'electron';
 
 @Component({
   components: {
@@ -42,62 +42,62 @@ import { remote } from 'electron'
 export default class App extends Vue {
 
   get applicationClass(): string {
-    let bodyClass = 'application'
-    const systemThemeDark = remote.nativeTheme.shouldUseDarkColors
-    const theme = this.$settingsGet('theme') || 'light'
+    let bodyClass = 'application';
+    const systemThemeDark = remote.nativeTheme.shouldUseDarkColors;
+    const theme = this.$settingsGet('theme') || 'light';
     let cssTheme = '';
 
-    remote.nativeTheme.themeSource = this.$store.state.controls.theme
+    remote.nativeTheme.themeSource = this.$store.state.controls.theme;
 
     if (theme !== 'system') {
-      cssTheme = this.$store.state.controls.theme === 'light' ? 'theme--light' : 'theme--dark'
+      cssTheme = this.$store.state.controls.theme === 'light' ? 'theme--light' : 'theme--dark';
     } else {
-      cssTheme = systemThemeDark ? 'theme--dark' : 'theme--light'
+      cssTheme = systemThemeDark ? 'theme--dark' : 'theme--light';
     }
 
     switch(remote.process.platform) {
-      case "win32":
-        bodyClass += ' application--windows'
-        break
-      case "linux":
-        bodyClass += ' application--linux'
-        break
-      case "darwin":
-        bodyClass += ' application--mac'
-        break
-      default:
-        bodyClass += ''
-        break
+    case 'win32':
+      bodyClass += ' application--windows';
+      break;
+    case 'linux':
+      bodyClass += ' application--linux';
+      break;
+    case 'darwin':
+      bodyClass += ' application--mac';
+      break;
+    default:
+      bodyClass = String(bodyClass);
+      break;
     }
-    return `${bodyClass} ${cssTheme}`
+    return `${bodyClass} ${cssTheme}`;
   }
 
   get contentStyles(): object {
-    const databasesVisible = this.$store.state.controls.databasesVisible ? 'minmax(300px, 17vw)' : '1rem'
+    const databasesVisible = this.$store.state.controls.databasesVisible ? 'minmax(300px, 17vw)' : '1rem';
     return {
       gridTemplateColumns: `${databasesVisible} 1fr`
-    }
+    };
   }
 
   mounted(): void {
-    this.loadStartupSettings()
+    this.loadStartupSettings();
   }
 
   async loadStartupSettings(): Promise<void> {
-    this.$i18n.locale = this.$settingsGet('language')
-    const theme = this.$settingsGet('theme') || 'light'
-    const lastOpened = this.$settingsGet('applicationWindow.lastOpened')
-    const pageOpened = this.$settingsGet('lastPage') || 'main'
+    this.$i18n.locale = this.$settingsGet('language');
+    const theme = this.$settingsGet('theme') || 'light';
+    const lastOpened = this.$settingsGet('applicationWindow.lastOpened');
+    const pageOpened = this.$settingsGet('lastPage') || 'main';
 
-    this.$store.commit('setTheme', theme)
-    this.$store.commit('setCurrentLastPage', pageOpened)
+    this.$store.commit('setTheme', theme);
+    this.$store.commit('setCurrentLastPage', pageOpened);
 
-    await this.$watchDatabases()
+    await this.$watchDatabases();
 
     if (pageOpened === 'lastCatalog') {
-      this.$router.push(lastOpened)
+      this.$router.push(lastOpened);
     } else {
-      this.$router.push('/')
+      this.$router.push('/');
     }
   }
 }

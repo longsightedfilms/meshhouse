@@ -45,33 +45,33 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { shell } from 'electron'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { shell } from 'electron';
 
 @Component({})
 export default class AboutProgramModal extends Vue {
   githubContributors: string[] = ['Maxim Makarov']
 
   get applicationVersion(): string {
-    return process.env.VUE_APP_VERSION !== undefined ? process.env.VUE_APP_VERSION : '0.0.0'
+    return process.env.VUE_APP_VERSION !== undefined ? process.env.VUE_APP_VERSION : '0.0.0';
   }
 
   get returnContributorsAsText(): string {
-    let contrib = ''
+    let contrib = '';
     this.githubContributors.forEach((contributor, index) => {
-      contrib += contributor
+      contrib += contributor;
       if (index < this.githubContributors.length - 1) {
-        contrib += ', '
+        contrib += ', ';
       }
-    })
-    return this.$t('modals.about.textContributors') + contrib
+    });
+    return this.$t('modals.about.textContributors') + contrib;
   }
 
   openLink(event: Event): void {
-    const target = (event.target as HTMLAnchorElement)
-    shell.openExternal(target.href)
-    event.preventDefault()
+    const target = (event.target as HTMLAnchorElement);
+    shell.openExternal(target.href);
+    event.preventDefault();
   }
 }
 </script>

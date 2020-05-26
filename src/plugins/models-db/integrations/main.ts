@@ -1,7 +1,7 @@
-import Local from './local'
+import Local from './local';
 
 const integrations: Integrations = {
   local: Local
-}
+};
 
-export default integrations
+export default integrations;

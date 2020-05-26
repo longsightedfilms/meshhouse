@@ -26,26 +26,26 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { remote } from 'electron'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { remote } from 'electron';
 
 @Component({})
 
 export default class ThemeSelector extends Vue {
-  currentTheme =  ''
+  currentTheme = ''
 
   mounted(): void {
-    this.currentTheme = this.$store.state.controls.theme
+    this.currentTheme = this.$store.state.controls.theme;
   }
 
   onChange(event: Event): void {
     const target = (event.target as HTMLInputElement);
-    const theme = (target.value as Theme)
+    const theme = (target.value as Theme);
 
-    remote.nativeTheme.themeSource = theme
-    this.$store.commit('setTheme', theme)
-    this.$settingsSet('theme', theme)
+    remote.nativeTheme.themeSource = theme;
+    this.$store.commit('setTheme', theme);
+    this.$settingsSet('theme', theme);
   }
 }
 </script>

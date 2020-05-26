@@ -11,4 +11,4 @@ export default {
     color: '#ffffff',
     image: 'my-fancy-catalog.svg'
   },
-}
+};

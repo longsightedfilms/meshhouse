@@ -24,44 +24,44 @@ export default {
   },
   mutations: {
     incrementImageRandomizer(state: ControlsState): void {
-      state.imageRandomizer++
+      state.imageRandomizer++;
     },
     setCurrentLastPage(state: ControlsState, payload: 'main' | 'lastCatalog'): void {
-      state.lastPage = payload
+      state.lastPage = payload;
     },
     setThumbnailSize(state: ControlsState, size: number): void {
-      state.thumbnailSize = size
+      state.thumbnailSize = size;
     },
     setCategoriesVisibility(state: ControlsState, visibility: boolean): void {
-      state.categoriesVisible = visibility
+      state.categoriesVisible = visibility;
     },
     setDBVisibility(state: ControlsState, visibility: boolean): void {
-      state.databasesVisible = visibility
+      state.databasesVisible = visibility;
     },
     setFilterOrder(state: ControlsState, payload: string): void {
-      state.filters.order = payload
+      state.filters.order = payload;
     },
     setFilter(state: ControlsState, payload: FilterPayload): void {
-      state.filters.where[payload.field] = payload.value
+      state.filters.where[payload.field] = payload.value;
     },
     setFilters(state: ControlsState, payload: Filters): Promise<boolean> {
-      state.filters = payload
-      return Promise.resolve(true)
+      state.filters = payload;
+      return Promise.resolve(true);
     },
     setLoadingStatus(state: ControlsState, status: boolean): void {
-      state.isLoaded = status
+      state.isLoaded = status;
     },
     setProperties(state: ControlsState, payload: ImageProperties): void {
-      state.properties = payload
+      state.properties = payload;
     },
     setTheme(state: ControlsState, payload: Theme): void {
-      state.theme = payload
+      state.theme = payload;
     },
     setUpdateDownload(state: ControlsState, payload: boolean): void {
-      state.updates.downloading = payload
+      state.updates.downloading = payload;
     },
     setUpdateDownloadComplete(state: ControlsState, payload: boolean): void {
-      state.updates.downloaded = payload
+      state.updates.downloaded = payload;
     }
   },
-}
+};

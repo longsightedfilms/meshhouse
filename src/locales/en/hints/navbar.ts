@@ -4,4 +4,4 @@ export default {
   sortDESC: 'Descending sort',
   filters: 'Filters',
   downloads: 'Downloads'
-}
+};

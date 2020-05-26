@@ -30,10 +30,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Fragment } from 'vue-fragment'
-import { handleDatabases, findDatabaseIndex, modelsExtensions } from '@/plugins/models-db/functions'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { Fragment } from 'vue-fragment';
+import { handleDatabases, findDatabaseIndex, modelsExtensions } from '@/plugins/models-db/functions';
 
 @Component({
   components: {
@@ -46,7 +46,7 @@ export default class LocalFilters extends Vue {
 
   mounted(): void {
     if(this.$settingsGet('thumbnailSize') !== undefined) {
-      this.$store.commit('setThumbnailSize', this.$settingsGet('thumbnailSize'))
+      this.$store.commit('setThumbnailSize', this.$settingsGet('thumbnailSize'));
     }
   }
 
@@ -54,16 +54,16 @@ export default class LocalFilters extends Vue {
     this.$store.commit('setFilter', {
       field: 'extension',
       value: (event.target as HTMLInputElement).value
-    })
-    this.setFilters()
+    });
+    this.setFilters();
   }
 
   setFilters(): void {
-    const db = handleDatabases(this.$route.params.database)
+    const db = handleDatabases(this.$route.params.database);
 
     db.fetchItemsFromDatabase().then((result: Model[]): void => {
-      this.$store.commit('setLoadedData', result)
-    })
+      this.$store.commit('setLoadedData', result);
+    });
   }
 }
 </script>

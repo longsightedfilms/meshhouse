@@ -6,10 +6,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Watch } from 'vue-property-decorator'
-import { remote } from 'electron'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { Watch } from 'vue-property-decorator';
+import { remote } from 'electron';
 
 @Component({
   props: {
@@ -32,16 +32,16 @@ export default class Icon extends Vue {
   @Watch('$store.state.controls.theme')
   onThemeChanged(val: string): void {
     this.useInvertedIcon = remote.nativeTheme.shouldUseDarkColors === true
-    || val === 'dark'
+    || val === 'dark';
   }
 
 
   get iconClass(): string {
-    return `icon ${this.useInvertedIcon ? 'icon--inverted' : ''}`
+    return `icon ${this.useInvertedIcon ? 'icon--inverted' : ''}`;
   }
 
   retrieveImage(icon: string): string {
-    return `/assets/icons/${icon !== '' ? icon : 'edit'}.${this.$props.raster ? 'png' : 'svg'}`
+    return `/assets/icons/${icon !== '' ? icon : 'edit'}.${this.$props.raster ? 'png' : 'svg'}`;
   }
 }
 </script>

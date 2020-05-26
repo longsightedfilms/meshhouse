@@ -6,13 +6,13 @@ export default {
   },
   mutations: {
     setApplicationDatabases(state: DatabaseState, payload: DatabaseItem[]): void {
-      state.databases = payload
+      state.databases = payload;
     },
     setCategories(state: DatabaseState, payload: Category[]): void {
-      state.categories = payload
+      state.categories = payload;
     },
     setLoadedData(state: DatabaseState, payload: Model | Model[]): void {
-      state.loadedData = payload
+      state.loadedData = payload;
     },
   }
-}
+};

@@ -135,13 +135,13 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { remote } from 'electron'
-import path from 'path'
-import ColorPicker from 'vue-color/src/components/Chrome.vue'
-import { ValidationObserver, validate } from 'vee-validate'
-import { colorContrast } from '@/plugins/models-db/functions'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { remote } from 'electron';
+import path from 'path';
+import ColorPicker from 'vue-color/src/components/Chrome.vue';
+import { ValidationObserver, validate } from 'vee-validate';
+import { colorContrast } from '@/plugins/models-db/functions';
 
 @Component({
   components: {
@@ -166,71 +166,71 @@ export default class AddNewCatalogModal extends Vue {
 
   get folderPlaceholder(): string {
     switch(remote.process.platform) {
-      case "win32":
-        return 'C:\\Models\\My fancy models'
-      case "linux":
-        return '/home/user/my fancy models'
-      case "darwin":
-        return '~/Library/My fancy models'
-      default:
-        return 'C:\\Models\\My fancy models'
+    case 'win32':
+      return 'C:\\Models\\My fancy models';
+    case 'linux':
+      return '/home/user/my fancy models';
+    case 'darwin':
+      return '~/Library/My fancy models';
+    default:
+      return 'C:\\Models\\My fancy models';
     }
   }
 
   get catalogBackgroundColor(): object {
     return {
       backgroundColor: this.color
-    }
+    };
   }
 
   get avatarTextColorClass(): string {
-    return colorContrast(this.color)
+    return colorContrast(this.color);
   }
 
   async handleDirectoryInputClick(): Promise<void> {
     const dialog = await remote.dialog.showOpenDialog({
       properties: ['openDirectory']
-    })
-    const folderPath = dialog.filePaths.length !== 0 ? dialog.filePaths[0].toString() : ''
+    });
+    const folderPath = dialog.filePaths.length !== 0 ? dialog.filePaths[0].toString() : '';
     const validation = await validate(folderPath, 'required', {
       name: 'catalogPath'
-    })
-    this.path = validation.valid ? folderPath : ''
+    });
+    this.path = validation.valid ? folderPath : '';
   }
 
   handleImageInputClick(): void {
-    this.$refs.image.click()
+    this.$refs.image.click();
   }
 
   handleUpdateColor(color: VueColor): void {
-    this.color = color.hex
+    this.color = color.hex;
   }
 
   async handleImageChange(event: Event): Promise<void> {
-    const valid = await this.$refs.imageProvider.validate()
+    const valid = await this.$refs.imageProvider.validate();
     if (valid) {
-      const target = event.target as HTMLInputElement
-      const file = (target.files as FileList)[0]
-      this.image = file !== undefined ? file.path : ''
-      this.preview = ''
+      const target = event.target as HTMLInputElement;
+      const file = (target.files as FileList)[0];
+      this.image = file !== undefined ? file.path : '';
+      this.preview = '';
 
       // Handle preview image
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onload = ((): void => {
         if (typeof reader.result === 'string') {
-          this.preview = reader.result
+          this.preview = reader.result;
         }
-      })
+      });
 
       if (file !== undefined) {
-        reader.readAsDataURL(file)
+        reader.readAsDataURL(file);
       }
     }
   }
 
   submitNewCatalog(): void {
     this.$refs.form.validate()
-      .then(async (success: boolean) => {
+      .then(async(success: boolean) => {
         if (success) {
           const catalog = {
             title: this.title,
@@ -240,13 +240,13 @@ export default class AddNewCatalogModal extends Vue {
             path: this.path,
             localDB: true,
             disabled: false
-          }
-          this.url = catalog.url
+          };
+          this.url = catalog.url;
 
-          await this.$addDatabase(catalog)
-          this.$emit('close')
+          await this.$addDatabase(catalog);
+          this.$emit('close');
         }
-      })
+      });
   }
 }
 </script>

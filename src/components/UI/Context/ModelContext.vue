@@ -27,10 +27,10 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import EditPropertiesModal from '@/views/Modals/Edit/EditPropertiesModal.vue'
-import { Fragment } from 'vue-fragment'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import EditPropertiesModal from '@/views/Modals/Edit/EditPropertiesModal.vue';
+import { Fragment } from 'vue-fragment';
 
 @Component({
   components: {
@@ -46,8 +46,8 @@ export default class ModelContext extends Vue {
         height: 'auto',
         pivotX: 1.0,
         pivotY: 1.0,
-      })
-    })
+      });
+    });
   }
 }
 </script>

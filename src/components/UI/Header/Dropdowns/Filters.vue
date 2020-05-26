@@ -40,12 +40,12 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import VueSlider from 'vue-slider-component'
-import { Fragment } from 'vue-fragment'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import VueSlider from 'vue-slider-component';
+import { Fragment } from 'vue-fragment';
 
-import LocalFilters from '@/components/UI/Filters/LocalFilters.vue'
+import LocalFilters from '@/components/UI/Filters/LocalFilters.vue';
 
 @Component({
   components: {
@@ -57,9 +57,9 @@ export default class FiltersDropdown extends Vue {
   currentFilter = LocalFilters
 
   onSliderChange(val: number): void {
-    this.$root.$children[0].$forceUpdate()
-    this.$settingsSet('thumbnailSize', val)
-    this.$store.commit('setThumbnailSize', val)
+    this.$root.$children[0].$forceUpdate();
+    this.$settingsSet('thumbnailSize', val);
+    this.$store.commit('setThumbnailSize', val);
   }
 }
 </script>

@@ -24,9 +24,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { mixin as clickaway } from 'vue-clickaway'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { mixin as clickaway } from 'vue-clickaway';
 
 @Component({
   mixins: [
@@ -49,20 +49,20 @@ export default class DropdownButton extends Vue {
   toggled = false
 
   get menuClass(): string {
-    return `dropdown__menu ${this.toggled ? 'show' : ''}`
+    return `dropdown__menu ${this.toggled ? 'show' : ''}`;
   }
 
   toggleDropdown(): void {
-    this.toggled = !this.toggled
+    this.toggled = !this.toggled;
   }
 
   onClickedOutside(): void {
-    this.toggled = false
+    this.toggled = false;
   }
 
   onClickedInside(): void {
     if (this.$props.closeByClick === true) {
-      this.toggled = false
+      this.toggled = false;
     }
   }
 }

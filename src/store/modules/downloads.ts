@@ -10,10 +10,10 @@ export default {
   ],
   mutations: {
     clearDownloadsList(state: Download[]): void {
-      state = []
+      state = [];
     },
     deleteDownloadItem(state: Download[], index: number): void {
-      state.splice(index, 1)
+      state.splice(index, 1);
     },
   }
-}
+};

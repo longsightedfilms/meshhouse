@@ -20,15 +20,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { Watch } from 'vue-property-decorator'
-import path from 'path'
-import { remote } from 'electron'
-import VueContext from 'vue-context'
-import EditPropertiesModal from '@/views/Modals/EditPropertiesModal.vue'
-import ModelContext from '@/components/UI/Context/ModelContext.vue'
-import ModelCard from '@/components/UI/Card/ModelCard.vue'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { Watch } from 'vue-property-decorator';
+import path from 'path';
+import { remote } from 'electron';
+import VueContext from 'vue-context';
+import EditPropertiesModal from '@/views/Modals/EditPropertiesModal.vue';
+import ModelContext from '@/components/UI/Context/ModelContext.vue';
+import ModelCard from '@/components/UI/Card/ModelCard.vue';
 
 @Component({
   components: {
@@ -40,23 +40,23 @@ import ModelCard from '@/components/UI/Card/ModelCard.vue'
 export default class RemoteDatabase extends Vue {
   @Watch('$route')
   async onRouteChanged(): Promise<void> {
-    await this.databaseInitialize()
+    await this.databaseInitialize();
   }
 
   async mounted(): Promise<void> {
-    await this.databaseInitialize()
+    await this.databaseInitialize();
   }
 
   async databaseInitialize(): Promise<void> {
-    await Promise.resolve(true)
+    await Promise.resolve(true);
     //this.$store.commit('setLoadedData', models)
   }
 
   get dynamicGrid(): object {
-    const { thumbnailSize } = this.$store.state.controls
+    const { thumbnailSize } = this.$store.state.controls;
     return {
       gridTemplateColumns: `repeat(auto-fit, ${thumbnailSize}px)`
-    }
+    };
   }
 }
 </script>

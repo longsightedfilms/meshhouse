@@ -24,15 +24,15 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import Integrations from '@/plugins/models-db/integrations/main'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import Integrations from '@/plugins/models-db/integrations/main';
 
 @Component({})
 export default class DeleteCategoryModal extends Vue {
   async onSubmit(): Promise<void> {
-    const db = new Integrations.local(this.$route.params.database)
-    const { id } = this.$store.state.controls.properties
+    const db = new Integrations.local(this.$route.params.database);
+    const { id } = this.$store.state.controls.properties;
 
     let query = `UPDATE models
     SET category = NULL
@@ -40,20 +40,20 @@ export default class DeleteCategoryModal extends Vue {
       SELECT id from categories
       WHERE id = ${id}
       or parentId = ${id}
-    )`
+    )`;
 
-    await db.runQuery(query)
+    await db.runQuery(query);
 
     query = `DELETE FROM categories
     WHERE id = ${id}
-    OR parentId = ${id}`
+    OR parentId = ${id}`;
 
-    const result = await db.runQuery(query)
+    const result = await db.runQuery(query);
 
     if (result) {
-      const categories = await db.fetchCategories()
-      this.$store.commit('setCategories', categories)
-      this.$emit('close')
+      const categories = await db.fetchCategories();
+      this.$store.commit('setCategories', categories);
+      this.$emit('close');
     }
   }
 }

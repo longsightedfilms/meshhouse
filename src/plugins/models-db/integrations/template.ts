@@ -1,7 +1,7 @@
-import { remote } from 'electron'
-import fs from 'fs'
-import path from 'path'
-import sqlite3 from 'sqlite3'
+import { remote } from 'electron';
+import fs from 'fs';
+import path from 'path';
+import sqlite3 from 'sqlite3';
 
 export abstract class Integration {
   directory = path.join(remote.app.getPath('userData'), '/databases/')
@@ -9,9 +9,9 @@ export abstract class Integration {
 
   constructor(name: string) {
     if (!fs.existsSync(this.directory)) {
-      fs.mkdirSync(this.directory)
+      fs.mkdirSync(this.directory);
     }
-    this.db = sqlite3.cached.Database(path.resolve(`${this.directory}`, `${name}.sqlite3`))
+    this.db = sqlite3.cached.Database(path.resolve(`${this.directory}`, `${name}.sqlite3`));
   }
 
   /**

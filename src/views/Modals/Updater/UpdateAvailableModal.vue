@@ -44,9 +44,9 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
-import { ipcRenderer, IpcRendererEvent } from 'electron'
+import Vue from 'vue';
+import Component from 'vue-class-component';
+import { ipcRenderer, IpcRendererEvent } from 'electron';
 
 @Component({})
 export default class UpdateAvailableModal extends Vue {
@@ -59,23 +59,23 @@ export default class UpdateAvailableModal extends Vue {
 
   mounted(): void {
     ipcRenderer.on('download-progress', (event: IpcRendererEvent, progress: ProgressInfo): void => {
-      this.$store.commit('setUpdateDownload', true)
-      this.progress = progress
-    })
+      this.$store.commit('setUpdateDownload', true);
+      this.progress = progress;
+    });
 
     ipcRenderer.on('update-downloaded', () => {
-      this.$store.commit('setUpdateDownload', false)
-      this.$store.commit('setUpdateDownloadComplete', true)
-    })
+      this.$store.commit('setUpdateDownload', false);
+      this.$store.commit('setUpdateDownloadComplete', true);
+    });
   }
 
   downloadUpdate(): void {
-    ipcRenderer.send('download-update')
-    this.$store.commit('setUpdateDownload', true)
+    ipcRenderer.send('download-update');
+    this.$store.commit('setUpdateDownload', true);
   }
 
   installUpdate(): void {
-    ipcRenderer.send('install-update')
+    ipcRenderer.send('install-update');
   }
 }
 </script>

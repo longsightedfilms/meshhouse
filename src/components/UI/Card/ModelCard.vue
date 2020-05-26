@@ -27,11 +27,11 @@
 
 <script lang="ts">
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import Vue from 'vue'
-import VueContext from 'vue-context'
-import Component from 'vue-class-component'
-import ModelImage from '@/components/UI/Image/ModelImage.vue'
-import { formatBytes } from '@/plugins/models-db/functions'
+import Vue from 'vue';
+import VueContext from 'vue-context';
+import Component from 'vue-class-component';
+import ModelImage from '@/components/UI/Image/ModelImage.vue';
+import { formatBytes } from '@/plugins/models-db/functions';
 
 @Component({
   components: {
@@ -44,13 +44,13 @@ import { formatBytes } from '@/plugins/models-db/functions'
 })
 export default class ModelCard extends Vue {
   modelSize(size: number): string {
-    return formatBytes(size)
+    return formatBytes(size);
   }
 
   onRightClick(event: MouseEvent): void {
     (this.$parent.$refs.categoryMenu as any).close(event);
-    (this.$parent.$refs.menu as any).open(event)
-    this.$store.commit('setProperties', this.$props.item)
+    (this.$parent.$refs.menu as any).open(event);
+    this.$store.commit('setProperties', this.$props.item);
   }
 
 }

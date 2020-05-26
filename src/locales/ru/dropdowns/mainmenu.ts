@@ -8,4 +8,4 @@ export default {
   releaseNotes: 'Заметки о выпуске',
   aboutProgram: 'О программе',
   checkUpdates: 'Проверить наличие обновлений'
-}
+};

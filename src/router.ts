@@ -1,8 +1,8 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import store from '@/store/main'
+import Vue from 'vue';
+import Router from 'vue-router';
+import store from '@/store/main';
 
-Vue.use(Router)
+Vue.use(Router);
 
 const router = new Router({
   routes: [
@@ -41,20 +41,20 @@ const router = new Router({
       }
     },
   ],
-})
+});
 
 router.beforeEach((to, from, next) => {
-  store.commit('setLoadingStatus', false)
-  next()
-})
+  store.commit('setLoadingStatus', false);
+  next();
+});
 
 router.afterEach((to, from) => {
   Vue.nextTick(() => {
-    store.commit('setLoadingStatus', true)
+    store.commit('setLoadingStatus', true);
     if (to.name !== 'Home' && to.name !== 'Updated') {
-      router.app.$root.$settingsSet('applicationWindow.lastOpened', to.path)
+      router.app.$root.$settingsSet('applicationWindow.lastOpened', to.path);
     }
-  })
-})
+  });
+});
 
-export default router
+export default router;

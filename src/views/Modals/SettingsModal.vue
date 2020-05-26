@@ -40,11 +40,11 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import Component from 'vue-class-component'
+import Vue from 'vue';
+import Component from 'vue-class-component';
 // Tabs
-import MainSettings from './Settings/MainSettings.vue'
-import ProgramSettings from './Settings/ProgramSettings.vue'
+import MainSettings from './Settings/MainSettings.vue';
+import ProgramSettings from './Settings/ProgramSettings.vue';
 
 @Component({
   components: {

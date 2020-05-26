@@ -1,7 +1,7 @@
 export default {
   tabs: {
     common: {
-      title: "Common settings",
+      title: 'Common settings',
       content: {
         language: 'Language',
         theme: {
@@ -22,7 +22,7 @@ export default {
       }
     },
     dcc: {
-      title: "DCC launch settings",
+      title: 'DCC launch settings',
       content: {
         currentPath: 'Current path to application: ',
         useSystemAssociation: 'Use system association',
@@ -32,4 +32,4 @@ export default {
     }
   },
   title: 'MeshHouse settings',
-}
+};

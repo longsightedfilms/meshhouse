@@ -25,4 +25,4 @@ export default {
     title: 'Database updated',
     description: 'We updated the database, to go back, select the directory in the sidebar'
   }
-}
+};
