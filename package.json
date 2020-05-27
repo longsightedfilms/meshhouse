@@ -17,10 +17,8 @@
     "electron:build:win": "vue-cli-service electron:build --windows --publish=always",
     "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
     "electron:serve": "vue-cli-service electron:serve",
-    "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'",
     "postinstall": "electron-builder install-app-deps",
-    "postuninstall": "electron-builder install-app-deps",
-    "release": "vue-cli-service electron:build --publish always"
+    "postuninstall": "electron-builder install-app-deps"
   },
   "main": "background.js",
   "dependencies": {
@@ -75,7 +73,8 @@
     "vue-cli-plugin-electron-builder": "^1.4.6",
     "vue-cli-plugin-i18n": "^0.6.0",
     "vue-cli-plugin-typescript": "0.0.1",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "webpack-bundle-analyzer": "^3.8.0"
   },
   "homepage": "https://github.com/longsightedfilms/meshhouse",
   "license": "MPL-2.0",

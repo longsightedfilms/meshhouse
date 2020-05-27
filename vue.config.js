@@ -1,7 +1,13 @@
-process.env.VUE_APP_VERSION = require('./package.json').version
+process.env.VUE_APP_VERSION = require('./package.json').version;
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
   configureWebpack: {
+    plugins: [
+      new BundleAnalyzerPlugin({
+        openAnalyzer: false
+      })
+    ],
     resolve: {
       mainFields: ['module', 'main'],
     },
@@ -38,6 +44,10 @@ module.exports = {
           allowToChangeInstallationDirectory: true
         }
       },
+      publish: {
+        provider: 'github',
+        owner: 'longsightedfilms'
+      }
     }
   },
 

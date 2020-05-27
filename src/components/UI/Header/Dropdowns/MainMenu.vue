@@ -55,7 +55,6 @@ export default class MainMenuDropdown extends Vue {
 
   mounted(): void {
     ipcRenderer.on('update-available', () => {
-      ipcRenderer.removeAllListeners('update-available');
       this.$modal.show(UpdateAvailableModal, {}, {
         clickToClose: true,
         height: 'auto'
@@ -63,7 +62,6 @@ export default class MainMenuDropdown extends Vue {
     });
 
     ipcRenderer.on('update-not-available', () => {
-      ipcRenderer.removeAllListeners('update-not-available');
       this.$modal.show(UpdateNotAvailableModal, {}, {
         clickToClose: true,
         height: 'auto'

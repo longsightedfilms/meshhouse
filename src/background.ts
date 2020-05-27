@@ -96,7 +96,9 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  autoUpdater.checkForUpdatesAndNotify();
+  if(settings.get('checkForUpdatesOnStartup') === true) {
+    autoUpdater.checkForUpdates();
+  }
   createWindow('app', 'index.html', applicationOptions);
 });
 
@@ -118,7 +120,12 @@ if (isDevelopment) {
 app.allowRendererProcessReuse = false;
 
 // Handling auto updates
+if (isDevelopment) {
+  autoUpdater.updateConfigPath = path.join(__dirname, '../', 'dev-app-update.yml');
+}
+
 autoUpdater.autoDownload = false;
+autoUpdater.allowPrerelease = true;
 
 autoUpdater.on('update-available', (info) => {
   appWin?.webContents.send('update-available', info);
@@ -133,7 +140,7 @@ autoUpdater.on('download-progress', (progressObj: ProgressInfo) => {
 });
 
 ipcMain.on('check-update', () => {
-  autoUpdater.checkForUpdatesAndNotify();
+  autoUpdater.checkForUpdates();
 });
 
 ipcMain.on('download-update', () => {

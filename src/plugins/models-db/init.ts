@@ -10,10 +10,12 @@ import dccDefault from './defaults/dcc';
 import settingsDefault from './defaults/settings';
 
 // Import migrations
+import settingsMigrations from './migrations/settings';
 import dccMigrations from './migrations/dccSettings';
 
 export const settings: ElectronStore<ApplicationSettings> = new ElectronStore({
   name: 'settings',
+  migrations: settingsMigrations,
   projectVersion: process.env.VUE_APP_VERSION
 } as StoreSettings);
 export const databases: ElectronStore<DatabaseSettings> = new ElectronStore({
