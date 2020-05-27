@@ -4,9 +4,9 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 module.exports = {
   configureWebpack: {
     plugins: [
-      new BundleAnalyzerPlugin({
+      ...(process.env.NODE_ENV === 'production' ? [] : [new BundleAnalyzerPlugin({
         openAnalyzer: false
-      })
+      })])
     ],
     resolve: {
       mainFields: ['module', 'main'],
@@ -42,12 +42,13 @@ module.exports = {
           installerIcon: './build/icons/icon.ico',
           license: './build/license.txt',
           allowToChangeInstallationDirectory: true
+        },
+        publish: {
+          provider: 'github',
+          owner: 'longsightedfilms',
+          repo: 'meshhouse'
         }
       },
-      publish: {
-        provider: 'github',
-        owner: 'longsightedfilms'
-      }
     }
   },
 
