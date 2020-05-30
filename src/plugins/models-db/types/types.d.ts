@@ -7,6 +7,7 @@ type ApplicationStore = {
 
 type ControlsState = {
   filters: Filters;
+  fullscreen: boolean;
   categoriesVisible: boolean;
   databasesVisible: boolean;
   imageRandomizer: number;

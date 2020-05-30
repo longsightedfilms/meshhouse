@@ -3,6 +3,16 @@
     <p class="title">
       <span>{{ $t('dropdowns.mainmenu.title.header') }}</span>
     </p>
+    <a
+      v-if="currentOS !== 'darwin'"
+      @click="toggleFullscreen"
+    >
+      <vue-icon
+        icon="full-screen"
+        raster
+      />
+      {{ $t('dropdowns.mainmenu.fullscreen') }}
+    </a>
     <a @click="showSettings">
       <vue-icon icon="settings" />
       {{ $t('dropdowns.mainmenu.settings') }}
@@ -44,7 +54,7 @@ import AboutProgramModal from '@/views/Modals/AboutProgramModal.vue';
 import UpdateAvailableModal from '@/views/Modals/Updater/UpdateAvailableModal.vue';
 import UpdateNotAvailableModal from '@/views/Modals/Updater/UpdateNotAvailableModal.vue';
 
-import { shell, ipcRenderer } from 'electron';
+import { shell, ipcRenderer, remote } from 'electron';
 
 @Component({
   components: {
@@ -101,6 +111,16 @@ export default class MainMenuDropdown extends Vue {
 
   checkUpdates(): void {
     ipcRenderer.send('check-update');
+  }
+
+  toggleFullscreen(): void {
+    const window = remote.getCurrentWindow();
+    window.setFullScreen(!window.isFullScreen());
+    this.$store.commit('setFullscreen', window.isFullScreen());
+  }
+
+  get currentOS(): string {
+    return remote.process.platform;
   }
 }
 </script>

@@ -3,6 +3,7 @@ export default {
     header: 'Settings',
     help: 'Help'
   },
+  fullscreen: 'Toggle fullscreen',
   settings: '@:modals.settings.title',
   help: 'Documentation',
   releaseNotes: 'Release notes',

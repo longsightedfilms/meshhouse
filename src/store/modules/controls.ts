@@ -9,6 +9,7 @@ export default {
         path: '',
       },
     },
+    fullscreen: false,
     categoriesVisible: true,
     databasesVisible: false,
     imageRandomizer: 0,
@@ -47,6 +48,9 @@ export default {
     setFilters(state: ControlsState, payload: Filters): Promise<boolean> {
       state.filters = payload;
       return Promise.resolve(true);
+    },
+    setFullscreen(state: ControlsState, payload: boolean): void {
+      state.fullscreen = payload;
     },
     setLoadingStatus(state: ControlsState, status: boolean): void {
       state.isLoaded = status;

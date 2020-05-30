@@ -150,3 +150,11 @@ ipcMain.on('download-update', () => {
 ipcMain.on('install-update', () => {
   autoUpdater.quitAndInstall();
 });
+
+// Handle drag model to OS or DCC
+ipcMain.on('dropOut', (event, filePath) => {
+  event.sender.startDrag({
+    file: filePath,
+    icon: path.join(__static, '../build/icons', '64x64.png')
+  });
+});

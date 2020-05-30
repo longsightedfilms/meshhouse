@@ -1,5 +1,5 @@
 <template>
-  <div :class="applicationClass">
+  <div :class="applicationClass()">
     <application-header />
     <span
       class="application__main"
@@ -28,6 +28,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import { Watch } from 'vue-property-decorator';
 import ApplicationHeader from '@/components/UI/Header/ApplicationHeader.vue';
 import ApplicationSidebar from '@/components/UI/Sidebar/ApplicationSidebar.vue';
 
@@ -41,11 +42,13 @@ import { remote } from 'electron';
 })
 export default class App extends Vue {
 
-  get applicationClass(): string {
+  @Watch('$store.state.controls.fullscreen')
+  applicationClass(): string {
     let bodyClass = 'application';
+    let cssTheme = '';
     const systemThemeDark = remote.nativeTheme.shouldUseDarkColors;
     const theme = this.$settingsGet('theme') || 'light';
-    let cssTheme = '';
+    const isFullScreen = this.$store.state.controls.fullscreen;
 
     remote.nativeTheme.themeSource = this.$store.state.controls.theme;
 
@@ -57,7 +60,11 @@ export default class App extends Vue {
 
     switch(remote.process.platform) {
     case 'win32':
-      bodyClass += ' application--windows';
+      if(!isFullScreen) {
+        bodyClass += ' application--windows';
+      } else {
+        bodyClass = `${bodyClass} ${bodyClass}--fullscreen`;
+      }
       break;
     case 'linux':
       bodyClass += ' application--linux';
