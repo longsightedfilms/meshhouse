@@ -16,19 +16,19 @@
           <label>{{ $t('common.types.databases.remote') }}</label>
           <div>
             <sidebar-link
-              v-for="(item, index) in filteredRemoteDB"
+              v-for="item in filteredRemoteDB"
               :key="'remote-' + item.title"
               :navlink="item"
-              :progress="computeProgressLength(index)"
+              :progress="computeProgressLength(item.title)"
             />
           </div>
           <label>{{ $t('common.types.databases.local') }}</label>
           <div>
             <sidebar-link
-              v-for="(item, index) in filteredLocalDB"
+              v-for="item in filteredLocalDB"
               :key="'local-' + item.title"
               :navlink="item"
-              :progress="computeProgressLength(index)"
+              :progress="computeProgressLength(item.title)"
             />
           </div>
         </div>
@@ -69,13 +69,20 @@ export default class ApplicationSidebar extends Vue {
     return this.$store.state.db.databases.filter((db: DatabaseItem) => db.localDB === true);
   }
 
-  computeProgressLength(idx: number): number {
+  computeProgressLength(title: string): number {
     let totalSpace = 0;
     const { databases } = this.$store.state.db;
+    const idx = databases.findIndex((db: DatabaseItem) => db.title === title);
+
     databases.forEach((db: DatabaseItem) => {
       totalSpace += Number(db.totalsize);
     });
-    return 100 / (totalSpace / Number(databases[idx].totalsize));
+
+    if (databases[idx].totalsize === 0) {
+      return 0;
+    } else {
+      return 100 / (totalSpace / Number(databases[idx].totalsize));
+    }
   }
 
   toggleVisibility(val: boolean): void {

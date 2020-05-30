@@ -2,29 +2,15 @@
   <fragment>
     <div class="filter">
       <label>{{ $t('views.catalog.filters.dcc') }}</label>
-      <div class="input--select">
-        <select
-          v-model="scene"
-          class="input"
-          @change="handleDccSelect"
-        >
-          <option value="none">
-            {{ $t('common.list.all') }}
-          </option>
-          <option
-            v-for="(sceneType, index) in sceneTypes"
-            :key="index"
-            :value="`.${sceneType.icon}`"
-          >
-            {{ sceneType.title }} (.{{ sceneType.icon }})
-          </option>
-        </select>
-        <vue-icon
-          icon="caret-forward"
-          inverted
-          raster
-        />
-      </div>
+      <multiselect
+        v-model="scene"
+        track-by="icon"
+        label="title"
+        :options="sceneTypes"
+        :searchable="false"
+        :show-labels="false"
+        @select="handleDccSelect"
+      />
     </div>
   </fragment>
 </template>
@@ -32,28 +18,49 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import Multiselect from 'vue-multiselect';
 import { Fragment } from 'vue-fragment';
 import { handleDatabases, findDatabaseIndex, modelsExtensions } from '@/plugins/models-db/functions';
 
 @Component({
   components: {
-    Fragment
+    Fragment,
+    Multiselect
   }
 })
 export default class LocalFilters extends Vue {
-  scene = 'none'
-  sceneTypes: ExtensionProperty[] = Object.values(modelsExtensions)
+  scene: ExtensionProperty = {
+    title: 'All',
+    icon: 'none'
+  }
+  sceneTypes: ExtensionProperty[] = []
 
   mounted(): void {
     if(this.$settingsGet('thumbnailSize') !== undefined) {
       this.$store.commit('setThumbnailSize', this.$settingsGet('thumbnailSize'));
     }
+    this.scene = {
+      title: this.$i18n.t('common.list.all').toString(),
+      icon: 'none'
+    };
+    this.sceneTypes = [
+      {
+        title: this.$i18n.t('common.list.all').toString(),
+        icon: 'none'
+      }
+    ];
+    Object.values(modelsExtensions).forEach((element: ExtensionProperty) => {
+      this.sceneTypes.push({
+        title: `${element.title} (.${element.icon})`,
+        icon: `.${element.icon}`
+      });
+    });
   }
 
-  handleDccSelect(event: Event): void {
+  handleDccSelect(select: ExtensionProperty): void {
     this.$store.commit('setFilter', {
       field: 'extension',
-      value: (event.target as HTMLInputElement).value
+      value: select.icon
     });
     this.setFilters();
   }

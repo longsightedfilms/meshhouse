@@ -112,3 +112,34 @@
         word-wrap: none
       &:focus
         width: 20rem
+
+.multiselect
+  color: var(--textColor)
+  &__tags
+    width: 100%
+    border: 2px solid var(--buttonHover)
+    padding: 0.625rem 1rem
+    background: none
+    border-radius: 0
+    transition: all 0.3s ease
+    color: var(--textColor)
+    font-size: 1rem
+  &__single
+    background: none
+    margin: 0.25rem 0 0 0
+    padding: 0
+  &__select
+    height: 48px
+  &__content-wrapper
+    border-radius: 0
+    background-color: var(--blockColor)
+    border: 2px solid var(--buttonHover)
+    &::-webkit-scrollbar
+      width: 0.125rem
+    &::-webkit-scrollbar-thumb
+      width: 100%
+      background-color: var(--scrollColor)
+  &__option
+    &--highlight, &:after, &--selected
+      color: $white
+      background-color: $primary
