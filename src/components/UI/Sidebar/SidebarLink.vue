@@ -17,7 +17,7 @@
         v-else
         :class="avatarTextColorClass"
       >
-        {{ navlink.title.substr(0, 1).toUpperCase() }}
+        {{ avatarTextPreview }}
       </p>
     </div>
     <div class="info">
@@ -77,6 +77,10 @@ export default class SidebarLink extends Vue {
 
   get avatarTextColorClass(): string {
     return colorContrast(this.$props.navlink.color);
+  }
+
+  get avatarTextPreview(): string {
+    return Array.from(this.$props.navlink.title).slice(0, 1).join('').toUpperCase();
   }
 
   avatarStyle(navlink: DatabaseItem): object {

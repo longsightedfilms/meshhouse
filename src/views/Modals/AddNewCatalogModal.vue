@@ -19,7 +19,7 @@
                 v-else
                 :class="avatarTextColorClass"
               >
-                {{ title.substr(0, 1).toUpperCase() }}
+                {{ avatarTextPreview }}
               </span>
             </div>
             <div class="input-group input-group--column">
@@ -35,15 +35,12 @@
             v-slot="{ errors }"
             name="catalogTitle"
             class="input-group"
-            :rules="{
-              required: true,
-              alpha_spaces: true
-            }"
+            rules="required"
             immediate
           >
             <label>{{ $t('modals.addCatalog.labels.name') }}</label>
             <input
-              v-model="title"
+              v-model.lazy="title"
               type="text"
               class="input"
               :placeholder="$t('modals.addCatalog.hints.name')"
@@ -187,6 +184,10 @@ export default class AddNewCatalogModal extends Vue {
     return colorContrast(this.color);
   }
 
+  get avatarTextPreview(): string {
+    return Array.from(this.title).slice(0, 1).join('').toUpperCase();
+  }
+
   async handleDirectoryInputClick(): Promise<void> {
     const dialog = await remote.dialog.showOpenDialog({
       properties: ['openDirectory']
@@ -232,10 +233,11 @@ export default class AddNewCatalogModal extends Vue {
     this.$refs.form.validate()
       .then(async(success: boolean) => {
         if (success) {
+          const slug = this.title.trim().replace(/[~!@#$%^&*()=+.,?/\\|]+/, '');
           const catalog = {
-            title: this.title,
+            title: this.title.trim(),
             color: this.color,
-            url: this.$stringToSlug(this.title),
+            url: this.$stringToSlug(slug),
             icon: this.image,
             path: this.path,
             localDB: true,
