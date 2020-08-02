@@ -7,7 +7,7 @@
     <img
       v-if="src !== ''"
       class="icon"
-      :src="`/assets/dcc/${extension.substr(1)}.svg`"
+      :src="iconFile"
     >
   </div>
 </template>
@@ -39,6 +39,17 @@ export default class ModelImage extends Vue {
 
   imageClass(src: string): string {
     return `image ${src === '' ? 'image--icon' : ''}`;
+  }
+
+  get iconFile(): string {
+    const extension = this.$props.extension.substr(1);
+    switch (extension) {
+    case 'ma':
+    case 'mb':
+      return '/assets/dcc/maya.svg';
+    default:
+      return `/assets/dcc/${extension}.svg`;
+    }
   }
 }
 </script>

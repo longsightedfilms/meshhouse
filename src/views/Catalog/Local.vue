@@ -1,5 +1,6 @@
 <template>
   <fragment>
+    <catalog-header />
     <categories-grid />
     <vue-context ref="categoryMenu">
       <category-context />

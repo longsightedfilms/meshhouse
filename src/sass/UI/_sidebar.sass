@@ -1,103 +1,42 @@
 .application__sidebar
-  position: relative
-  grid-area: Sidebar
-  padding-right: 1rem
-  label
-    display: block
-    color: var(--textColor)
-    padding: 1rem
-    text-transform: uppercase
-    letter-spacing: 0.125rem
-    font-weight: 700
+  position: absolute
+  z-index: 10
+  inset-inline-start: 0
+  bottom: 0
+  background-color: var(--blockColorDark)
+  width: 350px
+  height: calc(100vh - 5.5rem)
+  border-right: 2px solid var(--buttonHover)
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1)
+  transform: translateX(-100%)
+  &.visible
+    transform: translateX(0)
   nav
     .nav-container
       max-height: calc(100vh - 114px * 2 - 1rem)
-    a
-      display: grid
-      color: var(--textColor)
-      background-color: var(--buttonHover)
-      margin-bottom: 1rem
-      border-left: 5px solid var(--buttonHover)
-      padding: 0.5rem
-      padding-right: 1rem
-      text-decoration: none
-      grid-template-columns: 3rem 1fr
-      grid-template-rows: 1fr
-      grid-template-areas: "Avatar Info"
-      grid-gap: 0 0.25rem
-      align-items: center
-      .avatar
-        display: flex
-        align-items: center
-        justify-content: center
-        width: 3rem
-        height: 3rem
-        background-color: var(--blockColor)
-        border-radius: 50%
-        font-weight: 700
-        font-size: 1.5rem
-        line-height: 1
-        grid-area: Avatar
-        overflow: hidden
-        color: $white
-        img
-          display: block
-          width: 3rem
-          height: 3rem
-          object-fit: contain
-          filter: drop-shadow(0 0 0.45rem rgba(0,0,0,0.1))
-      .info
-        grid-area: Info
-        grid-template-columns: 1fr
-        grid-template-rows: 1rem 0.25rem 1rem
-        grid-template-areas: "Title" "Progress" "Count"
-        .title
-          display: block
-          grid-area: Title
-          font-weight: 100
-          font-size: 1rem
-          line-height: 1
-        .progress
-          --color: #fff
-          grid-area: Progress
-          display: block
-          -webkit-appearance: none
-          -moz-appearance: none
-          appearance: none
-          width: 100%
-          height: 0.25rem
-          margin: 0.5rem 0
-          &::-webkit-progress-value
-            background-color: var(--color)
-        .count
-          grid-area: Count
-          line-height: 1
-          display: flex
-          align-items: center
-          font-size: 0.75rem
-          span
-            display: block
-            margin-left: auto
-            font-style: italic
-            font-size: 0.8rem
-            color: var(--textColor)
-      &[disabled]
-        color: #aaaaaa
-        cursor: not-allowed
-        .count
-          span
-            color: #aaaaaa
-      &:last-child
-        margin-bottom: 0
-      &.router-link-active
-        border-left: 5px solid var(--color)
   .show-databases
     position: absolute
-    right: 0
-    top: 0
-    height: 100%
+    inset-inline-start: 100%
+    bottom: 0
+    //width: 3rem
+    //height: 3rem
+    padding: 0.5rem 1rem
+    display: flex
+    align-items: center
+    justify-content: center
     background-color: var(--buttonHover)
     color: var(--textColor)
+    p
+      text-transform: uppercase
+      font-weight: 700
+      margin: 0
+      margin-inline-end: 0rem
+      max-width: 0
+      white-space: nowrap
+      word-break: none
+      overflow: hidden
+      letter-spacing: 0.125rem
+      transition: all 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1)
     .icon
       display: block
       width: 1rem
@@ -106,5 +45,99 @@
       transform: translateX(1px)
     &:hover
       background-color: var(--buttonHover)
+      p
+        margin-inline-end: 1rem
+        max-width: 300px
     &:focus
       outline: 0
+
+.sidebar
+  &_link
+    display: grid
+    color: var(--textColor)
+    background-color: var(--buttonHover)
+    margin-bottom: 1rem
+    border-inline-start: 5px solid var(--buttonHover)
+    padding: 0.5rem
+    padding-inline-end: 1rem
+    text-decoration: none
+    grid-template-columns: 3rem 1fr
+    grid-template-rows: 1fr
+    grid-template-areas: "Avatar Info"
+    grid-gap: 0 0.25rem
+    align-items: center
+    .avatar
+      display: flex
+      align-items: center
+      justify-content: center
+      width: 3rem
+      height: 3rem
+      background-color: var(--blockColor)
+      border-radius: 50%
+      font-weight: 700
+      font-size: 1.5rem
+      line-height: 1
+      grid-area: Avatar
+      overflow: hidden
+      color: $white
+      img
+        display: block
+        width: 3rem
+        height: 3rem
+        object-fit: contain
+        filter: drop-shadow(0 0 0.45rem rgba(0,0,0,0.1))
+    .info
+      grid-area: Info
+      grid-template-columns: 1fr
+      grid-template-rows: 1rem 0.25rem 1rem
+      grid-template-areas: "Title" "Progress" "Count"
+      .title
+        display: flex
+        justify-content: space-between
+        align-items: center
+        grid-area: Title
+        b
+          display: block
+          font-weight: 100
+          font-size: 1rem
+          line-height: 1
+        .button
+          padding: 0
+          margin-inline-start: 1rem
+          opacity: 0.1
+          border: none
+          .icon
+            width: 1rem
+            height: 1rem
+          &:hover
+            opacity: 1
+      .progress
+        --color: #fff
+        grid-area: Progress
+        display: block
+        -webkit-appearance: none
+        -moz-appearance: none
+        appearance: none
+        width: 100%
+        height: 0.25rem
+        margin: 0.5rem 0
+        &::-webkit-progress-value
+          background-color: var(--color)
+      .count
+        grid-area: Count
+        line-height: 1
+        display: flex
+        align-items: center
+        font-size: 0.75rem
+        .badge
+          margin-inline-start: auto
+    &[disabled]
+      color: #aaaaaa
+      cursor: not-allowed
+      .count
+        span
+          color: #aaaaaa
+    &:last-child
+      margin-bottom: 0
+    &.router-link-active
+      border-inline-start: 5px solid var(--color)

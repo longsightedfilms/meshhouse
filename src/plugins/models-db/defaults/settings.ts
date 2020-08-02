@@ -9,5 +9,6 @@ export default {
   databasesVisible: true,
   theme: 'light',
   lastPage: 'main',
-  categoriesVisible: true
+  categoriesVisible: true,
+  hideIntegrations: false
 };

@@ -1,7 +1,7 @@
 <template>
   <div class="modal modal--add-catalog">
     <header class="modal_header">
-      <h2>{{ $t('modals.addCatalog.title') }}</h2>
+      <h2>{{ $t('modals.editCatalog.title') }}</h2>
     </header>
     <div class="modal_content">
       <div class="left">
@@ -148,9 +148,9 @@
     <div class="modal_actions">
       <button
         class="button button--primary"
-        @click="submitNewCatalog"
+        @click="editCatalog"
       >
-        {{ $t('common.buttons.add') }}
+        {{ $t('common.buttons.save') }}
       </button>
       <button
         class="button button--danger"
@@ -172,7 +172,7 @@ import sharp from 'sharp';
 import ColorPicker from 'vue-color/src/components/Chrome.vue';
 import SidebarLink from '@/components/UI/Sidebar/SidebarLink.vue';
 import { ValidationObserver, validate } from 'vee-validate';
-import { colorContrast } from '@/plugins/models-db/functions';
+import { findDatabaseIndex, colorContrast } from '@/plugins/models-db/functions';
 
 @Component({
   components: {
@@ -181,7 +181,7 @@ import { colorContrast } from '@/plugins/models-db/functions';
     ValidationObserver
   }
 })
-export default class AddNewCatalogModal extends Vue {
+export default class EditCatalogModal extends Vue {
   $refs!: {
     form: InstanceType<typeof ValidationObserver>;
     background: HTMLInputElement;
@@ -205,6 +205,11 @@ export default class AddNewCatalogModal extends Vue {
   }
 
   preview = ''
+
+  mounted(): void {
+    const db = Object.assign({}, this.$store.state.db.databases.find((db: DatabaseItem) => db.url == this.$route.params.database));
+    this.properties = db;
+  }
 
   get folderPlaceholder(): string {
     switch(remote.process.platform) {
@@ -286,22 +291,11 @@ export default class AddNewCatalogModal extends Vue {
     }
   }
 
-  submitNewCatalog(): void {
+  editCatalog(): void {
     this.$refs.form.validate()
       .then(async(success: boolean) => {
         if (success) {
           const slug = this.properties.title.trim().replace(/[~!@#$%^&*()=+.,?/\\|]+/, '');
-          const catalog = {
-            title: this.properties.title.trim(),
-            color: this.properties.color,
-            url: this.$stringToSlug(slug),
-            background: this.properties.background,
-            icon: this.properties.icon,
-            path: this.properties.path,
-            localDB: true,
-            disabled: false
-          };
-          this.properties.url = catalog.url;
 
           // Handle background generation
           const imageFolder = path.join(remote.app.getPath('userData'),
@@ -334,8 +328,8 @@ export default class AddNewCatalogModal extends Vue {
                 })
                 .toFile(imagePath)
                 .then(async() => {
-                  catalog.background = this.properties.background;
-                  await this.$addDatabase(catalog);
+                  this.$store.commit('incrementImageRandomizer');
+                  await this.$editDatabase(findDatabaseIndex(this.properties.url), this.properties);
                   this.$emit('close');
                 })
                 .catch((err: Error) => {
@@ -345,7 +339,7 @@ export default class AddNewCatalogModal extends Vue {
                 });
             });
           } else {
-            await this.$addDatabase(catalog);
+            await this.$editDatabase(findDatabaseIndex(this.properties.url), this.properties);
             this.$emit('close');
           }
         }

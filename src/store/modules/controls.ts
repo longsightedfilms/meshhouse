@@ -12,6 +12,7 @@ export default {
     fullscreen: false,
     categoriesVisible: true,
     databasesVisible: false,
+    hideIntegrations: false,
     imageRandomizer: 0,
     isLoaded: false,
     lastPage: 'main',
@@ -66,6 +67,9 @@ export default {
     },
     setUpdateDownloadComplete(state: ControlsState, payload: boolean): void {
       state.updates.downloaded = payload;
-    }
+    },
+    hideIntegrations(state: ControlsState, payload: boolean): void {
+      state.hideIntegrations = payload;
+    },
   },
 };

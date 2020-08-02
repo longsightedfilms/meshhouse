@@ -12,9 +12,8 @@ declare module 'vue/types/vue' {
     $addDatabase(db: DatabaseItem): Promise<void>;
     $reindexCatalog(db: DatabaseItem): Promise<void>;
     $editDatabase(
-      database: string,
-      setting: string,
-      value: string
+      index: number,
+      payload: DatabaseItem,
     ): Promise<boolean>;
     $updateItemInDatabase(
       dbName: string,

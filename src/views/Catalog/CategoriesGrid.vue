@@ -68,8 +68,13 @@ export default class CategoriesGrid extends Vue {
   }
 
   onScroll(event: WheelEvent): void {
-    this.$refs.categoryGrid.scrollLeft += event.deltaY;
-    event.preventDefault();
+    const visibleWidth = this.$refs.categoryGrid.clientWidth;
+    const containerWidth = this.$refs.categoryGrid.scrollWidth;
+
+    if (containerWidth > visibleWidth) {
+      this.$refs.categoryGrid.scrollLeft += event.deltaY;
+      event.preventDefault();
+    }
   }
 
 }

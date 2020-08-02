@@ -18,6 +18,9 @@ export default {
             main: 'Начальную страницу',
             lastCatalog: 'Последний открытый каталог'
           }
+        },
+        hideIntegrations: {
+          title: 'Скрывать интеграции'
         }
       }
     },

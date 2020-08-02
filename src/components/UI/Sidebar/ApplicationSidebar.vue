@@ -1,9 +1,14 @@
 <template>
-  <aside class="application__sidebar">
+  <aside
+    class="application__sidebar"
+    :class="isVisible ? 'visible' : ''"
+  >
     <button
       class="show-databases"
+      :title="$t('common.buttons.showCatalogs')"
       @click="toggleVisibility"
     >
+      <p>{{ $t('common.buttons.showCatalogs') }}</p>
       <vue-icon
         :style="flipIcon"
         icon="caret-back"
@@ -13,23 +18,27 @@
     <nav v-bar>
       <div class="nav-container">
         <div>
-          <label>{{ $t('common.types.databases.remote') }}</label>
-          <div>
-            <sidebar-link
-              v-for="item in filteredRemoteDB"
-              :key="'remote-' + item.title"
-              :navlink="item"
-              :progress="computeProgressLength(item.title)"
-            />
+          <div v-if="!ifIntegrationsHidden">
+            <label class="label">{{ $t('common.types.databases.remote') }}</label>
+            <div>
+              <sidebar-link
+                v-for="item in filteredRemoteDB"
+                :key="'remote-' + item.title"
+                :navlink="item"
+                :progress="computeProgressLength(item.title)"
+              />
+            </div>
           </div>
-          <label>{{ $t('common.types.databases.local') }}</label>
           <div>
-            <sidebar-link
-              v-for="item in filteredLocalDB"
-              :key="'local-' + item.title"
-              :navlink="item"
-              :progress="computeProgressLength(item.title)"
-            />
+            <label class="label">{{ $t('common.types.databases.local') }}</label>
+            <div>
+              <sidebar-link
+                v-for="item in filteredLocalDB"
+                :key="'local-' + item.title"
+                :navlink="item"
+                :progress="computeProgressLength(item.title)"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -52,13 +61,19 @@ export default class ApplicationSidebar extends Vue {
     if(this.$settingsGet('databasesVisible') !== undefined) {
       this.$store.commit('setDBVisibility', this.$settingsGet('databasesVisible'));
     }
+    if(this.$settingsGet('hideIntegrations') !== undefined) {
+      this.$store.commit('hideIntegrations', this.$settingsGet('hideIntegrations'));
+    }
   }
 
   get flipIcon(): object {
-    const { databasesVisible } = this.$store.state.controls;
-    return !databasesVisible ? {
+    return !this.isVisible ? {
       transform: 'translateX(-1px) rotate(180deg)'
     } : {};
+  }
+
+  get isVisible(): boolean {
+    return this.$store.state.controls.databasesVisible;
   }
 
   get filteredRemoteDB(): DatabaseItem[] {
@@ -67,6 +82,10 @@ export default class ApplicationSidebar extends Vue {
 
   get filteredLocalDB(): DatabaseItem[] {
     return this.$store.state.db.databases.filter((db: DatabaseItem) => db.localDB === true);
+  }
+
+  get ifIntegrationsHidden(): boolean {
+    return this.$store.state.controls.hideIntegrations;
   }
 
   computeProgressLength(title: string): number {

@@ -10,6 +10,7 @@
     justify-content: center
     align-items: center
     color: var(--textColor)
+    padding-bottom: 10rem
     .icon
       width: 30rem
       height: 30rem
@@ -66,3 +67,91 @@
       .image
         outline: none
         filter: brightness(0.7) saturate(0.5)
+
+.catalog
+  &-header
+    position: relative
+    background-color: #000000
+    overflow: hidden
+    height: 400px
+    &__image
+      display: flex
+      flex-direction: column
+      justify-content: center
+      align-items: center
+      height: 400px
+      &-background
+        position: absolute
+        left: 0
+        top: 0
+        height: 400px
+        width: 100%
+        object-fit: cover
+        object-position: center
+    &__logo
+      position: relative
+      z-index: 1
+      display: flex
+      flex-direction: column
+      align-items: center
+      margin-top: -5rem
+      &-image
+        display: block
+        width: auto
+        height: 10rem
+      .avatar
+        display: flex
+        align-items: center
+        justify-content: center
+        width: 10rem
+        height: 10rem
+        background-color: var(--blockColor)
+        border-radius: 50%
+        font-weight: 700
+        font-size: 7rem
+        line-height: 1
+        p
+          margin-top: -1rem
+      &-title
+        text-align: center
+        margin: 0
+        color: $white
+        text-transform: uppercase
+        letter-spacing: 0.25rem
+        font-weight: 700
+        font-size: 2.25rem
+        filter: drop-shadow(0 0 8px rgba(0,0,0,1))
+    &__info
+      background-color: var(--blockColorGlass)
+      padding: 0.5rem 1rem
+      height: 5rem
+      margin-top: -5rem
+      display: flex
+      justify-content: flex-end
+      align-items: center
+      position: sticky
+      top: 0
+      z-index: 1
+      &-block
+        display: flex
+        align-items: center
+        background-color: var(--blockColorLight)
+        color: var(--textColor)
+        border: 2px solid darken($white, 40%)
+        padding: 0.375rem 0.5rem
+        border-radius: 0rem
+        margin-inline-end: 0.5rem
+        .icon
+          margin-inline-end: 1rem
+          width: 2rem
+          height: 2rem
+        p
+          font-weight: 700
+          letter-spacing: 0.0675rem
+        .button
+          padding: 0
+          border: none
+          .icon
+            margin: 0
+        &:last-child
+          margin-inline-end: 0

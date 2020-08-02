@@ -1,16 +1,13 @@
 <template>
   <div :class="applicationClass()">
     <application-header />
-    <span
-      class="application__main"
-      :style="contentStyles"
-    >
+    <span class="application__main">
       <application-sidebar />
       <main
         v-bar
         class="application__content"
       >
-        <div>
+        <div ref="inner">
           <div style="max-height: calc(100vh - 80px)">
             <router-view />
           </div>
@@ -26,9 +23,7 @@
 </style>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component';
-import { Watch } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import ApplicationHeader from '@/components/UI/Header/ApplicationHeader.vue';
 import ApplicationSidebar from '@/components/UI/Sidebar/ApplicationSidebar.vue';
 
@@ -39,9 +34,17 @@ import { remote } from 'electron';
     ApplicationHeader,
     ApplicationSidebar,
   },
+  metaInfo() {
+    return {
+      htmlAttrs: {
+        dir: (this as any).$isRTL() ? 'rtl' : 'ltr',
+        lang: this.$i18n.locale
+      },
+      title: ''
+    };
+  }
 })
 export default class App extends Vue {
-
   @Watch('$store.state.controls.fullscreen')
   applicationClass(): string {
     let bodyClass = 'application';
@@ -77,13 +80,6 @@ export default class App extends Vue {
       break;
     }
     return `${bodyClass} ${cssTheme}`;
-  }
-
-  get contentStyles(): object {
-    const databasesVisible = this.$store.state.controls.databasesVisible ? 'minmax(300px, 17vw)' : '1rem';
-    return {
-      gridTemplateColumns: `${databasesVisible} 1fr`
-    };
   }
 
   mounted(): void {

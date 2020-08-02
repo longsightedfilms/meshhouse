@@ -2,14 +2,7 @@ import common from './common';
 // Views
 import catalog from './views/catalog';
 // Modals
-import addCatalog from './modals/addCatalog';
-import settings from './modals/settings';
-import about from './modals/about';
-import properties from './modals/properties';
-import addCategory from './modals/addCategory';
-import deleteCategory from './modals/deleteCategory';
-import editCategory from './modals/editCategory';
-import updater from './modals/updater';
+import modals from './modals/';
 // Context menus
 import catalogContext from './context/catalog';
 import modelContext from './context/model';
@@ -33,16 +26,7 @@ export default {
   hints: {
     navbar: navbarHint
   },
-  modals: {
-    about: about,
-    addCatalog: addCatalog,
-    addCategory: addCategory,
-    deleteCategory: deleteCategory,
-    editCategory: editCategory,
-    properties: properties,
-    settings: settings,
-    updater: updater
-  },
+  modals: modals,
   validations: validationMessages,
   views: {
     catalog: catalog

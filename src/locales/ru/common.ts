@@ -9,6 +9,7 @@ export default {
     install: 'Установить',
     save: 'Сохранить',
     show: 'Показать',
+    showCatalogs: '@:common.buttons.show все каталоги'
   },
   labels: {
     search: 'Поиск...',

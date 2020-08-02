@@ -1,4 +1,5 @@
 import _Vue from 'vue';
+import { i18n } from '@/locales/i18n';
 import fs from 'fs';
 import path from 'path';
 import { remote, shell } from 'electron';
@@ -33,6 +34,10 @@ initAppSettings();
 initDCCSettings();
 
 export function ModelsDB(Vue: typeof _Vue): void {
+  Vue.prototype.$isRTL = function(): boolean {
+    return i18n.locale === 'ar';
+  };
+
   Vue.prototype.$settingsGet = function(setting: string): string {
     return settings.get(setting);
   };
@@ -139,11 +144,10 @@ export function ModelsDB(Vue: typeof _Vue): void {
   };
 
   Vue.prototype.$editDatabase = function(
-    database: string,
-    setting: string,
-    value: string
+    index: number,
+    payload: DatabaseItem
   ): Promise<boolean> {
-    databases.set(`databases.${database}.${setting}`, value);
+    databases.set(`databases.${index}`, payload);
     store.commit('setApplicationDatabases', databases.get('databases'));
     return Promise.resolve(true);
   };

@@ -9,6 +9,7 @@ export default {
     install: 'Install',
     save: 'Save',
     show: 'Show',
+    showCatalogs: '@:common.buttons.show all catalogs'
   },
   labels: {
     search: 'Search...',

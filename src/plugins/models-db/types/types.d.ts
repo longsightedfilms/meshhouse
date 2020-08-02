@@ -10,6 +10,7 @@ type ControlsState = {
   fullscreen: boolean;
   categoriesVisible: boolean;
   databasesVisible: boolean;
+  hideIntegrations: boolean;
   imageRandomizer: number;
   isLoaded: boolean;
   lastPage: 'main' | 'lastCatalog';
@@ -67,6 +68,7 @@ type DatabaseItem = {
   title: string;
   color: string;
   icon?: string;
+  background: string;
   url: string;
   path?: string | null;
   count?: string | number;
@@ -196,6 +198,7 @@ type Settings = {
   theme: string;
   lastPage: 'main' | 'lastCatalog' | string;
   categoriesVisible: boolean;
+  hideIntegrations: boolean;
 }
 
 type ApplicationSettings = {

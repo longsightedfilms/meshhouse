@@ -4,7 +4,8 @@ export default {
     name: 'Catalog title',
     folder: 'Path',
     color: 'Catalog color',
-    image: 'Catalog icon',
+    icon: 'Catalog icon',
+    image: 'Catalog background image',
   },
   hints: {
     name: 'New catalog',

@@ -17,18 +17,24 @@
     margin-top: 1rem
     label
       flex: 1 0 30%
-      margin-right: 1rem
+      margin-inline-end: 1rem
     .input
       flex: 1 1 calc(70% - 1rem)
     .input--select
       width: calc(70% - 1rem)
       .input
         width: 100%
+    .input--color.vc-chrome
+      width: calc(70% - 1rem)
+      .vc-chrome-saturation-wrap
+        padding-bottom: 30%
+    .input--file
+      width: calc(70% - 1rem)
     &--column
       align-items: flex-start
       flex-direction: column
       label
-        margin-right: 0
+        margin-inline-end: 0
         margin-bottom: 1rem
   &--select
     position: relative
@@ -37,7 +43,7 @@
       cursor: pointer
     .icon
       position: absolute
-      right: 1rem
+      inset-inline-end: 1rem
       top: 0.75rem
       display: block
       width: 1.5rem
@@ -56,9 +62,8 @@
       color: rgb(117, 117, 117)
   &__message
     flex: 1 0 100%
-    padding: 0.5rem 0
     line-height: 1
-    min-height: 2rem
+    min-height: 1rem
     margin-top: 0.5rem
     text-align: right
     color: $danger
@@ -101,10 +106,10 @@
     .decor
       pointer-events: none
       position: absolute
-      left: 0.5rem
+      inset-inline-start: 0.5rem
     .clear
       position: absolute
-      right: 0.5rem
+      inset-inline-end: 0.5rem
     .input
       padding: 0.625rem 2.5rem
       width: 10rem

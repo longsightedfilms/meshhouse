@@ -18,6 +18,9 @@ export default {
             main: 'Index page',
             lastCatalog: 'Last opened catalog'
           }
+        },
+        hideIntegrations: {
+          title: 'Hide integrations'
         }
       }
     },

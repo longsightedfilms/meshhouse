@@ -17,6 +17,7 @@
           :marks="true"
           :dot-size="[8, 24]"
           :height="2"
+          :direction="$isRTL() ? 'rtl' : 'ltr'"
           hide-label
           @change="onSliderChange"
         />

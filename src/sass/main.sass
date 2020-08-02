@@ -15,6 +15,7 @@ body
   &.theme--light
     --blockColorLighter: #{lighten($themeLightMain, 7%)}
     --blockColorLight: #{lighten($themeLightMain, 3%)}
+    --blockColorGlass: rgba(255,255,255,0.6)
     --blockColor: #{$themeLightMain}
     --blockColorDark: #{darken($themeLightMain, 3%)}
     --blockColorDarker: #{darken($themeLightMain, 7%)}
@@ -25,6 +26,7 @@ body
   &.theme--dark
     --blockColorLighter: #{lighten($themeDarkMain, 10%)}
     --blockColorLight: #{lighten($themeDarkMain, 5%)}
+    --blockColorGlass: rgba(0,0,0,0.6)
     --blockColor: #{$themeDarkMain}
     --blockColorDark: #{darken($themeDarkMain, 5%)}
     --blockColorDarker: #{darken($themeDarkMain, 10%)}
@@ -33,18 +35,19 @@ body
     --textColor: #{$white}
     --scrollColor: #aaaaaa
   &__content
-    grid-area: Content
     background-color: var(--blockColorDark)
   &__main
     display: grid
-    grid-template-columns: 16px 1fr
+    grid-template-columns: 1fr
     grid-template-rows: 1fr
-    grid-template-areas: "Sidebar Content"
     grid-area: Main
     background-color: var(--blockColor)
   &--linux, &--mac, &--fullscreen
     grid-template-rows: 4rem calc(100vh - 4rem)
+    .application__sidebar
+      height: calc(100vh - 4rem)
 // UI
+@import 'UI/badge'
 @import 'UI/button'
 @import 'UI/card'
 @import 'UI/context'
@@ -52,6 +55,7 @@ body
 @import 'UI/header'
 @import 'UI/icon'
 @import 'UI/input'
+@import 'UI/label'
 @import 'UI/modal'
 @import 'UI/sidebar'
 @import 'UI/slider'
@@ -63,3 +67,6 @@ body
 // Pages
 @import 'Pages/home'
 @import 'Pages/models'
+
+// RTL fixes
+@import 'rtl'

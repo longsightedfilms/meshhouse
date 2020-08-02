@@ -4,6 +4,7 @@
     :style="{'--color': navlink.color}"
     :event="!navlink.disabled ? 'click' : ''"
     :disabled="navlink.disabled"
+    class="sidebar_link"
   >
     <div
       class="avatar"
@@ -21,7 +22,17 @@
       </p>
     </div>
     <div class="info">
-      <b class="title">{{ navlink.title }}</b>
+      <div class="title">
+        <b>{{ navlink.title }}</b>
+        <button
+          v-if="navlink.localDB"
+          :title="'Удалить каталог'"
+          class="button button--flat"
+          @click="deleteCatalog(navlink)"
+        >
+          <vue-icon icon="recycle-bin" />
+        </button>
+      </div>
       <progress
         class="progress"
         :style="{'--color': navlink.color}"
@@ -30,7 +41,9 @@
       />
       <p class="count">
         {{ $tc('views.catalog.sidebar.model', navlink.count) }}
-        <span>{{ $formatSize(navlink.totalsize) }}</span>
+        <span class="badge">
+          {{ $formatSize(navlink.totalsize) }}
+        </span>
       </p>
     </div>
   </router-link>
@@ -93,6 +106,10 @@ export default class SidebarLink extends Vue {
     } else {
       return `/assets/integrations/${this.$props.navlink.icon.substr(2)}`;
     }
+  }
+
+  deleteCatalog(catalog: DatabaseItem): void {
+    console.log(catalog);
   }
 }
 </script>
