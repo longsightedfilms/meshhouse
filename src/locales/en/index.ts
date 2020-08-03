@@ -7,6 +7,7 @@ import modals from './modals/';
 import catalogContext from './context/catalog';
 import modelContext from './context/model';
 // Dropdown, hints
+import download from './dropdowns/download';
 import DDMenu from './dropdowns/mainmenu';
 import navbarHint from './hints/navbar';
 // Validation
@@ -20,6 +21,7 @@ export default {
     model: modelContext
   },
   dropdowns: {
+    download: download,
     mainmenu: DDMenu
   },
   fields: fields,

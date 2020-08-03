@@ -207,7 +207,7 @@ export default class EditCatalogModal extends Vue {
   preview = ''
 
   mounted(): void {
-    const db = Object.assign({}, this.$store.state.db.databases.find((db: DatabaseItem) => db.url == this.$route.params.database));
+    const db = Object.assign({}, this.$store.state.db.databases.local.find((db: DatabaseItem) => db.url == this.$route.params.database));
     this.properties = db;
   }
 

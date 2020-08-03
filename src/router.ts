@@ -30,7 +30,7 @@ const router = new Router({
       }
     },
     {
-      path: '/db/remote/:database/:category?',
+      path: '/db/remote/:database/:page?',
       name: 'RemoteDatabase',
       component: (): Promise<typeof import('*.vue')> =>
         import(
@@ -44,6 +44,7 @@ const router = new Router({
 });
 
 router.beforeEach((to, from, next) => {
+  store.commit('setOfflineStatus', false);
   store.commit('setLoadingStatus', false);
   next();
 });

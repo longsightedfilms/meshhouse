@@ -19,6 +19,15 @@
         </button>
       </div>
       <label>{{ $t('common.types.databases.remote') }}</label>
+      <div>
+        <button
+          class="button"
+          :class="selected === 'IntegrationsSettings' ? 'active' : ''"
+          @click="selected = 'IntegrationsSettings'"
+        >
+          Общие настройки интеграций
+        </button>
+      </div>
     </aside>
     <main>
       <header class="modal_header">
@@ -45,11 +54,13 @@ import Component from 'vue-class-component';
 // Tabs
 import MainSettings from './Settings/MainSettings.vue';
 import ProgramSettings from './Settings/ProgramSettings.vue';
+import IntegrationsSettings from './Settings/IntegrationsSettings.vue';
 
 @Component({
   components: {
     MainSettings,
     ProgramSettings,
+    IntegrationsSettings
   },
 })
 export default class ModalSettings extends Vue {

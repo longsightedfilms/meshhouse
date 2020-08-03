@@ -58,9 +58,15 @@ export const modelsExtensions: Extension = {
   }
 };
 
+export const integrationsList = [
+  'meshhouse',
+  'sfmlab',
+  'smutbase'
+];
+
 export function filterByModels(file: string, stats: fs.Stats): boolean {
   return (
-    !stats.isDirectory() && !modelsExtensions.hasOwnProperty(path.extname(file))
+    !stats.isDirectory() && !Object.hasOwnProperty.call(modelsExtensions, path.extname(file))
   );
 }
 
@@ -135,14 +141,14 @@ export function colorContrast(hex: string): string {
 // Database handling
 
 export function findDatabaseIndex(url: string): number {
-  return databases.get('databases').findIndex((db: DatabaseItem) => db.url === url);
+  return databases.get('databases').local.findIndex((db: DatabaseItem) => db.url === url);
 }
 
 export function handleDatabases(database: DatabaseItem | string): Integrations {
   let searchableDB;
 
   if (typeof database === 'string') {
-    searchableDB = databases.get('databases')[findDatabaseIndex(database)];
+    searchableDB = databases.get('databases.local')[findDatabaseIndex(database)];
   } else {
     searchableDB = database;
   }
@@ -156,7 +162,7 @@ export async function updateDatabases(): Promise<boolean> {
   const db = databases.get('databases');
 
   // Update model count and total size
-  for await (const [index, database] of db.entries()) {
+  for await (const [index, database] of db.local.entries()) {
     const handleDB = handleDatabases(database);
 
     if (handleDB !== null) {
@@ -178,8 +184,8 @@ export async function updateDatabases(): Promise<boolean> {
         await handleDB.runQuery(query);
       });
 
-      db[index].count = models.length;
-      db[index].totalsize = totalSize;
+      db.local[index].count = models.length;
+      db.local[index].totalsize = totalSize;
     }
   }
   databases.store = { databases: db };
@@ -187,14 +193,14 @@ export async function updateDatabases(): Promise<boolean> {
   return Promise.resolve(true);
 }
 
-function handleUpdate(database: DatabaseItem, handleDB: Integrations, db: DatabaseItem[], index: number): Promise<void> {
+function handleUpdate(database: DatabaseItem, handleDB: Integrations, db: any, index: number): Promise<void> {
   return recursive(database.path, [filterByModels])
     .then((files: string[]) => {
       return handleDB.reindexCatalog(files);
     })
     .then((items: DatabaseUpdateInformation) => {
-      db[index].count = items.count;
-      db[index].totalsize = items.totalSize;
+      db.local[index].count = items.count;
+      db.local[index].totalsize = items.totalSize;
 
       databases.store = { databases: db };
       store.commit('setApplicationDatabases', db);
@@ -205,7 +211,7 @@ function handleUpdate(database: DatabaseItem, handleDB: Integrations, db: Databa
 export async function watchDatabases(): Promise<boolean> {
   const db = databases.get('databases');
 
-  for await (const [index, database] of db.entries()) {
+  for await (const [index, database] of db.local.entries()) {
     const handleDB = handleDatabases(database);
 
 

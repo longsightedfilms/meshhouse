@@ -2,6 +2,10 @@ import Vue from 'vue';
 
 declare module 'vue/types/vue' {
   interface Vue {
+    /**
+     * Returns if current locale are Right-to-Left writing
+     */
+    $isRTL(): boolean;
     $settingsGet(setting: string): string;
     $settingsSet(key: string, value: string | number | boolean): void;
     $dccGetConfig(): object;
@@ -19,6 +23,7 @@ declare module 'vue/types/vue' {
       dbName: string,
       model?: Model
     ): Promise<string | boolean>;
+    $setIntegrationsDB(payload: any): void;
     $deleteDatabase(database: string): Promise<boolean>;
     $watchDatabases(): Promise<void>;
     $indexFolderRecursive(folder: string): Promise<string[]>;

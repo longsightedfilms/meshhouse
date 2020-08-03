@@ -22,6 +22,7 @@ module.exports = {
     electronBuilder: {
       externals: ['node-notifier', 'electron-store', 'sqlite3', 'sharp', 'axios', 'chokidar'],
       nodeModulesPath: ['../../node_modules', './node_modules'],
+      nodeIntegration: true,
       builderOptions: {
         appId: 'com.longsightedfilms.meshhouse',
         productName: 'MeshHouse',

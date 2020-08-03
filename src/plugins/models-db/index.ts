@@ -64,7 +64,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
   Vue.prototype.$returnHumanLikeExtension = function(
     extension: string
   ): string {
-    return modelsExtensions[extension].title;
+    return modelsExtensions[extension].title ?? '';
   };
 
   Vue.prototype.$forceReloadImage = function(image: string): string {
@@ -96,11 +96,11 @@ export function ModelsDB(Vue: typeof _Vue): void {
 
         const query = `INSERT INTO 'models' VALUES ${models}`;
         database.runQuery(query).then(() => {
-          const list = databases.get('databases');
+          const list = databases.get('databases.local');
           if (list) {
             db.count = models.length;
             db.totalsize = totalSize;
-            databases.set('databases', list.concat(db));
+            databases.set('databases.local', list.concat(db));
           }
           store.commit('setApplicationDatabases', databases.get('databases'));
         });
@@ -117,12 +117,12 @@ export function ModelsDB(Vue: typeof _Vue): void {
     return this.$indexFolderRecursive(db.path)
       .then((files: string[]) => {
         return database.reindexCatalog(files).then((items: DatabaseUpdateInformation) => {
-          const list = databases.get('databases');
+          const list = databases.get('databases.local');
           const dbIndex = findDatabaseIndex(db.url);
           if (list) {
             list[dbIndex].count = items.count;
             list[dbIndex].totalsize = items.totalSize;
-            databases.set('databases', list);
+            databases.set('databases.local', list);
           }
           store.commit('setApplicationDatabases', databases.get('databases'));
           store.commit('setLoadingStatus', true);
@@ -147,9 +147,14 @@ export function ModelsDB(Vue: typeof _Vue): void {
     index: number,
     payload: DatabaseItem
   ): Promise<boolean> {
-    databases.set(`databases.${index}`, payload);
+    databases.set(`databases.local.${index}`, payload);
     store.commit('setApplicationDatabases', databases.get('databases'));
+    store.commit('setCurrentDatabase', payload.url);
     return Promise.resolve(true);
+  };
+
+  Vue.prototype.$setIntegrationsDB = function(payload: any): void {
+    databases.set('databases.integrations', payload);
   };
 
   Vue.prototype.$deleteDatabase = function(database: string): Promise<boolean> {

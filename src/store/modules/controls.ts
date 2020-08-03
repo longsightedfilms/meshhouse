@@ -14,6 +14,7 @@ export default {
     databasesVisible: false,
     hideIntegrations: false,
     imageRandomizer: 0,
+    isOffline: false,
     isLoaded: false,
     lastPage: 'main',
     properties: {},
@@ -55,6 +56,9 @@ export default {
     },
     setLoadingStatus(state: ControlsState, status: boolean): void {
       state.isLoaded = status;
+    },
+    setOfflineStatus(state: ControlsState, status: boolean): void {
+      state.isOffline = status;
     },
     setProperties(state: ControlsState, payload: ImageProperties): void {
       state.properties = payload;

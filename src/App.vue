@@ -37,10 +37,10 @@ import { remote } from 'electron';
   metaInfo() {
     return {
       htmlAttrs: {
-        dir: (this as any).$isRTL() ? 'rtl' : 'ltr',
+        dir: this.$isRTL() ? 'rtl' : 'ltr',
         lang: this.$i18n.locale
       },
-      title: ''
+      titleTemplate: '%s - Meshhouse'
     };
   }
 })

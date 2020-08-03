@@ -22,7 +22,7 @@
             <label class="label">{{ $t('common.types.databases.remote') }}</label>
             <div>
               <sidebar-link
-                v-for="item in filteredRemoteDB"
+                v-for="item in $store.state.db.databases.integrations"
                 :key="'remote-' + item.title"
                 :navlink="item"
                 :progress="computeProgressLength(item.title)"
@@ -33,7 +33,7 @@
             <label class="label">{{ $t('common.types.databases.local') }}</label>
             <div>
               <sidebar-link
-                v-for="item in filteredLocalDB"
+                v-for="item in $store.state.db.databases.local"
                 :key="'local-' + item.title"
                 :navlink="item"
                 :progress="computeProgressLength(item.title)"
@@ -76,21 +76,14 @@ export default class ApplicationSidebar extends Vue {
     return this.$store.state.controls.databasesVisible;
   }
 
-  get filteredRemoteDB(): DatabaseItem[] {
-    return this.$store.state.db.databases.filter((db: DatabaseItem) => db.localDB === false);
-  }
-
-  get filteredLocalDB(): DatabaseItem[] {
-    return this.$store.state.db.databases.filter((db: DatabaseItem) => db.localDB === true);
-  }
-
   get ifIntegrationsHidden(): boolean {
     return this.$store.state.controls.hideIntegrations;
   }
 
   computeProgressLength(title: string): number {
     let totalSpace = 0;
-    const { databases } = this.$store.state.db;
+    const { local, integrations } = this.$store.state.db.databases;
+    const databases = [...local, ...Object.values(integrations)];
     const idx = databases.findIndex((db: DatabaseItem) => db.title === title);
 
     databases.forEach((db: DatabaseItem) => {

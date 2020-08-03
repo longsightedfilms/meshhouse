@@ -9,10 +9,16 @@
     </button>
     <div class="breadcrumbs">
       <span
-        v-if="selectedDB !== undefined"
+        v-if="$store.state.controls.isOffline"
+        class="badge"
+      >
+        OFFLINE
+      </span>
+      <span
+        v-if="$store.state.db.currentDB !== undefined"
         class="breadcrumb"
       >
-        {{ selectedDB.title }}
+        {{ $store.state.db.currentDB.title }}
       </span>
       <div
         v-if="!$store.state.controls.isLoaded"
@@ -116,10 +122,6 @@ import { handleDatabases, findDatabaseIndex } from '@/plugins/models-db/function
 })
 export default class HeaderNavigation extends Vue {
   title: string[] = []
-
-  get selectedDB(): DatabaseItem {
-    return this.$store.state.db.databases.find((db: DatabaseItem) => db.url == this.$route.params.database);
-  }
 
   showNewCatalog(): void {
     this.$modal.show(AddNewCatalogModal, {}, {

@@ -1,7 +1,7 @@
 <template>
   <div
     class="card card--model"
-    @dblclick="$openItem(item.path)"
+    @dblclick="handleDblClick(item)"
     @contextmenu.prevent="onRightClick"
     @dragstart="onDrag"
   >
@@ -47,6 +47,19 @@ import { ipcRenderer } from 'electron';
 export default class ModelCard extends Vue {
   modelSize(size: number): string {
     return formatBytes(size);
+  }
+
+  handleDblClick(item: Model): void {
+    if (Object.hasOwnProperty.call(item, 'installed')) {
+      // Is remote item
+      if (item.installed === true) {
+        this.$openItem(item.path);
+      } else {
+        console.log('not installed');
+      }
+    } else {
+      this.$openItem(item.path);
+    }
   }
 
   onRightClick(event: MouseEvent): void {

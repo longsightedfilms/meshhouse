@@ -51,9 +51,7 @@
 
 <script lang="ts">
 import eventBus from '@/eventBus';
-import Vue from 'vue';
-import Component from 'vue-class-component';
-import { Watch } from 'vue-property-decorator';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import VueContext from 'vue-context';
 import { Fragment } from 'vue-fragment';
 import CategoriesGrid from './CategoriesGrid.vue';
@@ -81,9 +79,15 @@ import { Route } from 'vue-router';
     const categories = await db.fetchCategories();
 
     next((vm: Vue) => {
+      vm.$store.commit('setCurrentDatabase', to.params.database);
       vm.$store.commit('setLoadedData', models);
       vm.$store.commit('setCategories', categories);
     });
+  },
+  metaInfo() {
+    return {
+      title: this.$store.state.db.currentDB?.title ?? ''
+    };
   }
 })
 export default class LocalDatabase extends Vue {
@@ -97,14 +101,14 @@ export default class LocalDatabase extends Vue {
     const models = await db.fetchItemsFromDatabase(undefined, this.$route.params.category);
 
     const categories = await db.fetchCategories();
+
+    this.$store.commit('setCurrentDatabase', this.$route.params.database);
     this.$store.commit('setLoadedData', models);
     this.$store.commit('setCategories', categories);
   }
 
   reindexCatalog(): void {
-    const dbIndex = findDatabaseIndex(this.$route.params.database);
-    const db = this.$store.state.db.databases[dbIndex];
-    this.$reindexCatalog(db).then(async() => {
+    this.$reindexCatalog(this.$store.state.db.currentDB).then(async() => {
       await this.databaseInitialize();
     });
   }

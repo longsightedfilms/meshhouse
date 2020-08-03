@@ -12,6 +12,7 @@ type ControlsState = {
   databasesVisible: boolean;
   hideIntegrations: boolean;
   imageRandomizer: number;
+  isOffline: boolean;
   isLoaded: boolean;
   lastPage: 'main' | 'lastCatalog';
   properties: ImageProperties;
@@ -26,9 +27,13 @@ type ControlsState = {
 type Theme = 'system' | 'light' | 'dark'
 
 type DatabaseState = {
-  databases: DatabaseItem[];
+  databases: {
+    local: DatabaseItem[];
+    integrations: any;
+  };
   categories: Category[];
   loadedData: Model[] | Model;
+  currentDB: DatabaseItem | undefined;
 }
 
 type Filters = {
@@ -125,12 +130,14 @@ type ProgressInfo = {
 
 type Model = {
   id: number;
+  remoteId?: number;
   name: string;
   extension: string;
   path: string;
   category: string | null;
   size?: number;
   image: string;
+  installed?: boolean;
 }
 
 type ImageProperties = Model & { imageChanged: boolean }
@@ -211,7 +218,10 @@ type DCCSettings = {
 
 type DatabaseSettings = {
   [key: string]: any;
-  databases: DatabaseItem[];
+  databases: {
+    local: DatabaseItem[];
+    integrations: any;
+  };
 }
 
 

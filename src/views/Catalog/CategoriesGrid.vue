@@ -30,14 +30,16 @@
         :key="`${category.id}-${category.slug}`"
         :item="category"
       />
-      <category-card type="new" />
+      <category-card
+        v-if="!$props.remote"
+        type="new"
+      />
     </div>
   </fragment>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component';
+import { Vue, Component } from 'vue-property-decorator';
 import { Fragment } from 'vue-fragment';
 import CategoryCard from '@/components/UI/Card/CategoryCard.vue';
 
@@ -46,6 +48,13 @@ import CategoryCard from '@/components/UI/Card/CategoryCard.vue';
     CategoryCard,
     Fragment
   },
+  props: {
+    remote: {
+      type: Boolean,
+      required: false,
+      default: false,
+    }
+  }
 })
 export default class CategoriesGrid extends Vue {
   $refs!: {
