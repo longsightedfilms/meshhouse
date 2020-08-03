@@ -161,13 +161,13 @@ export default class SFMLab extends Integration {
   }
 
   dynamicQueryBuilder(params: QueryParameters): string {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   updateBuilder(model: Model): string {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
   async reindexCatalog(files: string[]): Promise<DatabaseUpdateInformation> {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   async downloadItem(img: string, title: string, link: string): Promise<boolean | Error> {

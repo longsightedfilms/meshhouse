@@ -19,7 +19,7 @@ const applicationOptions = {
   backgroundColor: '#2e3131',
   webPreferences: {
     experimentalFeatures: true,
-    nodeIntegration: true,
+    nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
     webSecurity: false,
   },
 };
