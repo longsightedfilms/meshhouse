@@ -1,11 +1,15 @@
 declare const __static: string;
 
 import path from 'path';
+import ElectronStore from 'electron-store';
 import { app, protocol, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { autoUpdater } from 'electron-updater';
-import { settings } from './plugins/models-db/init';
 const isDevelopment = process.env.NODE_ENV !== 'production';
+
+const settings: ElectronStore<ApplicationSettings> = new ElectronStore({
+  name: 'settings',
+} as StoreSettings);
 
 const applicationOptions = {
   width: settings.get('applicationWindow.width') || 1024,

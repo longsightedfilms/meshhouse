@@ -1,5 +1,5 @@
 <template>
-  <div :class="applicationClass()">
+  <div>
     <application-header />
     <span class="application__main">
       <application-sidebar />
@@ -14,7 +14,6 @@
         </div>
       </main>
     </span>
-    <modals-container />
   </div>
 </template>
 
@@ -39,6 +38,9 @@ import { remote } from 'electron';
       htmlAttrs: {
         dir: this.$isRTL() ? 'rtl' : 'ltr',
         lang: this.$i18n.locale
+      },
+      bodyAttrs: {
+        class: (this as App).applicationClass()
       },
       titleTemplate: '%s - Meshhouse'
     };

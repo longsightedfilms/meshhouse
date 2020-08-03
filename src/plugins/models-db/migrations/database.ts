@@ -14,7 +14,7 @@ const sfmlab = {
 };
 
 export default {
-  '>=0.2.7': ((dcc: ElectronStore<DatabaseSettings>): void => {
-    dcc.set('databases.integrations.sfmlab', sfmlab);
+  '>=0.2.7': ((db: ElectronStore<DatabaseSettings>): void => {
+    db.set('databases.integrations.sfmlab', sfmlab);
   })
 };
