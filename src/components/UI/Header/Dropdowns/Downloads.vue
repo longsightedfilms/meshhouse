@@ -21,18 +21,39 @@
             max="100"
             :value="computeProgress(download)"
           />
-          <p class="status">
+          <p
+            v-if="download.downloadedSize !== -1"
+            class="status"
+          >
             <span>{{ computeFileSize(download.downloadedSize) + ' / ' + computeFileSize(download.totalSize) }}</span>
+          </p>
+          <p
+            v-else
+            class="status"
+          >
+            <span>{{ $t('dropdowns.download.canceled') }}</span>
           </p>
         </div>
         <div class="buttons">
           <button
+            v-if="!isFinished(download)"
+            class="button button--flat button--flat-danger"
+            @click="$store.commit('cancelDownloadItem', download)"
+          >
+            <vue-icon
+              icon="stop"
+              raster
+            />
+          </button>
+          <button
+            v-if="isFinished(download) && !isCanceled(download)"
             class="button button--flat"
             @click="$openFolder(download.path)"
           >
             <vue-icon icon="folder" />
           </button>
           <button
+            v-if="isFinished(download) || isCanceled(download)"
             class="button button--flat button--flat-danger"
             @click="$store.commit('deleteDownloadItem', idx)"
           >
@@ -65,6 +86,14 @@ import { formatBytes } from '@/plugins/models-db/functions';
   }
 })
 export default class DownloadsDropdown extends Vue {
+  isFinished(item: Download): boolean {
+    return item.downloadedSize === item.totalSize;
+  }
+
+  isCanceled(item: Download): boolean {
+    return item.downloadedSize === -1 && item.totalSize === -1;
+  }
+
   computeProgress(item: Download): number {
     return item.downloadedSize / item.totalSize * 100;
   }

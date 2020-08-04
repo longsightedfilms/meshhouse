@@ -1,3 +1,11 @@
+@keyframes newItem
+  0%
+    transform: scale(1)
+  50%
+    transform: scale(1.75)
+  100%
+    transform: scale(1)
+
 .dropdown
   position: relative
   &__menu
@@ -72,6 +80,7 @@
     grid-template-areas: "Image Content Buttons"
     align-items: center
     border-bottom: 0.125rem solid var(--blockColorLighter)
+    padding-bottom: 1rem
     margin-bottom: 1rem
     .image
       display: flex
@@ -106,6 +115,7 @@
       grid-area: Buttons
     &:last-child
       border-bottom: none
+      padding-bottom: 0
       margin-bottom: 0
   &__empty
     display: flex
@@ -117,6 +127,14 @@
       width: 6rem
     p
       margin: 0
+  &.active
+    >.button
+      .icon
+        animation: newItem 0.5s ease-in-out
+  &.completed
+    >.button
+      .icon
+        filter: invert(51%) sepia(90%) saturate(1078%) hue-rotate(172deg) brightness(95%) contrast(97%)
 
 .filters
   .dropdown

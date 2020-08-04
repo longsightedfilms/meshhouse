@@ -9,10 +9,12 @@ import modelContext from './context/model';
 // Dropdown, hints
 import download from './dropdowns/download';
 import DDMenu from './dropdowns/mainmenu';
-import navbarHint from './hints/navbar';
+import hints from './hints';
 // Validation
 import fields from './fields';
 import validationMessages from 'vee-validate/dist/locale/ru.json';
+
+import notifications from './notifications';
 
 export default {
   common: common,
@@ -25,10 +27,9 @@ export default {
     mainmenu: DDMenu
   },
   fields: fields,
-  hints: {
-    navbar: navbarHint
-  },
+  hints: hints,
   modals: modals,
+  notifications: notifications,
   validations: validationMessages,
   views: {
     catalog: catalog

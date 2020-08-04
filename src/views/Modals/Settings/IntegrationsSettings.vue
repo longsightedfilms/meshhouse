@@ -2,7 +2,7 @@
   <div v-bar>
     <div>
       <div class="tab tab--programs">
-        <h1>Включение интеграций</h1>
+        <h1>{{ $t('modals.settings.tabs.integrations.title') }}</h1>
         <div class="programs">
           <div
             v-for="(obj, key) in integrations"
@@ -16,8 +16,33 @@
                 :width="42"
                 :height="18"
                 :sync="true"
+                :disabled="obj.path === null"
                 @change="(event) => handleSliderChange(event, obj.url)"
               />
+            </div>
+            <div class="input-group">
+              <input
+                :ref="obj.url"
+                type="file"
+                webkitdirectory
+                hidden
+                required
+                @change="(event) => handleDirectoryChange(event, obj.url)"
+              >
+              <button
+                class="input input--file"
+                @click.prevent="() => handleDirectoryClick(obj.url)"
+              >
+                <span v-if="obj.path !== null">
+                  {{ obj.path }}
+                </span>
+                <span
+                  v-else
+                  class="placeholder"
+                >
+                  {{ $t('modals.settings.tabs.integrations.content.path') }}
+                </span>
+              </button>
             </div>
           </div>
         </div>
@@ -30,6 +55,8 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { ToggleButton } from 'vue-js-toggle-button';
+import { remote } from 'electron';
+import { validate } from 'vee-validate';
 
 @Component({
   components: {
@@ -38,6 +65,10 @@ import { ToggleButton } from 'vue-js-toggle-button';
 })
 
 export default class ProgramSettings extends Vue {
+  $refs!: {
+    [key: string]: HTMLInputElement[];
+  }
+
   integrations: any = {}
 
   mounted(): void {
@@ -46,6 +77,18 @@ export default class ProgramSettings extends Vue {
 
   handleSliderChange(event: VueToggleChangeEvent, integration: string): void {
     this.integrations[integration].disabled = !event.value;
+    this.$setIntegrationsDB(this.integrations);
+  }
+
+  async handleDirectoryClick(integration: string): Promise<void> {
+    const dialog = await remote.dialog.showOpenDialog({
+      properties: ['openDirectory']
+    });
+    const folderPath = dialog.filePaths.length !== 0 ? dialog.filePaths[0].toString() : '';
+    const validation = await validate(folderPath, 'required', {
+      name: 'catalogPath'
+    });
+    this.integrations[integration].path = validation.valid ? folderPath : null;
     this.$setIntegrationsDB(this.integrations);
   }
 }

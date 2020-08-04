@@ -77,7 +77,7 @@ function createWindow(
   return appWin;
 }
 
-app.disableHardwareAcceleration();
+//app.disableHardwareAcceleration();
 //app.commandLine.appendSwitch('disable-software-rasterizer')
 //app.commandLine.appendSwitch('disable-gpu')
 // Quit when all windows are closed.

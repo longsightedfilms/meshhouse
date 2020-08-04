@@ -83,6 +83,7 @@
       </vue-dropdown>
       <vue-dropdown
         class="download"
+        :class="downloadClass"
         :hint="$t('hints.navbar.downloads')"
       >
         <template slot="button">
@@ -104,6 +105,7 @@
 </template>
 
 <script lang="ts">
+import eventBus from '@/eventBus';
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import AddNewCatalogModal from '@/views/Modals/AddNewCatalogModal.vue';
@@ -121,7 +123,31 @@ import { handleDatabases, findDatabaseIndex } from '@/plugins/models-db/function
   }
 })
 export default class HeaderNavigation extends Vue {
+  downloadStarted = false
+  downloadCompleted = false
+
   title: string[] = []
+
+  get downloadClass (): string {
+    return `${this.downloadStarted ? 'active' : ''} ${this.downloadCompleted ? 'completed' : ''}`;
+  }
+
+  mounted(): void {
+    eventBus.$on('download-started', () => {
+      this.downloadStarted = true;
+      setTimeout(() => {
+        this.downloadStarted = false;
+      }, 1000);
+    });
+    eventBus.$on('download-completed', () => {
+      this.downloadCompleted = true;
+    });
+  }
+
+  resetClass (): void {
+    this.downloadStarted = false;
+    this.downloadCompleted = false;
+  }
 
   showNewCatalog(): void {
     this.$modal.show(AddNewCatalogModal, {}, {

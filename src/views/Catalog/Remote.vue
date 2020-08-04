@@ -20,12 +20,13 @@
       <vue-context ref="menu">
         <model-context />
       </vue-context>
-      <button @click="downloadItem">
-        Test download
-      </button>
     </div>
+    <catalog-paginator
+      v-if="$store.state.db.loadedData.length !== 0"
+      :totalPages="totalPages"
+    />
     <div
-      v-else
+      v-if="$store.state.db.loadedData.length === 0"
       class="models-empty"
     >
       <vue-icon icon="box" />
@@ -37,16 +38,19 @@
 </template>
 
 <script lang="ts">
+import eventBus from '@/eventBus';
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import { Fragment } from 'vue-fragment';
 import VueContext from 'vue-context';
 import ModelContext from '@/components/UI/Context/ModelContext.vue';
 import ModelCard from '@/components/UI/Card/ModelCard.vue';
 import Integrations from '@/plugins/models-db/integrations/main';
+import CatalogPaginator from './CatalogPaginator.vue';
 import { Route } from 'vue-router';
 
 @Component({
   components: {
+    CatalogPaginator,
     Fragment,
     ModelCard,
     VueContext,
@@ -60,6 +64,7 @@ import { Route } from 'vue-router';
       vm.$store.commit('setCurrentDatabase', to.params.database);
       vm.$store.commit('setLoadedData', data.models);
       vm.$store.commit('setCategories', data.categories);
+      (vm as RemoteDatabase).totalPages = data.totalPages;
     });
   },
   metaInfo() {
@@ -69,9 +74,20 @@ import { Route } from 'vue-router';
   }
 })
 export default class RemoteDatabase extends Vue {
+  totalPages = 0
+
   @Watch('$route')
   async onRouteChanged(): Promise<void> {
     await this.databaseInitialize();
+  }
+
+  mounted(): void {
+    eventBus.$on('download-completed', (async() => {
+      await this.databaseInitialize();
+    }));
+    eventBus.$on('item-deleted', (async() => {
+      await this.databaseInitialize();
+    }));
   }
 
   async databaseInitialize(): Promise<void> {
@@ -81,15 +97,6 @@ export default class RemoteDatabase extends Vue {
     this.$store.commit('setCurrentDatabase', this.$route.params.database);
     this.$store.commit('setLoadedData', data.models);
     this.$store.commit('setCategories', data.categories);
-  }
-
-  async downloadItem(): Promise<void> {
-    const db = new Integrations[this.$route.params.database]();
-    await db.downloadItem(
-      'https://sfmlab.com/media/cache/bf/19/bf198e9ac86f25014bd5808883a67fd4.webp?v=0',
-      'House/Room stages',
-      'https://sfmlab.com/serve_file/30551/'
-    );
   }
 
   get gridClass(): string {

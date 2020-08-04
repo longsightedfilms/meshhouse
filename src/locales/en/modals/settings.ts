@@ -32,6 +32,12 @@ export default {
         exePath: 'Choose executable file',
         hint: 'If switch is enabled (set to right), program will open file with system association with {extension} files',
       }
+    },
+    integrations: {
+      title: 'Main integrations settings',
+      content: {
+        path: 'Choose path to install models'
+      }
     }
   },
   title: 'MeshHouse settings',

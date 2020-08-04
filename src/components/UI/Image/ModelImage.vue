@@ -1,14 +1,20 @@
 <template>
   <div class="card_image">
     <img
-      :class="imageClass(src)"
-      :src="retrieveImage(src)"
+      :class="imageClass"
+      :src="retrieveImage"
     >
     <img
-      v-if="src !== ''"
+      v-if="item.image !== ''"
       class="icon"
       :src="iconFile"
     >
+    <span
+      v-if="isLocalItem && item.installed"
+      class="icon-badge"
+    >
+      <vue-icon icon="checked" />
+    </span>
   </div>
 </template>
 
@@ -18,31 +24,29 @@ import Component from 'vue-class-component';
 
 @Component({
   props: {
-    src: {
-      type: String,
-      required: true,
-      default: ''
-    },
-    extension: {
-      type: String,
-      required: true,
-      default: ''
+    item: {
+      type: Object,
+      required: true
     }
   }
 })
 export default class ModelImage extends Vue {
-  retrieveImage(src: string): string {
-    return src !== ''
-      ? this.$forceReloadImage(src)
-      : `/assets/files/${this.$props.extension.substr(1)}.svg`;
+  get isLocalItem(): boolean {
+    return Object.hasOwnProperty.call(this.$props.item, 'installed');
   }
 
-  imageClass(src: string): string {
-    return `image ${src === '' ? 'image--icon' : ''}`;
+  get retrieveImage(): string {
+    return this.$props.item.image !== ''
+      ? this.$forceReloadImage(this.$props.item.image)
+      : `/assets/files/${this.$props.item.extension.substr(1)}.svg`;
+  }
+
+  get imageClass(): string {
+    return `image ${this.$props.item.image === '' ? 'image--icon' : ''}`;
   }
 
   get iconFile(): string {
-    const extension = this.$props.extension.substr(1);
+    const extension = this.$props.item.extension.substr(1);
     switch (extension) {
     case 'ma':
     case 'mb':

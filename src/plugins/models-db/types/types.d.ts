@@ -58,6 +58,8 @@ type Download = {
   path: string;
   totalSize: number;
   downloadedSize: number;
+  startedAt: Date;
+  cancelToken: any;
 }
 
 // Database
@@ -133,6 +135,7 @@ type Model = {
   remoteId?: number;
   name: string;
   extension: string;
+  folderPath?: string;
   path: string;
   category: string | null;
   size?: number;

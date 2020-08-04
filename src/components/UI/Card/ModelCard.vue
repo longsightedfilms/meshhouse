@@ -5,10 +5,7 @@
     @contextmenu.prevent="onRightClick"
     @dragstart="onDrag"
   >
-    <model-image
-      :src="item.image"
-      :extension="item.extension"
-    />
+    <model-image :item="item" />
     <div class="card_title">
       <p>{{ item.name }}</p>
     </div>
@@ -63,7 +60,9 @@ export default class ModelCard extends Vue {
   }
 
   onRightClick(event: MouseEvent): void {
-    (this.$parent.$refs.categoryMenu as any).close(event);
+    if (this.$parent.$refs.categoryMenu !== undefined) {
+      (this.$parent.$refs.categoryMenu as any).close(event);
+    }
     (this.$parent.$refs.menu as any).open(event);
     this.$store.commit('setProperties', this.$props.item);
   }

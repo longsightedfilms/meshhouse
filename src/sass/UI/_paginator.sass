@@ -1,0 +1,32 @@
+.paginator
+  margin: 2rem 0
+  display: flex
+  flex-wrap: wrap
+  justify-content: center
+  align-items: center
+  &-item
+    display: flex
+    align-items: center
+    justify-content: center
+    padding: 0.5rem
+    margin: 0 0.5rem
+    background-color: var(--blockColor)
+    text-decoration: none
+    color: var(--textColor)
+    min-width: 3rem
+    min-height: 3rem
+    .icon
+      width: 2rem
+      height: 2rem
+    &.router-link-exact-active
+      color: $primary
+      font-weight: 700
+      background-color: var(--blockColorLighter)
+    &:hover
+      color: $primary
+      background-color: var(--blockColorLighter)
+    &-next, &-last
+      .icon
+        transform: scaleX(-1)
+    &[disabled]
+      cursor: not-allowed

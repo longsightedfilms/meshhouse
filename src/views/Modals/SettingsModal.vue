@@ -25,7 +25,7 @@
           :class="selected === 'IntegrationsSettings' ? 'active' : ''"
           @click="selected = 'IntegrationsSettings'"
         >
-          Общие настройки интеграций
+          {{ $t('modals.settings.tabs.integrations.title') }}
         </button>
       </div>
     </aside>
