@@ -1,9 +1,15 @@
 .paginator
-  margin: 2rem 0
+  padding: 2rem 0
   display: flex
   flex-wrap: wrap
   justify-content: center
   align-items: center
+  position: fixed
+  bottom: 0
+  inset-inline-start: 0
+  width: 100%
+  transition: all 0.5s ease
+  background-color: var(--blockColorGlass)
   &-item
     display: flex
     align-items: center
@@ -30,3 +36,6 @@
         transform: scaleX(-1)
     &[disabled]
       cursor: not-allowed
+  &.disabled
+    pointer-events: none
+    opacity: 0.5

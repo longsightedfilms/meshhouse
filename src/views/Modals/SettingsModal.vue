@@ -21,11 +21,13 @@
       <label>{{ $t('common.types.databases.remote') }}</label>
       <div>
         <button
+          v-for="item in integrationsList"
+          :key="item.component"
           class="button"
-          :class="selected === 'IntegrationsSettings' ? 'active' : ''"
-          @click="selected = 'IntegrationsSettings'"
+          :class="selected === item.component ? 'active' : ''"
+          @click="selected = item.component"
         >
-          {{ $t('modals.settings.tabs.integrations.title') }}
+          {{ item.title }}
         </button>
       </div>
     </aside>
@@ -35,14 +37,6 @@
       </header>
       <div class="modal_content">
         <component :is="selected" />
-      </div>
-      <div class="modal_actions">
-        <button
-          class="button button--primary"
-          @click="$emit('close')"
-        >
-          {{ $t('common.buttons.close') }}
-        </button>
       </div>
     </main>
   </div>
@@ -55,15 +49,32 @@ import Component from 'vue-class-component';
 import MainSettings from './Settings/MainSettings.vue';
 import ProgramSettings from './Settings/ProgramSettings.vue';
 import IntegrationsSettings from './Settings/IntegrationsSettings.vue';
+// Integrations tabs
+import SFMLab from './Settings/Integrations/SFMLab.vue';
+
+import type { TranslateResult } from 'vue-i18n';
+
+type integrationComponent = {
+  title: string | TranslateResult;
+  component: string;
+}
 
 @Component({
   components: {
     MainSettings,
     ProgramSettings,
-    IntegrationsSettings
+    IntegrationsSettings,
+    SFMLab
   },
 })
 export default class ModalSettings extends Vue {
   selected = 'MainSettings'
+
+  integrationsList: integrationComponent[] = [
+    {
+      title: this.$root.$t('modals.settings.tabs.integrations.title'),
+      component: 'IntegrationsSettings'
+    }
+  ]
 }
 </script>

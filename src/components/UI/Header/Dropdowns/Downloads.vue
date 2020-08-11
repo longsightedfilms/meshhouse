@@ -37,7 +37,7 @@
         <div class="buttons">
           <button
             v-if="!isFinished(download)"
-            class="button button--flat button--flat-danger"
+            class="button button--flat button--flat-danger button--icon-only"
             @click="$store.commit('cancelDownloadItem', download)"
           >
             <vue-icon
@@ -47,14 +47,14 @@
           </button>
           <button
             v-if="isFinished(download) && !isCanceled(download)"
-            class="button button--flat"
+            class="button button--flat button--icon-only"
             @click="$openFolder(download.path)"
           >
             <vue-icon icon="folder" />
           </button>
           <button
             v-if="isFinished(download) || isCanceled(download)"
-            class="button button--flat button--flat-danger"
+            class="button button--flat button--flat-danger button--icon-only"
             @click="$store.commit('deleteDownloadItem', idx)"
           >
             <vue-icon icon="delete" />

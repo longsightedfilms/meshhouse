@@ -25,6 +25,7 @@ const applicationOptions = {
     experimentalFeatures: true,
     nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
     webSecurity: false,
+    webviewTag: true,
   },
 };
 

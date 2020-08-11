@@ -68,6 +68,13 @@ export default class MainMenuDropdown extends Vue {
       this.$modal.show(UpdateAvailableModal, {}, {
         clickToClose: true,
         height: 'auto'
+      }, {
+        'before-open': () => {
+          this.$store.commit('setModalVisibility', true);
+        },
+        'before-close': () => {
+          this.$store.commit('setModalVisibility', false);
+        }
       });
     });
 
@@ -75,6 +82,13 @@ export default class MainMenuDropdown extends Vue {
       this.$modal.show(UpdateNotAvailableModal, {}, {
         clickToClose: true,
         height: 'auto'
+      }, {
+        'before-open': () => {
+          this.$store.commit('setModalVisibility', true);
+        },
+        'before-close': () => {
+          this.$store.commit('setModalVisibility', false);
+        }
       });
     });
   }
@@ -88,8 +102,15 @@ export default class MainMenuDropdown extends Vue {
     this.$modal.show(SettingsModal, {}, {
       adaptive: true,
       clickToClose: true,
-      width: '1024px',
-      height: 'auto',
+      width: '100%',
+      height: '100%',
+    }, {
+      'before-open': () => {
+        this.$store.commit('setModalVisibility', true);
+      },
+      'before-close': () => {
+        this.$store.commit('setModalVisibility', false);
+      }
     });
   }
 
@@ -97,6 +118,13 @@ export default class MainMenuDropdown extends Vue {
     this.$modal.show(AboutProgramModal, {}, {
       clickToClose: true,
       height: 'auto'
+    }, {
+      'before-open': () => {
+        this.$store.commit('setModalVisibility', true);
+      },
+      'before-close': () => {
+        this.$store.commit('setModalVisibility', false);
+      }
     });
   }
 

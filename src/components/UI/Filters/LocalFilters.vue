@@ -30,7 +30,7 @@ import { handleDatabases, findDatabaseIndex, modelsExtensions } from '@/plugins/
 })
 export default class LocalFilters extends Vue {
   scene: ExtensionProperty = {
-    title: 'All',
+    title: this.$i18n.t('common.list.all').toString(),
     icon: 'none'
   }
   sceneTypes: ExtensionProperty[] = []
@@ -68,7 +68,7 @@ export default class LocalFilters extends Vue {
   setFilters(): void {
     const db = handleDatabases(this.$route.params.database);
 
-    db.fetchItemsFromDatabase().then((result: Model[]): void => {
+    db?.fetchItemsFromDatabase().then((result: Model[]): void => {
       this.$store.commit('setLoadedData', result);
     });
   }

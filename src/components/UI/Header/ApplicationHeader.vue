@@ -1,11 +1,7 @@
 <template functional>
   <header class="application__header">
-    <img
-      class="application__header-logo"
-      src="/assets/integrations/meshhouse.svg"
-      alt="Meshhouse"
-    >
     <component :is="injections.components.HeaderNavigation" />
+    <component :is="injections.components.HeaderWindowTitle" />
     <component :is="injections.components.HeaderWindowButtons" />
   </header>
 </template>
@@ -14,6 +10,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import HeaderNavigation from '@/components/UI/Header/HeaderNavigation.vue';
+import HeaderWindowTitle from '@/components/UI/Header/HeaderWindowTitle.vue';
 import HeaderWindowButtons from '@/components/UI/Header/HeaderWindowButtons.vue';
 
 @Component({
@@ -21,7 +18,8 @@ import HeaderWindowButtons from '@/components/UI/Header/HeaderWindowButtons.vue'
     components: {
       default: {
         HeaderNavigation,
-        HeaderWindowButtons
+        HeaderWindowButtons,
+        HeaderWindowTitle
       },
     },
   },

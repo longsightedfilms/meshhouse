@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div class="filter__container">
     <p class="title">
       <span>{{ $t('hints.navbar.filters') }}</span>
     </p>
@@ -37,16 +37,17 @@
         </div>
       </div>
     </div>
-  </fragment>
+  </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component';
+import { Vue, Component, Watch }from 'vue-property-decorator';
 import VueSlider from 'vue-slider-component';
 import { Fragment } from 'vue-fragment';
+import { isDatabaseRemote } from '@/plugins/models-db/functions';
 
 import LocalFilters from '@/components/UI/Filters/LocalFilters.vue';
+import RemoteFilters from '@/components/UI/Filters/RemoteFilters.vue';
 
 @Component({
   components: {
@@ -55,12 +56,17 @@ import LocalFilters from '@/components/UI/Filters/LocalFilters.vue';
   }
 })
 export default class FiltersDropdown extends Vue {
-  currentFilter = LocalFilters
+  currentFilter: any = LocalFilters
 
   onSliderChange(val: number): void {
     this.$root.$children[0].$forceUpdate();
     this.$settingsSet('thumbnailSize', val);
     this.$store.commit('setThumbnailSize', val);
+  }
+
+  @Watch('$route.params.database')
+  handleFiltersChange(): void {
+    this.currentFilter = isDatabaseRemote(this.$route.params.database) ? RemoteFilters : LocalFilters;
   }
 }
 </script>

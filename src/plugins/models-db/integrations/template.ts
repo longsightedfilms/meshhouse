@@ -32,7 +32,7 @@ export abstract class Integration {
    * Get all items from database
    * @param query - query string
    */
-  abstract fetchItemsFromDatabase(query: string): Promise<Model[] | Error>
+  abstract fetchItemsFromDatabase(query: string): Promise<IntegrationFetch | Error>
   /**
    * Dynamic SQL query builder if user set filters
    * @param params - query object

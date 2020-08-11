@@ -1,5 +1,8 @@
 <template>
-  <div class="paginator">
+  <div
+    class="paginator"
+    :class="!$store.state.controls.isLoaded ? 'disabled' : ''"
+  >
     <router-link
       :to="generateLink(1)"
       :disabled="activePage === 1"
@@ -76,15 +79,18 @@ export default class CatalogPaginator extends Vue {
 
   get paginatorPages(): number[] {
     const arr: number[] = [];
-    let pages = Number(this.activePage) + 10;
-    if (pages >= this.$props.totalPages) {
-      pages = this.$props.totalPages;
-    }
-
-    for (let i = pages - 10; i <= pages; i++) {
+    for (let i = 1; i <= this.$props.totalPages; i++) {
       arr.push(i);
     }
-    return arr;
+    const pages = Number(this.activePage) + 10;
+    const slicedArr = arr.slice(this.activePage - 1, pages);
+    if (this.$props.totalPages < 10) {
+      return arr;
+    }
+    if (slicedArr.length <= 10) {
+      return arr.slice(this.activePage - pages - 1, pages);
+    }
+    return arr.slice(this.activePage - 1, pages);
   }
 
   generateLink(index: number): any {

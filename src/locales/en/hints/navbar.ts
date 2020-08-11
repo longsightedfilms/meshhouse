@@ -3,5 +3,6 @@ export default {
   sortASC: 'Ascending sort',
   sortDESC: 'Descending sort',
   filters: 'Filters',
-  downloads: 'Downloads'
+  downloads: 'Downloads',
+  refreshCatalog: 'Refresh catalog'
 };

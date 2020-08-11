@@ -110,6 +110,7 @@ export default class Local extends Integration {
   }
 
   fetchItemsFromDatabase(query?: string, category?: number): Promise<Model[] | Error> {
+    store.commit('setLoadingStatus', false);
     const params = store.state.controls.filters;
 
     if(category !== undefined) {
@@ -123,6 +124,7 @@ export default class Local extends Integration {
       dbQuery += this.dynamicQueryBuilder(params.where);
       dbQuery += ` ORDER BY name COLLATE NOCASE ${params.order}`;
     }
+    store.commit('setLoadingStatus', true);
 
     return new Promise((resolve, reject): void => {
       this.db.all(dbQuery as string, (err, rows) => {

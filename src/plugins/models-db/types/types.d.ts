@@ -14,10 +14,12 @@ type ControlsState = {
   imageRandomizer: number;
   isOffline: boolean;
   isLoaded: boolean;
+  isModalVisible: boolean;
   lastPage: 'main' | 'lastCatalog';
   properties: ImageProperties;
   thumbnailSize: string | number;
   theme: Theme;
+  title: string;
   updates: {
     downloading: boolean;
     downloaded: boolean;
@@ -243,4 +245,18 @@ type VueToggleChangeEvent = {
   value: boolean;
   tag: string;
   srcEvent: InputEvent;
+}
+
+type IntegrationFetch = Model[] | SFMLabFetch
+
+// Integrations types
+type SFMLabFetch = {
+  models: Model[];
+  categories: Category[];
+  totalPages: number;
+}
+
+type SFMLabLink = {
+  link: string;
+  filename: string;
 }

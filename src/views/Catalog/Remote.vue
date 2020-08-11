@@ -22,8 +22,8 @@
       </vue-context>
     </div>
     <catalog-paginator
-      v-if="$store.state.db.loadedData.length !== 0"
-      :totalPages="totalPages"
+      v-if="$store.state.db.loadedData.length !== 0 && !$store.state.controls.isOffline"
+      :total-pages="totalPages"
     />
     <div
       v-if="$store.state.db.loadedData.length === 0"
@@ -58,7 +58,7 @@ import { Route } from 'vue-router';
   },
   async beforeRouteEnter(to: Route, from: Route, next: Function) {
     const db = new Integrations[to.params.database]();
-    const data = await db.fetchItemsFromDatabase(undefined, to.params.page);
+    const data = await db.fetchItemsFromDatabase(to.params.page);
 
     next((vm: Vue) => {
       vm.$store.commit('setCurrentDatabase', to.params.database);
@@ -85,6 +85,9 @@ export default class RemoteDatabase extends Vue {
     eventBus.$on('download-completed', (async() => {
       await this.databaseInitialize();
     }));
+    eventBus.$on('filters-updated', (async() => {
+      await this.databaseInitialize();
+    }));
     eventBus.$on('item-deleted', (async() => {
       await this.databaseInitialize();
     }));
@@ -92,15 +95,16 @@ export default class RemoteDatabase extends Vue {
 
   async databaseInitialize(): Promise<void> {
     const db = new Integrations[this.$route.params.database]();
-    const data = await db.fetchItemsFromDatabase(undefined, this.$route.params.page);
+    const data = await db.fetchItemsFromDatabase(this.$route.params.page);
 
     this.$store.commit('setCurrentDatabase', this.$route.params.database);
     this.$store.commit('setLoadedData', data.models);
     this.$store.commit('setCategories', data.categories);
+    this.totalPages = data.totalPages;
   }
 
   get gridClass(): string {
-    return `models-grid ${this.$store.state.controls.thumbnailSize === 64 ? 'models-grid--table' : ''}`;
+    return `models-grid models-grid-remote ${this.$store.state.controls.thumbnailSize === 64 ? 'models-grid--table' : ''}`;
   }
 
   get dynamicGrid(): object {

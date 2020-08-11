@@ -11,6 +11,13 @@ import {
   databases
 } from './init';
 
+const gameEnginesExtensions: Extension = {
+  '.sfm': {
+    title: 'Source Filmmaker Addon',
+    icon: 'sfm'
+  }
+};
+
 export const modelsExtensions: Extension = {
   '.3b': {
     title: '3DCoat Scene',
@@ -55,7 +62,8 @@ export const modelsExtensions: Extension = {
   '.spp': {
     title: 'Substance Painter Scene',
     icon: 'spp'
-  }
+  },
+  ...gameEnginesExtensions
 };
 
 export const integrationsList = [
@@ -144,17 +152,28 @@ export function findDatabaseIndex(url: string): number {
   return databases.get('databases').local.findIndex((db: DatabaseItem) => db.url === url);
 }
 
-export function handleDatabases(database: DatabaseItem | string): Integrations {
+export function isDatabaseRemote(url: string): boolean {
+  return integrationsList.findIndex((value: string) => value === url) !== -1;
+}
+
+export function handleDatabases(database: DatabaseItem | string): Integrations | null {
   let searchableDB;
 
   if (typeof database === 'string') {
-    searchableDB = databases.get('databases.local')[findDatabaseIndex(database)];
+    if (integrationsList.findIndex((val: string) => val === database) === -1) {
+      searchableDB = databases.get('databases.local')[findDatabaseIndex(database)];
+    } else {
+      searchableDB = databases.get(`databases.integrations.${database}`);
+    }
   } else {
     searchableDB = database;
   }
   const dbType = searchableDB.localDB ? 'local' : searchableDB.url;
 
-  return dbType === 'local' ? new Integrations.local(searchableDB.url) : null;//new Integrations[dbType]()
+  if (dbType === 'meshhouse') {
+    return null;
+  }
+  return dbType === 'local' ? new Integrations.local(searchableDB.url) : new Integrations[dbType]();
 }
 
 

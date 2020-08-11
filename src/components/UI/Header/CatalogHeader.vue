@@ -35,12 +35,33 @@
       </div>
     </div>
     <div class="catalog-header__info">
+      <span
+        v-if="!$store.state.db.currentDB.localDB && $store.state.controls.isOffline"
+        class="badge"
+      >
+        OFFLINE
+      </span>
       <div class="catalog-header__info-block">
         <vue-icon
           icon="stack"
           raster
         />
         <p>{{ $formatSize($store.state.db.currentDB.totalsize) }}</p>
+      </div>
+      <div
+        v-if="!$store.state.db.currentDB.localDB"
+        class="catalog-header__info-block"
+      >
+        <button
+          :title="$t('hints.navbar.refreshCatalog')"
+          class="button button--flat"
+          @click="refreshRemoteCatalog"
+        >
+          <vue-icon
+            icon="update"
+            raster
+          />
+        </button>
       </div>
       <div
         v-if="$store.state.db.currentDB.localDB"
@@ -65,6 +86,7 @@
 </template>
 
 <script lang="ts">
+import EventBus from '@/eventBus';
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { colorContrast } from '@/plugins/models-db/functions';
@@ -145,6 +167,10 @@ export default class CatalogHeader extends Vue {
       width: '1024px',
       height: 'auto'
     });
+  }
+
+  refreshRemoteCatalog(): void {
+    EventBus.$emit('filters-updated');
   }
 }
 </script>

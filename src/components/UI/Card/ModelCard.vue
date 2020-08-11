@@ -29,6 +29,8 @@ import Vue from 'vue';
 import VueContext from 'vue-context';
 import Component from 'vue-class-component';
 import ModelImage from '@/components/UI/Image/ModelImage.vue';
+import Integrations from '@/plugins/models-db/integrations/main';
+import RemoteModelInfoModal from '@/views/Modals/RemoteModelInfoModal.vue';
 import { formatBytes } from '@/plugins/models-db/functions';
 import { ipcRenderer } from 'electron';
 
@@ -46,13 +48,27 @@ export default class ModelCard extends Vue {
     return formatBytes(size);
   }
 
-  handleDblClick(item: Model): void {
+  async handleDblClick(item: Model): Promise<void> {
     if (Object.hasOwnProperty.call(item, 'installed')) {
       // Is remote item
       if (item.installed === true) {
         this.$openItem(item.path);
       } else {
-        console.log('not installed');
+        const db = new Integrations[this.$route.params.database]();
+        await db.fetchSingleModel(this.$props.item);
+        this.$modal.show(RemoteModelInfoModal, {}, {
+          adaptive: true,
+          clickToClose: true,
+          width: '100%',
+          height: '100%',
+        }, {
+          'before-open': () => {
+            this.$store.commit('setModalVisibility', true);
+          },
+          'before-close': () => {
+            this.$store.commit('setModalVisibility', false);
+          }
+        });
       }
     } else {
       this.$openItem(item.path);

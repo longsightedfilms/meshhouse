@@ -20,14 +20,26 @@ module.exports = {
       enableInSFC: true
     },
     electronBuilder: {
-      externals: ['node-notifier', 'electron-store', 'sqlite3', 'sharp', 'axios', 'chokidar'],
+      externals: [
+        'node-notifier',
+        'electron-store',
+        'sqlite3',
+        'sharp',
+        'axios',
+        'chokidar',
+        '7zip-bin',
+        'unrar-binaries',
+        'node-7z',
+        '@zhangfuxing/unrar'
+      ],
       nodeModulesPath: ['../../node_modules', './node_modules'],
       nodeIntegration: true,
       builderOptions: {
         appId: 'com.longsightedfilms.meshhouse',
         productName: 'MeshHouse',
         compression: 'maximum',
-        asar: true,
+        // Workaround to broken archive extraction in production builds
+        asar: false,
         mac: {
           category: 'public.app-category.graphics-design',
           target: 'dmg'

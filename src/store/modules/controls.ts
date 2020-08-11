@@ -16,10 +16,12 @@ export default {
     imageRandomizer: 0,
     isOffline: false,
     isLoaded: false,
+    isModalVisible: false,
     lastPage: 'main',
     properties: {},
     thumbnailSize: 256,
     theme: 'light',
+    title: 'Meshhouse',
     updates: {
       downloading: false,
       downloaded: false
@@ -60,11 +62,17 @@ export default {
     setOfflineStatus(state: ControlsState, status: boolean): void {
       state.isOffline = status;
     },
+    setModalVisibility(state: ControlsState, payload: boolean): void {
+      state.isModalVisible = payload;
+    },
     setProperties(state: ControlsState, payload: ImageProperties): void {
       state.properties = payload;
     },
     setTheme(state: ControlsState, payload: Theme): void {
       state.theme = payload;
+    },
+    setTitle(state: ControlsState, payload: string): void {
+      state.title = payload;
     },
     setUpdateDownload(state: ControlsState, payload: boolean): void {
       state.updates.downloading = payload;

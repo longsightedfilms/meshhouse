@@ -17,13 +17,18 @@ import Seven from 'node-7z';
 const url = 'https://sfmlab.com';
 
 import { databases } from '@/plugins/models-db/init';
+import { installFile } from '@/functions/archive';
 
 const sfmlabInstance = axios.create({
-  method: 'get',
   baseURL: url,
   responseType: 'text',
-  timeout: 10000
+  timeout: 10000,
+  withCredentials: true,
 });
+
+function isDownloadLink(link: SFMLabLink | Error): link is SFMLabLink {
+  return (link as SFMLabLink).link !== undefined;
+}
 
 export default class SFMLab extends Integration {
   constructor() {
@@ -69,25 +74,45 @@ export default class SFMLab extends Integration {
       });
     });
   }
-  async fetchItemsFromDatabase(category?: string, page?: string): Promise<any | Error> {
+
+  async checkIsInstalledModel(id: number): Promise<boolean | Error> {
     try {
+      const dbQuery = `SELECT * FROM models WHERE remoteId=${id}`;
+      const item = (await this.fetchQuery(dbQuery) as Model[]);
+      return Promise.resolve(item.length > 0);
+    } catch (e) {
+      return Promise.reject(e);
+    }
+  }
+
+  async fetchItemsFromDatabase(page?: string): Promise<SFMLabFetch | Error> {
+    try {
+      const filters = store.state.controls.filters;
       const params: any = {};
-      if (category !== undefined) {
-        params.category = category;
+      if (filters.where.category !== -1) {
+        params.category = filters.where.category;
       }
 
       if (page !== undefined) {
         params.page = page;
       }
 
+      if (filters.where.name !== '') {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        params.search_text = filters.where.name;
+      }
+      store.commit('setOfflineStatus', false);
+      store.commit('setLoadingStatus', false);
+
       const root = await sfmlabInstance.get('/', {
         params: params
       });
+
       const parser = new DOMParser();
       const dom = parser.parseFromString(root.data, 'text/html');
 
       const body = dom.querySelectorAll('.content-container .entry-content .entry-list .entry');
-      const options = dom.querySelectorAll('.content-container .sidebar .panel .panel__body select#id_category option:not(:checked)');
+      const options = dom.querySelectorAll('.content-container .sidebar .panel .panel__body select#id_category option');
 
       const paginator = dom.querySelector('.content-container .pagination');
 
@@ -98,7 +123,7 @@ export default class SFMLab extends Integration {
       for (const element of body) {
         const title = element.querySelector('.entry__body .entry__title a')?.innerHTML;
         const link = element.querySelector('.entry__body .entry__title a')?.getAttribute('href');
-        const id = (link?.match(/\d+/) as any[])[0];
+        const id = (link?.match(/\d+/) as string[])[0];
         const image = url + element.querySelector('.entry__heading a img')?.getAttribute('src');
         const category = element.querySelector('.entry__tags .entry__tag')?.innerHTML;
 
@@ -110,7 +135,7 @@ export default class SFMLab extends Integration {
           remoteId: Number(id),
           name: title ?? '',
           image: image,
-          extension: '.max',
+          extension: '.sfm',
           category: category ?? '',
           size: item.length !== 0 ? item[0].size : 0,
           folderPath: item.length !== 0 ? item[0].folderPath : '',
@@ -143,37 +168,94 @@ export default class SFMLab extends Integration {
         });
       }
       console.log(e);
-      return [];
+      return {
+        models: [],
+        categories: [],
+        totalPages: 0
+      };
+    } finally {
+      store.commit('setLoadingStatus', true);
+    }
+  }
+
+  async fetchSingleModel(model: Model): Promise<any | Error> {
+    try {
+      store.commit('setOfflineStatus', false);
+      store.commit('setLoadingStatus', false);
+      const root = await sfmlabInstance.get(`/project/${model.id}`);
+      const parser = new DOMParser();
+      const dom = parser.parseFromString(root.data, 'text/html');
+
+      const title = dom.querySelector('.container h1#file_title')?.innerHTML;
+      const description = dom.querySelector('.content-container .main-upload .panel .panel__body')?.innerHTML;
+      const fileSize = dom.querySelector('.content-container .main-upload table tbody tr td:last-child')?.innerHTML;
+      const domImages = dom.querySelectorAll('.content-container .main-upload .text-center a picture.project-detail-image-main img');
+
+      const images: string[] = [];
+
+      domImages.forEach((element: Element) => {
+        images.push(`${url}${element.getAttribute('src')}`);
+      });
+      if (domImages.length === 0) {
+        const thubmnail = dom.querySelector('.content-container .side-upload .panel .panel__body img')?.getAttribute('src');
+        images.push(`${url}${thubmnail}`);
+      }
+
+      const installed = await this.checkIsInstalledModel(model.id);
+
+      console.log(dom);
+
+      const item = {
+        id: model.id,
+        remoteId: model.id,
+        title: title,
+        description: description,
+        images: images,
+        size: fileSize,
+        installed: installed
+      };
+
+      console.log(item);
+      store.commit('setProperties', item);
+    } catch (e) {
+      if (e.code === 'ECONNABORTED') {
+        store.commit('setOfflineStatus', true);
+        return Promise.reject(e);
+      }
+    } finally {
+      store.commit('setLoadingStatus', true);
     }
   }
 
   async login(): Promise<void> {
     try {
+      const token = databases.get('databases.integrations.sfmlab.auth.csrf') ?? undefined;
       const csrf = await sfmlabInstance.get('/accounts/login');
       console.log(csrf);
-      const root = await sfmlabInstance.post('/accounts/login/?next=/', {
-        csrfmiddlewaretoken: 'o4va504jx1VkqCKcHcHR7xyamV5tBEVYXjNySZPqB4kKdY7FwpBMwmSc3ceWI4eC',
+      /*const root = await sfmlabInstance.post('/accounts/login', {
         login: 'aks113',
         remember: true,
         password: '2GGyq9jvkYHiTjFXSq4E'
-      });
+      });*/
 
-      console.log(root);
+      // console.log(root);
     } catch (e) {
       console.log(e);
     }
   }
 
   fetchCategories(options: NodeListOf<Element>): Category[] {
-    const categories: any[] = [];
+    const categories: Category[] = [];
 
     options?.forEach((element: any) => {
-      categories.push({
-        id: element.value,
-        parentId: -1,
-        slug: element.value,
-        name: element.innerText
-      });
+      if (element.innerText !== '---------') {
+        categories.push({
+          id: element.value,
+          parentId: -1,
+          slug: element.value,
+          name: element.innerText
+        });
+      }
     });
     return categories;
   }
@@ -182,8 +264,9 @@ export default class SFMLab extends Integration {
     const activeLink = paginator?.querySelector('li.active a')?.innerHTML;
     const lastLink = paginator?.querySelector('li.last a')?.getAttribute('href');
 
-    const href = lastLink !== null ? lastLink : activeLink;
-    return Number(href?.split('=')[1]) ?? 1;
+    return lastLink !== null
+      ? Number(lastLink?.split('page=')[1])
+      : Number(activeLink);
   }
 
   dynamicQueryBuilder(params: QueryParameters): string {
@@ -196,7 +279,7 @@ export default class SFMLab extends Integration {
     throw new Error('Method not implemented.');
   }
 
-  async fetchDownloadLink(projectID: number): Promise<any | Error> {
+  async fetchDownloadLink(projectID: number): Promise<SFMLabLink | Error> {
     store.commit('setLoadingStatus', false);
     try {
       const root = await sfmlabInstance.get(`/project/${projectID}/`);
@@ -216,8 +299,8 @@ export default class SFMLab extends Integration {
         if (downloadLink !== null) {
           store.commit('setLoadingStatus', true);
           return Promise.resolve({
-            link: downloadLink.getAttribute('href'),
-            filename: filename
+            link: downloadLink.getAttribute('href') || '',
+            filename: filename || ''
           });
         }
       }
@@ -225,7 +308,10 @@ export default class SFMLab extends Integration {
       store.commit('setLoadingStatus', true);
       return Promise.reject(new Error(e));
     }
-    return '';
+    return {
+      link: '',
+      filename: ''
+    };
   }
 
   async deleteItem(item: Model): Promise<boolean | Error> {
@@ -258,14 +344,12 @@ export default class SFMLab extends Integration {
     return Promise.resolve(true);
   }
 
-  async downloadItem(item: any): Promise<boolean | Error> {
+  async downloadItem(item: Model): Promise<boolean | Error> {
     const isFolderSet = databases.get('databases.integrations.sfmlab').path !== null;
 
     if (!isFolderSet) {
       return Promise.reject(new Error('Path not set'));
     }
-
-    const dbPath = databases.get('databases.integrations.sfmlab').path ?? '';
 
     const cancelToken = axios.CancelToken.source();
 
@@ -280,14 +364,21 @@ export default class SFMLab extends Integration {
     };
     store.commit('addDownloadItem', download);
 
-    const { link, filename } = await this.fetchDownloadLink(item.remoteId);
-
     try {
+      let link = '';
+      let filename = '';
+
+      const fetch = await this.fetchDownloadLink(item.remoteId || 0);
+      if (isDownloadLink(fetch)) {
+        link = fetch.link;
+        filename = fetch.filename;
+      }
+
       const file: Blob = (await sfmlabInstance.get(`${link}?timestamp=${new Date().getTime()}`, {
         cancelToken: cancelToken.token,
         responseType: 'blob',
         timeout: 0,
-        onDownloadProgress: (progressEvent: any) => {
+        onDownloadProgress: (progressEvent) => {
           const loaded = progressEvent.loaded;
           const total = progressEvent.total;
           download.totalSize = Number(total);
@@ -297,7 +388,7 @@ export default class SFMLab extends Integration {
         }
       })).data;
       // Unpack archive in folder
-      await this.installFile(file, item, filename);
+      await installFile(file, item, filename, 'sfmlab');
 
       // Insert downloaded item into local DB
       const dbQuery = `INSERT INTO 'models' VALUES
@@ -336,50 +427,5 @@ export default class SFMLab extends Integration {
         return Promise.reject(new Error(e));
       }
     }
-  }
-
-
-
-  async installFile(blob: Blob, item: Model, filename: string): Promise<boolean | Error> {
-    const tmpPath = path.join(databases.get('databases.integrations.sfmlab').path, '.meshhouse_temp');
-    const tmpFile = path.join(tmpPath, sanitize(filename));
-
-    // Check if temp folder exists
-    if (!fs.existsSync(tmpPath)) {
-      fs.mkdirSync(tmpPath);
-    }
-
-    return new Promise((resolve, reject) => {
-      const fileReader = new FileReader();
-
-      fileReader.onload = (e: any): Promise<boolean | Error> => {
-        if(!fs.existsSync(tmpFile)) {
-          fs.writeFileSync(tmpFile, new Uint8Array(Buffer.from(e.target.result)));
-        }
-
-        console.log('File written', tmpFile);
-        store.commit('setLoadingStatus', false);
-
-        const pathTo7zip = sevenBin.path7za;
-        const outputPath = path.join(databases.get('databases.integrations.sfmlab').path, sanitize(item.name));
-
-        if (!fs.existsSync(outputPath)) {
-          fs.mkdirSync(outputPath);
-        }
-
-        return (Seven as any).extractFull(tmpFile, outputPath, {
-          recursive: true,
-          $bin: pathTo7zip,
-        }).on('end', () => {
-          store.commit('setLoadingStatus', true);
-          fs.rmdirSync(tmpPath, { recursive: true });
-          return resolve(true);
-        }).on('error', (err: any) => {
-          store.commit('setLoadingStatus', true);
-          return reject(new Error(err));
-        });
-      };
-      fileReader.readAsArrayBuffer(blob);
-    });
   }
 }

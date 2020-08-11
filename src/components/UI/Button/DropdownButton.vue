@@ -5,7 +5,7 @@
   >
     <button
       v-on-clickaway="onClickedInside"
-      class="button button--flat"
+      class="button button--flat button--icon-only"
       :title="hint"
       @click.prevent="toggleDropdown"
     >

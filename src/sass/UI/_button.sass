@@ -26,9 +26,12 @@
     padding: 0.625rem
     border: 2px solid rgba(0,0,0,0)
     color: var(--textColor)
+    -webkit-font-smoothing: antialiased
+    will-change: auto
     .icon
       width: 1.5rem
       height: 1.5rem
+      margin-right: 0.5rem
     &:focus
       outline: 0
     &:hover, &.active
@@ -41,6 +44,9 @@
       &:hover
         border-color: $danger
         background-color: $danger
+  &--icon-only
+    .icon
+      margin-right: 0
   &--grid
     position: relative
     color: var(--textColor)

@@ -42,7 +42,10 @@ import { remote } from 'electron';
       bodyAttrs: {
         class: (this as App).applicationClass()
       },
-      titleTemplate: '%s - Meshhouse'
+      titleTemplate: ((chunk): string => (chunk !== '' ? `${chunk} - Meshhouse` : 'Meshhouse')),
+      changed: (newInfo): void => {
+        this.$store.commit('setTitle', newInfo.title);
+      }
     };
   }
 })

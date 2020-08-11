@@ -1,38 +1,35 @@
 <template>
   <div class="application__header-navigation">
+    <div
+      v-if="!$store.state.controls.isLoaded"
+      class="progress__container"
+    >
+      <div class="progress" />
+    </div>
     <button
       :title="$t('hints.navbar.addCatalog')"
-      class="button button--flat"
+      class="button button--flat button--icon-only"
       @click="showNewCatalog"
     >
       <vue-icon icon="add" />
     </button>
     <div class="breadcrumbs">
       <span
-        v-if="$store.state.controls.isOffline"
-        class="badge"
-      >
-        OFFLINE
-      </span>
-      <span
         v-if="$store.state.db.currentDB !== undefined"
         class="breadcrumb"
       >
         {{ $store.state.db.currentDB.title }}
       </span>
-      <div
-        v-if="!$store.state.controls.isLoaded"
-        class="progress__container"
-      >
-        <div class="progress" />
-      </div>
     </div>
-    <div class="buttons">
+    <div
+      v-if="$store.state.db.currentDB !== undefined && $store.state.db.currentDB.localDB"
+      class="buttons"
+    >
       <button
         :title="$store.state.controls.filters.order === 'ASC'
           ? $t('hints.navbar.sortASC')
           : $t('hints.navbar.sortDESC')"
-        class="button button--flat"
+        class="button button--flat button--icon-only"
         @click="handleChangeOrder"
       >
         <vue-icon
@@ -159,10 +156,7 @@ export default class HeaderNavigation extends Vue {
 
   updateItems(): void {
     const db = handleDatabases(this.$route.params.database);
-
-    db.fetchItemsFromDatabase().then((result: Model[]): void => {
-      this.$store.commit('setLoadedData', result);
-    });
+    eventBus.$emit('filters-updated');
   }
 
   handleChangeOrder(): void {

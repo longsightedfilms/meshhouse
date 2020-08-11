@@ -2,11 +2,17 @@
   &.theme--light
     .vm--overlay
       background: rgba(255,255,255,0.7)
+  &--windows
+    .vm--overlay
+      display: none
+    .vm--container
+      top: 32px !important
+      height: calc(100vh - 32px) !important
 .vm--modal
   background-color: var(--blockColor) !important
   border-radius: 0 !important
   color: var(--textColor)
-  padding: 1rem
+  //padding: 1rem
   box-shadow: none !important
   left: 0px !important
   margin: 0 auto
@@ -17,6 +23,7 @@
   display: flex
   flex-direction: column
   color: var(--textColor)
+  padding: 0 1rem
   main
     max-width: calc(100% - 300px - 1rem)
   &--about
@@ -87,11 +94,10 @@
       text-align: center
       font-weight: 700
   &_content
-    padding-bottom: 1rem
     display: flex
     flex-direction: column
     height: 100%
-    max-height: 520px
+    max-height: calc(100vh - 32px)
   &_actions
     display: flex
     justify-content: flex-end
@@ -187,7 +193,7 @@
             background-color: $primary
             color: $white
       &_content
-        height: 60vh
+        height: calc(100vh - 32px)
         margin-inline-end: -1rem
       &_header
         padding: 0.625rem 1rem
@@ -211,3 +217,60 @@
             margin: 0.5rem 0
             &::-webkit-progress-value
               background-color: $primary
+  &--model-info
+    height: calc(100vh - 48px)
+    .modal_header
+      display: flex
+      align-items: center
+      margin: 0
+      h1
+        font-size: 2.5rem
+        font-weight: 100
+        line-height: 1
+        margin-inline-end: auto
+    .modal_content
+      .model-info__image
+        margin: 0 -1rem 2rem
+        .outer
+          position: relative
+          &:before
+            display: block
+            content: ""
+            width: 100%
+            padding-top: (9 / 16) * 100%
+          img
+            position: absolute
+            top: 0
+            right: 0
+            bottom: 0
+            left: 0
+            display: block
+            width: 100%
+            object-fit: contain
+            object-position: 50%
+  button.back
+    display: flex
+    justify-content: center
+    align-items: center
+    width: 4rem
+    height: 4rem
+    font-family: "Segoe MDL2 Assets"
+    font-size: 10px
+    -webkit-appearance: none
+    transition: all 0.25s ease
+    border: none
+    background: none
+    padding: 0.625rem 0
+    svg
+      width: 3rem
+      height: 1.5rem
+      line
+        stroke: var(--textColor)
+    &:hover
+      background-color: var(--buttonHover)
+    &:focus
+      outline: none
+.application--windows
+  .modal
+    button.back
+      display: none

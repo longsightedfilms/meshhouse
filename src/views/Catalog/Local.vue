@@ -119,6 +119,9 @@ export default class LocalDatabase extends Vue {
         await this.databaseInitialize();
       }
     }));
+    eventBus.$on('filters-updated', (async() => {
+      await this.databaseInitialize();
+    }));
   }
 
   get gridClass(): string {
