@@ -1,10 +1,10 @@
 <template>
   <div class="application__header-navigation">
     <div
-      v-if="!$store.state.controls.isLoaded"
+      v-show="!$store.state.controls.isLoaded"
       class="progress__container"
     >
-      <div class="progress" />
+      <div class="progress-main" />
     </div>
     <button
       :title="$t('hints.navbar.addCatalog')"
@@ -22,7 +22,7 @@
       </span>
     </div>
     <div
-      v-if="$store.state.db.currentDB !== undefined && $store.state.db.currentDB.localDB"
+      v-if="$store.state.db.currentDB !== undefined"
       class="buttons"
     >
       <button
@@ -125,7 +125,7 @@ export default class HeaderNavigation extends Vue {
 
   title: string[] = []
 
-  get downloadClass (): string {
+  get downloadClass(): string {
     return `${this.downloadStarted ? 'active' : ''} ${this.downloadCompleted ? 'completed' : ''}`;
   }
 
@@ -141,7 +141,7 @@ export default class HeaderNavigation extends Vue {
     });
   }
 
-  resetClass (): void {
+  resetClass(): void {
     this.downloadStarted = false;
     this.downloadCompleted = false;
   }
@@ -155,7 +155,6 @@ export default class HeaderNavigation extends Vue {
   }
 
   updateItems(): void {
-    const db = handleDatabases(this.$route.params.database);
     eventBus.$emit('filters-updated');
   }
 

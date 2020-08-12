@@ -124,6 +124,11 @@ export default class LocalDatabase extends Vue {
     }));
   }
 
+  beforeDestroy(): void {
+    eventBus.$off('file-event');
+    eventBus.$off('filters-updated');
+  }
+
   get gridClass(): string {
     return `models-grid ${this.$store.state.controls.thumbnailSize === 64 ? 'models-grid--table' : ''}`;
   }

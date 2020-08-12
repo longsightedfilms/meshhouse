@@ -5,10 +5,33 @@
       class="back"
       @click="back"
     >
-      <svg width="15" height="12" viewBox="0 0 15 12" xmlns="http://www.w3.org/2000/svg">
-        <line y2="6" x2="1" y1="6" x1="15" fill="none" />
-        <line y2="0" x2="6" y1="6" x1="0" fill="none" />
-        <line y2="12" x2="6" y1="6" x1="0" fill="none" />
+      <svg
+        width="15"
+        height="12"
+        viewBox="0 0 15 12"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <line
+          y2="6"
+          x2="1"
+          y1="6"
+          x1="15"
+          fill="none"
+        />
+        <line
+          y2="0"
+          x2="6"
+          y1="6"
+          x1="0"
+          fill="none"
+        />
+        <line
+          y2="12"
+          x2="6"
+          y1="6"
+          x1="0"
+          fill="none"
+        />
       </svg>
     </button>
     <div class="title">

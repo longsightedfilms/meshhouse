@@ -15,6 +15,7 @@ export default {
   },
   filters: {
     dcc: 'File type',
+    license: 'File license',
     thumbnailSize: 'Thumbnail size',
   },
   empty: {

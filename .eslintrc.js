@@ -45,6 +45,8 @@ module.exports = {
     'space-before-function-paren': ['warn', 'never'],
     'space-in-parens': ['warn', 'never'],
     'space-infix-ops': 'warn',
-    'arrow-parens': ['warn', 'always']
+    'arrow-parens': ['warn', 'always'],
+    // Disabling because we sanitize incoming html's
+    'vue/no-v-html': 'off'
   },
 }

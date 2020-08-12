@@ -1,5 +1,8 @@
 export default {
+  delete: 'Delete item',
+  install: 'Install item',
+  remoteInfo: 'Item information',
   open: 'Open',
   openFolder: 'Open folder',
-  properties: 'Model properties',
+  properties: 'Item properties',
 };

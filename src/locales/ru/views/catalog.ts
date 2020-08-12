@@ -15,6 +15,7 @@ export default {
   },
   filters: {
     dcc: 'Формат файла',
+    license: 'Лицензия файла',
     thumbnailSize: 'Размер миниатюр',
   },
   empty: {

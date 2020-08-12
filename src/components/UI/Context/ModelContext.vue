@@ -11,7 +11,11 @@
     </li>
     <li v-if="!$store.state.controls.properties.installed">
       <a @click.prevent="installModel()">
-        Установить модель
+        <vue-icon
+          icon="download-from-cloud"
+          inverted
+        />
+        {{ $t('context.model.install') }}
       </a>
     </li>
     <li v-if="$store.state.controls.properties.installed">
@@ -20,7 +24,16 @@
           icon="recycle-bin"
           inverted
         />
-        Удалить модель
+        {{ $t('context.model.delete') }}
+      </a>
+    </li>
+    <li>
+      <a @click.prevent="openRemoteInfo()">
+        <vue-icon
+          icon="edit"
+          inverted
+        />
+        {{ $t('context.model.remoteInfo') }}
       </a>
     </li>
   </fragment>
@@ -55,6 +68,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import EditPropertiesModal from '@/views/Modals/Edit/EditPropertiesModal.vue';
+import RemoteModelInfoModal from '@/views/Modals/RemoteModelInfoModal.vue';
 import Integrations from '@/plugins/models-db/integrations/main';
 import { Fragment } from 'vue-fragment';
 
@@ -78,6 +92,25 @@ export default class ModelContext extends Vue {
     const item = this.$store.state.controls.properties;
     const db = new Integrations[this.$route.params.database]();
     await db.deleteItem(item);
+  }
+
+  async openRemoteInfo(): Promise<void> {
+    const item = this.$store.state.controls.properties;
+    const db = new Integrations[this.$route.params.database]();
+    await db.fetchSingleModel(item);
+    this.$modal.show(RemoteModelInfoModal, {}, {
+      adaptive: true,
+      clickToClose: true,
+      width: '100%',
+      height: '100%',
+    }, {
+      'before-open': () => {
+        this.$store.commit('setModalVisibility', true);
+      },
+      'before-close': () => {
+        this.$store.commit('setModalVisibility', false);
+      }
+    });
   }
 
   openProperties(): void {

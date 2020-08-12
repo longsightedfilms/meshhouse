@@ -35,6 +35,7 @@ type DatabaseState = {
   };
   categories: Category[];
   loadedData: Model[] | Model;
+  licenses: SFMLabLicense[];
   currentDB: DatabaseItem | undefined;
 }
 
@@ -250,9 +251,15 @@ type VueToggleChangeEvent = {
 type IntegrationFetch = Model[] | SFMLabFetch
 
 // Integrations types
+type SFMLabLicense = {
+  id: number | string;
+  name: string;
+}
+
 type SFMLabFetch = {
   models: Model[];
   categories: Category[];
+  licenses: SFMLabLicense[];
   totalPages: number;
 }
 

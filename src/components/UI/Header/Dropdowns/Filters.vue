@@ -56,7 +56,7 @@ import RemoteFilters from '@/components/UI/Filters/RemoteFilters.vue';
   }
 })
 export default class FiltersDropdown extends Vue {
-  currentFilter: any = LocalFilters
+  currentFilter: typeof LocalFilters | typeof RemoteFilters = LocalFilters
 
   onSliderChange(val: number): void {
     this.$root.$children[0].$forceUpdate();

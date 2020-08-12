@@ -8,6 +8,7 @@ import { transliterate as tr, slugify } from 'transliteration';
 import store from '@/store/main';
 import Integration from '@/plugins/models-db/integrations/main';
 import recursive from 'recursive-readdir';
+import sanitizeHTML from 'sanitize-html';
 import {
   settings,
   databases,
@@ -201,5 +202,9 @@ export function ModelsDB(Vue: typeof _Vue): void {
 
   Vue.prototype.$formatSize = function(size: number): string {
     return formatBytes(size);
+  };
+
+  Vue.prototype.$sanitizeHTML = function(html: string): string {
+    return sanitizeHTML(html);
   };
 }

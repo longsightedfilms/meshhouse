@@ -65,6 +65,9 @@ import { Route } from 'vue-router';
       vm.$store.commit('setLoadedData', data.models);
       vm.$store.commit('setCategories', data.categories);
       (vm as RemoteDatabase).totalPages = data.totalPages;
+      if (Object.hasOwnProperty.call(data, 'licenses')) {
+        vm.$store.commit('setLicenses', data.licenses);
+      }
     });
   },
   metaInfo() {
@@ -93,6 +96,12 @@ export default class RemoteDatabase extends Vue {
     }));
   }
 
+  beforeDestroy(): void {
+    eventBus.$off('download-completed');
+    eventBus.$off('filters-updated');
+    eventBus.$off('item-deleted');
+  }
+
   async databaseInitialize(): Promise<void> {
     const db = new Integrations[this.$route.params.database]();
     const data = await db.fetchItemsFromDatabase(this.$route.params.page);
@@ -101,6 +110,9 @@ export default class RemoteDatabase extends Vue {
     this.$store.commit('setLoadedData', data.models);
     this.$store.commit('setCategories', data.categories);
     this.totalPages = data.totalPages;
+    if (Object.hasOwnProperty.call(data, 'licenses')) {
+      this.$store.commit('setLicenses', data.licenses);
+    }
   }
 
   get gridClass(): string {

@@ -31,5 +31,10 @@ declare module 'vue/types/vue' {
     $openFolder(folder: string): void;
     $openPropertiesModal(model: Model): Promise<boolean>;
     $formatSize(size: number): string;
+    /**
+     * Returns clean HTML, safe for interpolation
+     * @param html HTML string
+     */
+    $sanitizeHTML(html: string): string;
   }
 }

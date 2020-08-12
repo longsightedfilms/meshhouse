@@ -92,6 +92,14 @@ export default class SFMLab extends Integration {
       if (filters.where.category !== -1) {
         params.category = filters.where.category;
       }
+      if (filters.where.license !== -1) {
+        params.license = filters.where.license;
+      }
+
+      if (filters.order === 'DESC') {
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        params.order_by = 'created';
+      }
 
       if (page !== undefined) {
         params.page = page;
@@ -113,10 +121,12 @@ export default class SFMLab extends Integration {
 
       const body = dom.querySelectorAll('.content-container .entry-content .entry-list .entry');
       const options = dom.querySelectorAll('.content-container .sidebar .panel .panel__body select#id_category option');
+      const lics = dom.querySelectorAll('.content-container .sidebar .panel .panel__body select#id_license option');
 
       const paginator = dom.querySelector('.content-container .pagination');
 
       const models: Model[] = [];
+      const licenses = this.fetchLicenses(lics);
       const categories = this.fetchCategories(options);
       const lastPage = this.detectLastPage(paginator);
 
@@ -146,6 +156,7 @@ export default class SFMLab extends Integration {
       return {
         models: models,
         categories: categories,
+        licenses: licenses,
         totalPages: lastPage
       };
     } catch (e) {
@@ -160,6 +171,7 @@ export default class SFMLab extends Integration {
               const obj = {
                 models: rows,
                 categories: [],
+                licenses: [],
                 totalPages: 1
               };
               resolve(obj);
@@ -171,6 +183,7 @@ export default class SFMLab extends Integration {
       return {
         models: [],
         categories: [],
+        licenses: [],
         totalPages: 0
       };
     } finally {
@@ -203,8 +216,6 @@ export default class SFMLab extends Integration {
 
       const installed = await this.checkIsInstalledModel(model.id);
 
-      console.log(dom);
-
       const item = {
         id: model.id,
         remoteId: model.id,
@@ -215,7 +226,6 @@ export default class SFMLab extends Integration {
         installed: installed
       };
 
-      console.log(item);
       store.commit('setProperties', item);
     } catch (e) {
       if (e.code === 'ECONNABORTED') {
@@ -242,6 +252,20 @@ export default class SFMLab extends Integration {
     } catch (e) {
       console.log(e);
     }
+  }
+
+  fetchLicenses(options: NodeListOf<Element>): SFMLabLicense[] {
+    const licenses: SFMLabLicense[] = [];
+
+    options?.forEach((element: any) => {
+      if (element.innerText !== '---------') {
+        licenses.push({
+          id: element.value,
+          name: element.innerText
+        });
+      }
+    });
+    return licenses;
   }
 
   fetchCategories(options: NodeListOf<Element>): Category[] {

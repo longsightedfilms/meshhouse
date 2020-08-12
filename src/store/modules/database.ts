@@ -5,6 +5,7 @@ export default {
     currentDB: undefined,
     databases: [],
     categories: [],
+    licenses: [],
     loadedData: []
   },
   mutations: {
@@ -25,5 +26,8 @@ export default {
     setLoadedData(state: DatabaseState, payload: Model | Model[]): void {
       state.loadedData = payload;
     },
+    setLicenses(state: DatabaseState, payload: SFMLabLicense[]): void {
+      state.licenses = payload;
+    }
   }
 };

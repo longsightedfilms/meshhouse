@@ -45,11 +45,20 @@
             <p>{{ $store.state.controls.properties.size }}</p>
           </div>
           <button
+            v-if="!$store.state.controls.properties.installed"
             class="button button--flat"
             @click="installModel()"
           >
             <vue-icon icon="download-from-cloud" />
-            Install model
+            {{ $t('context.model.install') }}
+          </button>
+          <button
+            v-if="$store.state.controls.properties.installed"
+            class="button button--flat"
+            @click="deleteModel()"
+          >
+            <vue-icon icon="download-from-cloud" />
+            {{ $t('context.model.delete') }}
           </button>
         </div>
         <div class="modal_content">
@@ -90,7 +99,7 @@
               />
             </swiper>
           </div>
-          <div v-html="$store.state.controls.properties.description" />
+          <div v-html="$sanitizeHTML($store.state.controls.properties.description)" />
         </div>
       </div>
     </div>
@@ -135,6 +144,14 @@ export default class RemoteModelInfoModal extends Vue {
     const item = this.$store.state.controls.properties;
     const db = new Integrations[this.$route.params.database]();
     await db.downloadItem(item);
+  }
+
+  async deleteModel(): Promise<void> {
+    this.back();
+
+    const item = this.$store.state.controls.properties;
+    const db = new Integrations[this.$route.params.database]();
+    await db.deleteItem(item);
   }
 }
 </script>
