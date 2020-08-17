@@ -1,6 +1,6 @@
 <template>
   <header
-    v-if="$store.state.db.currentDB !== undefined"
+    v-if="database !== undefined"
     class="catalog-header"
   >
     <div class="catalog-header__image">
@@ -11,14 +11,14 @@
       >
       <div class="catalog-header__logo">
         <img
-          v-if="$store.state.db.currentDB.icon !== ''"
+          v-if="database.icon !== ''"
           class="catalog-header__logo-image"
           :src="catalogIcon"
         >
         <div
           v-else
           class="avatar"
-          :style="avatarStyle($store.state.db.currentDB)"
+          :style="avatarStyle(database)"
         >
           <p
             :class="avatarTextColorClass"
@@ -27,16 +27,16 @@
           </p>
         </div>
         <p
-          v-if="$store.state.db.currentDB.localDB"
+          v-if="database.localDB"
           class="catalog-header__logo-title"
         >
-          {{ $store.state.db.currentDB.title }}
+          {{ database.title }}
         </p>
       </div>
     </div>
     <div class="catalog-header__info">
       <span
-        v-if="!$store.state.db.currentDB.localDB && $store.state.controls.isOffline"
+        v-if="!database.localDB && $store.state.controls.isOffline"
         class="badge"
       >
         OFFLINE
@@ -46,10 +46,10 @@
           icon="stack"
           raster
         />
-        <p>{{ $formatSize($store.state.db.currentDB.totalsize) }}</p>
+        <p>{{ $formatSize(database.totalsize) }}</p>
       </div>
       <div
-        v-if="!$store.state.db.currentDB.localDB"
+        v-if="!database.localDB"
         class="catalog-header__info-block"
       >
         <button
@@ -64,7 +64,7 @@
         </button>
       </div>
       <div
-        v-if="$store.state.db.currentDB.localDB"
+        v-if="database.localDB"
         class="catalog-header__info-block"
       >
         <button
@@ -104,11 +104,11 @@ export default class CatalogHeader extends Vue {
   blur = 'filter: blur(0px); transform: scale(1.0);'
 
   get avatarTextColorClass(): string {
-    return colorContrast(this.$store.state.db.currentDB.color);
+    return colorContrast(this.$props.database.color);
   }
 
   get avatarTextPreview(): string {
-    return Array.from(this.$store.state.db.currentDB.title).slice(0, 1).join('').toUpperCase();
+    return Array.from(this.$props.database.title).slice(0, 1).join('').toUpperCase();
   }
 
   avatarStyle(navlink: DatabaseItem): object {
@@ -116,11 +116,11 @@ export default class CatalogHeader extends Vue {
   }
 
   get catalogBackground(): string {
-    if (this.$store.state.db.currentDB.background !== '') {
-      if (!this.$store.state.db.currentDB.background.includes('@/')) {
-        return this.$forceReloadImage(this.$store.state.db.currentDB.background);
+    if (this.$props.database.background !== '') {
+      if (!this.$props.database.background.includes('@/')) {
+        return this.$forceReloadImage(this.$props.database.background);
       } else {
-        return `/assets/integrations/backgrounds/${this.$store.state.db.currentDB.url}.webp`;
+        return `/assets/integrations/backgrounds/${this.$props.database.url}.webp`;
       }
     } else {
       return "data:image/svg+xml,%3Csvg width='2560' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3ClinearGradient id='lg'%3E%3Cstop offset='0%25' stop-color='%232db8e7'/%3E%3Cstop offset='100%25' stop-color='%233081e2'/%3E%3C/linearGradient%3E%3Crect x='2' y='2' width='2556' height='396' style='fill:url(%23lg);stroke:%23555555;stroke-width:2'/%3E%3Ctext x='50%25' y='50%25' font-size='18' text-anchor='middle' alignment-baseline='middle' font-family='monospace, sans-serif' fill='%23555555'%3E2560&%23215;400%3C/text%3E%3C/svg%3E";
@@ -128,11 +128,11 @@ export default class CatalogHeader extends Vue {
   }
 
   get catalogIcon(): string {
-    if (this.$store.state.db.currentDB.icon !== undefined) {
-      if (!this.$store.state.db.currentDB.icon.includes('@/')) {
-        return this.$forceReloadImage(this.$store.state.db.currentDB.icon);
+    if (this.$props.database.icon !== undefined) {
+      if (!this.$props.database.icon.includes('@/')) {
+        return this.$forceReloadImage(this.$props.database.icon);
       } else {
-        return `/assets/integrations/wide/${this.$store.state.db.currentDB.url}.svg`;
+        return `/assets/integrations/wide/${this.$props.database.url}.svg`;
       }
     } else {
       return '';
@@ -163,9 +163,17 @@ export default class CatalogHeader extends Vue {
 
   openEditCatalog(): void {
     this.$modal.show(EditCatalogModal, {}, {
+      adaptive: true,
       clickToClose: true,
-      width: '1024px',
-      height: 'auto'
+      width: '100%',
+      height: '100%',
+    }, {
+      'before-open': () => {
+        this.$store.commit('setModalVisibility', true);
+      },
+      'before-close': () => {
+        this.$store.commit('setModalVisibility', false);
+      }
     });
   }
 

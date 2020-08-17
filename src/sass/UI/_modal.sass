@@ -23,9 +23,42 @@
   display: flex
   flex-direction: column
   color: var(--textColor)
-  padding: 0 1rem
+  padding: 1rem
+  height: 100%
   main
     max-width: calc(100% - 300px - 1rem)
+  &_header
+    display: flex
+    align-items: center
+    margin: 0
+    padding: 1rem
+    margin: -1rem
+    margin-bottom: 0
+    h2
+      text-transform: uppercase
+      letter-spacing: 0.125rem
+      text-align: center
+      font-weight: 700
+    h1
+      font-size: 1.75rem
+      font-weight: 100
+      line-height: 1
+      margin-inline-end: auto
+  &_content
+    display: flex
+    flex-direction: column
+    height: 100%
+    max-height: calc(100vh - 32px)
+  &_actions
+    display: flex
+    justify-content: flex-end
+    border-top: 2px solid var(--blockColorLighter)
+    margin: 0 -1rem 1rem
+    padding: 1rem
+    .button
+      margin-inline-end: 1rem
+      &:last-child
+        margin-inline-end: 0
   &--about
     .logo
       display: block
@@ -83,31 +116,6 @@
           color: $danger
           font-weight: 700
           margin-top: auto
-  &_header
-    border-bottom: 2px solid var(--blockColorLighter)
-    padding: 0.5rem
-    margin: -1rem
-    margin-bottom: 0
-    h2
-      text-transform: uppercase
-      letter-spacing: 0.125rem
-      text-align: center
-      font-weight: 700
-  &_content
-    display: flex
-    flex-direction: column
-    height: 100%
-    max-height: calc(100vh - 32px)
-  &_actions
-    display: flex
-    justify-content: flex-end
-    border-top: 2px solid var(--blockColorLighter)
-    margin: auto -1rem -1rem
-    padding: 1rem
-    .button
-      margin-inline-end: 1rem
-      &:last-child
-        margin-inline-end: 0
   &--add-catalog
     .modal
       &_content
@@ -219,15 +227,6 @@
               background-color: $primary
   &--model-info
     height: calc(100vh - 48px)
-    .modal_header
-      display: flex
-      align-items: center
-      margin: 0
-      h1
-        font-size: 1.75rem
-        font-weight: 100
-        line-height: 1
-        margin-inline-end: auto
     .modal_content
       .model-info__image
         margin: 0 -1rem 2rem

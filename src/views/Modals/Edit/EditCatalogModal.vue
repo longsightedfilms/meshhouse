@@ -1,19 +1,19 @@
 <template>
   <div class="modal modal--add-catalog">
     <header class="modal_header">
-      <h2>{{ $t('modals.editCatalog.title') }}</h2>
+      <h1>{{ $t('modals.editCatalog.title') }}</h1>
     </header>
     <div class="modal_content">
       <div class="left">
         <ValidationObserver ref="form">
           <form v-bar>
             <div>
-              <div style="max-height: 500px">
+              <div style="max-height: calc(100vh - 12rem)">
                 <ValidationProvider
                   v-slot="{ errors }"
                   name="catalogTitle"
                   class="input-group"
-                  rules="required"
+                  rules="required|notIntegrationName"
                   immediate
                 >
                   <label>{{ $t('modals.addCatalog.labels.name') }}</label>
@@ -29,7 +29,7 @@
                 </ValidationProvider>
                 <ValidationProvider
                   ref="directoryProvider"
-                  v-slot="{ validate, errors }"
+                  v-slot="{ errors }"
                   name="catalogPath"
                   class="input-group"
                   rules="required"
@@ -59,7 +59,7 @@
                 </ValidationProvider>
                 <ValidationProvider
                   ref="imageProvider"
-                  v-slot="{ validate, errors }"
+                  v-slot="{ errors }"
                   name="catalogImage"
                   class="input-group"
                   rules="image"
@@ -91,7 +91,7 @@
                 </ValidationProvider>
                 <ValidationProvider
                   ref="imageProvider"
-                  v-slot="{ validate, errors }"
+                  v-slot="{ errors }"
                   name="catalogImage"
                   class="input-group"
                   rules="image"
@@ -135,13 +135,13 @@
         </ValidationObserver>
       </div>
       <div class="right">
-        <label class="label">Предпросмотр</label>
-        <p>В боковой панели</p>
+        <label class="label">{{ $t('modals.addCatalog.preview.title') }}</label>
+        <p>{{ $t('modals.addCatalog.preview.side') }}</p>
         <sidebar-link
           :navlink="properties"
           :progress="100"
         />
-        <p>Широкая карточка</p>
+        <p>{{ $t('modals.addCatalog.preview.wideCard') }}</p>
         <catalog-header :database="properties" />
       </div>
     </div>

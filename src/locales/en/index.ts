@@ -12,7 +12,7 @@ import DDMenu from './dropdowns/mainmenu';
 import hints from './hints';
 // Validation
 import fields from './fields';
-import validationMessages from 'vee-validate/dist/locale/en.json';
+import validationMessages from './validation';
 
 import notifications from './notifications';
 

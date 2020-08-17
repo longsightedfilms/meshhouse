@@ -148,9 +148,17 @@ export default class HeaderNavigation extends Vue {
 
   showNewCatalog(): void {
     this.$modal.show(AddNewCatalogModal, {}, {
+      adaptive: true,
       clickToClose: true,
-      width: '1024px',
-      height: 'auto'
+      width: '100%',
+      height: '100%',
+    }, {
+      'before-open': () => {
+        this.$store.commit('setModalVisibility', true);
+      },
+      'before-close': () => {
+        this.$store.commit('setModalVisibility', false);
+      }
     });
   }
 

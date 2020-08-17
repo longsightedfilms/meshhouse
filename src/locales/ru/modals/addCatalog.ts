@@ -12,4 +12,9 @@ export default {
     color: '#ffffff',
     image: 'my-fancy-catalog.svg'
   },
+  preview: {
+    title: 'Предпросмотр',
+    side: 'В боковой панели',
+    wideCard: 'Широкая карточка'
+  }
 };

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/require-await */
+/* eslint-disable @typescript-eslint/camelcase */
 declare const __static: string;
 
 import eventBus from '@/eventBus';
@@ -11,13 +12,13 @@ import axios from 'axios';
 import { i18n } from '@/locales/i18n';
 
 import sanitize from 'sanitize-filename';
-import sevenBin from '7zip-bin';
-import Seven from 'node-7z';
 
 const url = 'https://sfmlab.com';
 
 import { databases } from '@/plugins/models-db/init';
 import { installFile } from '@/functions/archive';
+
+axios.defaults.withCredentials = true;
 
 const sfmlabInstance = axios.create({
   baseURL: url,
@@ -92,12 +93,12 @@ export default class SFMLab extends Integration {
       if (filters.where.category !== -1) {
         params.category = filters.where.category;
       }
+
       if (filters.where.license !== -1) {
         params.license = filters.where.license;
       }
 
       if (filters.order === 'DESC') {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         params.order_by = 'created';
       }
 
@@ -106,14 +107,14 @@ export default class SFMLab extends Integration {
       }
 
       if (filters.where.name !== '') {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         params.search_text = filters.where.name;
       }
       store.commit('setOfflineStatus', false);
       store.commit('setLoadingStatus', false);
 
       const root = await sfmlabInstance.get('/', {
-        params: params
+        params: params,
+        withCredentials: true
       });
 
       const parser = new DOMParser();
@@ -234,23 +235,6 @@ export default class SFMLab extends Integration {
       }
     } finally {
       store.commit('setLoadingStatus', true);
-    }
-  }
-
-  async login(): Promise<void> {
-    try {
-      const token = databases.get('databases.integrations.sfmlab.auth.csrf') ?? undefined;
-      const csrf = await sfmlabInstance.get('/accounts/login');
-      console.log(csrf);
-      /*const root = await sfmlabInstance.post('/accounts/login', {
-        login: 'aks113',
-        remember: true,
-        password: '2GGyq9jvkYHiTjFXSq4E'
-      });*/
-
-      // console.log(root);
-    } catch (e) {
-      console.log(e);
     }
   }
 

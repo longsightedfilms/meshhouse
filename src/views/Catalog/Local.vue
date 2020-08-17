@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <catalog-header />
+    <catalog-header :database="$store.state.db.currentDB" />
     <categories-grid />
     <vue-context ref="categoryMenu">
       <category-context />
@@ -9,15 +9,6 @@
       <span>
         {{ $t('views.catalog.models.title') }}
       </span>
-      <button
-        class="button button--flat"
-        @click="reindexCatalog"
-      >
-        <vue-icon
-          icon="update"
-          raster
-        />
-      </button>
     </div>
     <div
       v-if="$store.state.db.loadedData.length !== 0"
@@ -105,12 +96,6 @@ export default class LocalDatabase extends Vue {
     this.$store.commit('setCurrentDatabase', this.$route.params.database);
     this.$store.commit('setLoadedData', models);
     this.$store.commit('setCategories', categories);
-  }
-
-  reindexCatalog(): void {
-    this.$reindexCatalog(this.$store.state.db.currentDB).then(async() => {
-      await this.databaseInitialize();
-    });
   }
 
   mounted(): void {

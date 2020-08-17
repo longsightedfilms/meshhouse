@@ -13,6 +13,9 @@ import VueIcon from '@/components/UI/Icon/Icon.vue';
 import VueDropdown from '@/components/UI/Button/DropdownButton.vue';
 import CatalogHeader from '@/components/UI/Header/CatalogHeader.vue';
 
+import { integrationsList } from '@/functions/databases';
+import { transliterate as tr, slugify } from 'transliteration';
+
 Vue.config.productionTip = false;
 
 for (const [rule, validation] of Object.entries(rules)) {
@@ -20,6 +23,12 @@ for (const [rule, validation] of Object.entries(rules)) {
     ...validation
   });
 }
+
+extend('notIntegrationName', ((value: string): boolean => {
+  const slug = value.trim().replace(/[~!@#$%^&*()=+.,?/\\|]+/, '');
+  const url = slugify(slug);
+  return integrationsList.findIndex((integrationName: string) => integrationName === url) === -1;
+}));
 
 Vue.component('vue-icon', VueIcon);
 Vue.component('vue-dropdown', VueDropdown);

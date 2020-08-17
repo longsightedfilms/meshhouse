@@ -12,4 +12,9 @@ export default {
     color: '#ffffff',
     image: 'my-fancy-catalog.svg'
   },
+  preview: {
+    title: 'Preview',
+    side: 'In sidebar',
+    wideCard: 'Wide card'
+  }
 };

@@ -1,6 +1,6 @@
 <template>
   <fragment>
-    <catalog-header />
+    <catalog-header :database="$store.state.db.currentDB" />
     <div class="button button--grid">
       <span>
         {{ $t('views.catalog.models.title') }}
