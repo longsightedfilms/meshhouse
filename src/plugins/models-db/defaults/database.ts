@@ -1,3 +1,9 @@
+import {
+  sfmlab,
+  smutbase,
+  open3dlab
+} from '../migrations/database';
+
 export default {
   local: [],
   integrations: {
@@ -12,6 +18,9 @@ export default {
       localDB: false,
       totalsize: 0,
       disabled: true
-    }
+    },
+    sfmlab,
+    smutbase,
+    open3dlab
   }
 };

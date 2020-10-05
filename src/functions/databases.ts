@@ -12,3 +12,11 @@ export const integrationsWithLicenseField: string[] = [
   'smutbase',
   'open3dlab'
 ];
+
+export function isDownloadLink(link: SFMLabLink[] | Error): link is SFMLabLink[] {
+  return (link as SFMLabLink[]).length !== undefined;
+}
+
+export function isDBModel(model: Model[] | Error): model is Model[] {
+  return (model as Model[]).length !== undefined;
+}

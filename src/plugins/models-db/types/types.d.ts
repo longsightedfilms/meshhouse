@@ -20,6 +20,7 @@ type ControlsState = {
   thumbnailSize: string | number;
   theme: Theme;
   title: string;
+  downloadLinks: SFMLabLink[];
   updates: {
     downloading: boolean;
     downloaded: boolean;

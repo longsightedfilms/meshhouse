@@ -16,7 +16,7 @@ export default {
   mutations: {
     addDownloadItem(state: Download[], payload: Download): void {
       state.push(payload);
-      eventBus.$emit('download-started');
+      eventBus.emit('download-started');
     },
     cancelDownloadItem(state: Download[], payload: Download): void {
       const idx = state.findIndex((download: Download) => download.cancelToken === payload.cancelToken);

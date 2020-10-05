@@ -19,6 +19,15 @@
       </a>
     </li>
     <li v-if="$store.state.controls.properties.installed">
+      <a @click.prevent="installOtherFileModel()">
+        <vue-icon
+          icon="download-from-cloud"
+          inverted
+        />
+        {{ $t('context.model.update') }}
+      </a>
+    </li>
+    <li v-if="$store.state.controls.properties.installed">
       <a @click.prevent="deleteModel()">
         <vue-icon
           icon="recycle-bin"
@@ -85,7 +94,13 @@ export default class ModelContext extends Vue {
   async installModel(): Promise<void> {
     const item = this.$store.state.controls.properties;
     const db = new Integrations[this.$route.params.database]();
-    await db.downloadItem(item);
+    await db.downloadHandle(item);
+  }
+
+  async installOtherFileModel(): Promise<void> {
+    const item = this.$store.state.controls.properties;
+    const db = new Integrations[this.$route.params.database]();
+    await db.updateHandle(item);
   }
 
   async deleteModel(): Promise<void> {
@@ -117,7 +132,7 @@ export default class ModelContext extends Vue {
     this.$openPropertiesModal(this.$store.state.controls.properties).then(() => {
       this.$modal.show(EditPropertiesModal, {}, {
         clickToClose: true,
-        width: '450px',
+        width: '1024px',
         height: 'auto',
         pivotX: 1.0,
         pivotY: 1.0,

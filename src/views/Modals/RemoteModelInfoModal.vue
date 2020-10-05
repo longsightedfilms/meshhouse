@@ -55,9 +55,17 @@
           <button
             v-if="$store.state.controls.properties.installed"
             class="button button--flat"
-            @click="deleteModel()"
+            @click="installOtherFileModel()"
           >
             <vue-icon icon="download-from-cloud" />
+            {{ $t('context.model.update') }}
+          </button>
+          <button
+            v-if="$store.state.controls.properties.installed"
+            class="button button--flat"
+            @click="deleteModel()"
+          >
+            <vue-icon icon="recycle-bin" />
             {{ $t('context.model.delete') }}
           </button>
         </div>
@@ -143,7 +151,15 @@ export default class RemoteModelInfoModal extends Vue {
 
     const item = this.$store.state.controls.properties;
     const db = new Integrations[this.$route.params.database]();
-    await db.downloadItem(item);
+    await db.downloadHandle(item);
+  }
+
+  async installOtherFileModel(): Promise<void> {
+    this.back();
+
+    const item = this.$store.state.controls.properties;
+    const db = new Integrations[this.$route.params.database]();
+    await db.updateHandle(item);
   }
 
   async deleteModel(): Promise<void> {

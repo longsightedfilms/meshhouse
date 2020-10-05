@@ -178,7 +178,7 @@ export default class CatalogHeader extends Vue {
   }
 
   refreshRemoteCatalog(): void {
-    EventBus.$emit('filters-updated');
+    EventBus.emit('filters-updated');
   }
 }
 </script>

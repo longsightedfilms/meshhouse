@@ -13,10 +13,11 @@ import { i18n } from '@/locales/i18n';
 
 import sanitize from 'sanitize-filename';
 
-const url = 'https://sfmlab.com';
+const url = 'https://smutba.se';
 
 import { databases } from '@/plugins/models-db/init';
 import { installFile } from '@/functions/archive';
+
 import {
   isDownloadLink,
   isDBModel
@@ -24,16 +25,16 @@ import {
 
 axios.defaults.withCredentials = true;
 
-const sfmlabInstance = axios.create({
+const smutbaseInstance = axios.create({
   baseURL: url,
   responseType: 'text',
   timeout: 10000,
   withCredentials: true,
 });
 
-export default class SFMLab extends Integration {
+export default class Smutbase extends Integration {
   constructor() {
-    super('sfmlab');
+    super('smutbase');
     this.initializeLocalDatabase();
   }
   async initializeLocalDatabase(): Promise<boolean> {
@@ -112,7 +113,7 @@ export default class SFMLab extends Integration {
       store.commit('setOfflineStatus', false);
       store.commit('setLoadingStatus', false);
 
-      const root = await sfmlabInstance.get('/', {
+      const root = await smutbaseInstance.get('/', {
         params: params,
         withCredentials: true
       });
@@ -196,7 +197,7 @@ export default class SFMLab extends Integration {
     try {
       store.commit('setOfflineStatus', false);
       store.commit('setLoadingStatus', false);
-      const root = await sfmlabInstance.get(`/project/${model.id}`);
+      const root = await smutbaseInstance.get(`/project/${model.id}`);
       const parser = new DOMParser();
       const dom = parser.parseFromString(root.data, 'text/html');
 
@@ -290,7 +291,7 @@ export default class SFMLab extends Integration {
   async fetchDownloadLink(projectID: number): Promise<SFMLabLink[] | Error> {
     store.commit('setLoadingStatus', false);
     try {
-      const root = await sfmlabInstance.get(`/project/${projectID}/`);
+      const root = await smutbaseInstance.get(`/project/${projectID}/`);
       const parser = new DOMParser();
       const dom = parser.parseFromString(root.data, 'text/html');
 
@@ -303,7 +304,7 @@ export default class SFMLab extends Integration {
         const linksArray = [];
 
         for (let i = 0; i < links.length; i++) {
-          const downloadPage = await sfmlabInstance.get((links[i].getAttribute('href') as string));
+          const downloadPage = await smutbaseInstance.get((links[i].getAttribute('href') as string));
           const dom = parser.parseFromString(downloadPage.data, 'text/html');
 
           const downloadLink = dom.querySelector('.content-container .main-upload .project-description-div p a');
@@ -339,18 +340,18 @@ export default class SFMLab extends Integration {
 
     await this.runQuery(dbQuery);
     // Update databases record
-    const db = databases.get('databases.integrations.sfmlab');
+    const db = databases.get('databases.integrations.smutbase');
     db.totalsize -= item.size ?? 0;
     db.count--;
 
-    databases.set('databases.integrations.sfmlab', db);
+    databases.set('databases.integrations.smutbase', db);
     store.commit('setApplicationDatabases', databases.get('databases'));
-    store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? 'sfmlab');
+    store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? 'smutbase');
     eventBus.emit('item-deleted');
 
     const notifierObject = {
       appName: 'com.longsightedfilms.meshhouse',
-      title: i18n.t('notifications.delete.title', { site: 'SFMLab' }).toString(),
+      title: i18n.t('notifications.delete.title', { site: 'Smutbase' }).toString(),
       message: i18n.t('notifications.delete.text', { title: item.name }).toString(),
       icon: path.join(__static, '../build/icons', '512x512.png'),
       wait: true
@@ -404,7 +405,7 @@ export default class SFMLab extends Integration {
   }
 
   async downloadItem(item: Model, downloadLink: SFMLabLink): Promise<boolean | Error> {
-    const isFolderSet = databases.get('databases.integrations.sfmlab').path !== null;
+    const isFolderSet = databases.get('databases.integrations.smutbase').path !== null;
 
     if (!isFolderSet) {
       return Promise.reject(new Error('Path not set'));
@@ -415,7 +416,7 @@ export default class SFMLab extends Integration {
     const download = {
       img: item.image,
       title: item.name,
-      path: path.join(databases.get('databases.integrations.sfmlab').path, sanitize(item.name)),
+      path: path.join(databases.get('databases.integrations.smutbase').path, sanitize(item.name)),
       totalSize: 0,
       downloadedSize: 0,
       startedAt: new Date(),
@@ -427,7 +428,7 @@ export default class SFMLab extends Integration {
       const link = downloadLink.link;
       const filename = downloadLink.filename;
 
-      const file: Blob = (await sfmlabInstance.get(link, {
+      const file: Blob = (await smutbaseInstance.get(link, {
         cancelToken: cancelToken.token,
         responseType: 'blob',
         timeout: 0,
@@ -441,7 +442,7 @@ export default class SFMLab extends Integration {
         }
       })).data;
       // Unpack archive in folder
-      await installFile(file, item, filename, 'sfmlab');
+      await installFile(file, item, filename, 'smutbase');
 
       // Check if file exists in DB and update it
       const checkQuery = `SELECT * FROM 'models'
@@ -453,7 +454,7 @@ export default class SFMLab extends Integration {
       if (isDBModel(result)) {
         if (result.length === 0) {
           const dbQuery = `INSERT INTO 'models' VALUES
-          (null, ${item.id}, '${item.name}', '.sfm', '${download.path}',
+          (null, ${item.id}, '${item.name}', '${item.extension}', '${download.path}',
           '${download.path}', '${item.category}', ${download.totalSize}, '${item.image}', 1)`;
 
           await this.runQuery(dbQuery);
@@ -470,7 +471,7 @@ export default class SFMLab extends Integration {
       // Notify when downloaded
       const notifierObject = {
         appName: 'com.longsightedfilms.meshhouse',
-        title: i18n.t('notifications.download.title', { site: 'SFMLab' }).toString(),
+        title: i18n.t('notifications.download.title', { site: 'Smutbase' }).toString(),
         message: i18n.t('notifications.download.text', { title: item.name }).toString(),
         icon: path.join(__static, '../build/icons', '512x512.png'),
         wait: true
@@ -479,13 +480,13 @@ export default class SFMLab extends Integration {
       eventBus.emit('download-completed');
 
       // Update databases record
-      const db = databases.get('databases.integrations.sfmlab');
+      const db = databases.get('databases.integrations.smutbase');
       db.totalsize += download.totalSize;
       db.count++;
 
-      databases.set('databases.integrations.sfmlab', db);
+      databases.set('databases.integrations.smutbase', db);
       store.commit('setApplicationDatabases', databases.get('databases'));
-      store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? 'sfmlab');
+      store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? 'smutbase');
 
       return Promise.resolve(true);
     } catch (e) {

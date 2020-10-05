@@ -5,4 +5,5 @@ export default {
   open: 'Open',
   openFolder: 'Open folder',
   properties: 'Item properties',
+  update: 'Install other file'
 };

@@ -46,6 +46,7 @@ import ModelContext from '@/components/UI/Context/ModelContext.vue';
 import ModelCard from '@/components/UI/Card/ModelCard.vue';
 import Integrations from '@/plugins/models-db/integrations/main';
 import CatalogPaginator from './CatalogPaginator.vue';
+import MultipleLinksModal from '@/views/Modals/MultipleLinksDetected.vue';
 import { Route } from 'vue-router';
 
 @Component({
@@ -85,21 +86,25 @@ export default class RemoteDatabase extends Vue {
   }
 
   mounted(): void {
-    eventBus.$on('download-completed', (async() => {
-      await this.databaseInitialize();
+    eventBus.on('download-completed', (() => {
+      this.databaseInitialize();
     }));
-    eventBus.$on('filters-updated', (async() => {
-      await this.databaseInitialize();
+    eventBus.on('filters-updated', (() => {
+      this.databaseInitialize();
     }));
-    eventBus.$on('item-deleted', (async() => {
-      await this.databaseInitialize();
+    eventBus.on('item-deleted', (() => {
+      this.databaseInitialize();
+    }));
+    eventBus.on('multiple-links', (() => {
+      this.$modal.show(MultipleLinksModal, {}, {
+        clickToClose: true,
+        height: 'auto'
+      });
     }));
   }
 
   beforeDestroy(): void {
-    eventBus.$off('download-completed');
-    eventBus.$off('filters-updated');
-    eventBus.$off('item-deleted');
+    eventBus.all.clear();
   }
 
   async databaseInitialize(): Promise<void> {

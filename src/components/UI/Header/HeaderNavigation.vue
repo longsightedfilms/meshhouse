@@ -130,20 +130,15 @@ export default class HeaderNavigation extends Vue {
   }
 
   mounted(): void {
-    eventBus.$on('download-started', () => {
+    eventBus.on('download-started', () => {
       this.downloadStarted = true;
       setTimeout(() => {
         this.downloadStarted = false;
       }, 1000);
     });
-    eventBus.$on('download-completed', () => {
+    eventBus.on('download-completed', () => {
       this.downloadCompleted = true;
     });
-  }
-
-  resetClass(): void {
-    this.downloadStarted = false;
-    this.downloadCompleted = false;
   }
 
   showNewCatalog(): void {
@@ -163,7 +158,7 @@ export default class HeaderNavigation extends Vue {
   }
 
   updateItems(): void {
-    eventBus.$emit('filters-updated');
+    eventBus.emit('filters-updated');
   }
 
   handleChangeOrder(): void {

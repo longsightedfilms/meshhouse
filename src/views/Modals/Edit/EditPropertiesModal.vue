@@ -1,14 +1,16 @@
 <template>
-  <div class="modal modal--sidebar modal--properties">
+  <div class="modal modal--properties">
     <header class="modal_header">
       <h2>{{ $t('context.model.properties') }}</h2>
     </header>
     <div class="modal_content">
       <model-image
-        :src="properties.image"
-        :extension="properties.extension"
+        :item="properties"
       />
-      <ValidationObserver ref="form">
+      <ValidationObserver
+        ref="form"
+        class="modal_form"
+      >
         <ValidationProvider
           v-slot="{ classes }"
           name="modelTitle"

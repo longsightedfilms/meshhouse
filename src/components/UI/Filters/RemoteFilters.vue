@@ -113,7 +113,7 @@ export default class RemoteFilters extends Vue {
       field: 'category',
       value: select.id
     });
-    EventBus.$emit('filters-updated');
+    EventBus.emit('filters-updated');
   }
 
   handleLicenseSelect(select: SFMLabLicense): void {
@@ -121,7 +121,7 @@ export default class RemoteFilters extends Vue {
       field: 'license',
       value: select.id
     });
-    EventBus.$emit('filters-updated');
+    EventBus.emit('filters-updated');
   }
 
 }

@@ -22,6 +22,7 @@ export default {
     thumbnailSize: 256,
     theme: 'light',
     title: 'Meshhouse',
+    downloadLinks: [],
     updates: {
       downloading: false,
       downloaded: false
@@ -83,5 +84,8 @@ export default {
     hideIntegrations(state: ControlsState, payload: boolean): void {
       state.hideIntegrations = payload;
     },
+    setDownloadLinks(state: ControlsState, payload: SFMLabLink[]): void {
+      state.downloadLinks = payload;
+    }
   },
 };

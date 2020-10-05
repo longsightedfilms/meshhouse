@@ -69,7 +69,8 @@ export const modelsExtensions: Extension = {
 export const integrationsList = [
   'meshhouse',
   'sfmlab',
-  'smutbase'
+  'smutbase',
+  'open3dlab'
 ];
 
 export function filterByModels(file: string, stats: fs.Stats): boolean {
@@ -223,7 +224,7 @@ function handleUpdate(database: DatabaseItem, handleDB: Integrations, db: any, i
 
       databases.store = { databases: db };
       store.commit('setApplicationDatabases', db);
-      eventBus.$emit('file-event', database);
+      eventBus.emit('file-event', database);
     });
 }
 
@@ -246,14 +247,14 @@ export async function watchDatabases(): Promise<boolean> {
           handleUpdate(database, handleDB, db, index)
             .then(() => {
               store.commit('setApplicationDatabases', db);
-              eventBus.$emit('file-event', database);
+              eventBus.emit('file-event', database);
             });
         }))
         .on('unlink', (() => {
           handleUpdate(database, handleDB, db, index)
             .then(() => {
               store.commit('setApplicationDatabases', db);
-              eventBus.$emit('file-event', database);
+              eventBus.emit('file-event', database);
             });
         }));
     }

@@ -53,7 +53,7 @@
     display: flex
     justify-content: flex-end
     border-top: 2px solid var(--blockColorLighter)
-    margin: 0 -1rem 1rem
+    margin: 0 -1rem -1rem
     padding: 1rem
     .button
       margin-inline-end: 1rem
@@ -78,20 +78,18 @@
       font-size: 1.125rem
   &--properties
     height: calc(100vh - 96px)
-    padding-bottom: 2rem
     .modal
       &_content
         display: flex
-        flex-direction: column
+        flex-direction: row
         height: 100%
-        max-height: calc(100% - 5rem)
+        max-height: calc(100% - 3rem)
         .card
           &_image
             display: block
-            margin: 0 -1rem
-            max-width: 200%
-            width: calc(100% + 2rem)
-            height: 300px
+            margin: 0
+            flex: 1 1 50%
+            height: 100%
             &:before
               display: none
             .image
@@ -116,10 +114,13 @@
           color: $danger
           font-weight: 700
           margin-top: auto
+        .modal_form
+          flex: 0 0 50%
   &--add-catalog
     .modal
       &_content
         flex-direction: row
+        max-height: calc(100vh - 10.5rem)
         .left
           width: 70%
           flex: 0 0 70%
@@ -247,7 +248,22 @@
             width: 100%
             object-fit: contain
             object-position: 50%
-  button.back
+  &--links
+    .modal--note
+      text-align: center
+      margin-bottom: 1rem
+      padding: 1rem
+      background-color: var(--blockColorLighter)
+    .model--links
+      padding: 0.5rem 1rem
+      border: 2px solid var(--blockColorLighter)
+    .model--link
+      display: flex
+      align-items: center
+      justify-content: space-between
+      p
+        margin: 0
+  button.back, button.close
     display: flex
     justify-content: center
     align-items: center

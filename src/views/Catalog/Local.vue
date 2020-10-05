@@ -99,19 +99,18 @@ export default class LocalDatabase extends Vue {
   }
 
   mounted(): void {
-    eventBus.$on('file-event', (async(database: DatabaseItem) => {
+    eventBus.on('file-event', (database: DatabaseItem | any) => {
       if (database.url === this.$route.params.database) {
-        await this.databaseInitialize();
+        this.databaseInitialize();
       }
-    }));
-    eventBus.$on('filters-updated', (async() => {
-      await this.databaseInitialize();
+    });
+    eventBus.on('filters-updated', (() => {
+      this.databaseInitialize();
     }));
   }
 
   beforeDestroy(): void {
-    eventBus.$off('file-event');
-    eventBus.$off('filters-updated');
+    eventBus.all.clear();
   }
 
   get gridClass(): string {

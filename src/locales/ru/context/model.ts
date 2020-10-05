@@ -5,4 +5,5 @@ export default {
   open: 'Открыть',
   openFolder: 'Открыть папку',
   properties: 'Свойства предмета',
+  update: 'Установить другой файл'
 };
