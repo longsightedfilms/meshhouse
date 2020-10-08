@@ -23,9 +23,9 @@
 |Integration name|URL|Status|Filters|Installation|Authentication|Purchase|
 |---|---|---|---|---|---|---|
 |Meshhouse|[https://meshhouse.art](https://meshhouse.art)|❌|❌|❌|❌|❌|
-|SFMLab|[https://sfmlab.com](https://sfmlab.com)|Mostly working ✔️|❌|✔️|❌|❌|
-|SmutBase|[https://smutba.se](https://smutba.se)|Not implemented ❌|❌|❌|❌|❌|
-|Open3DLab|[https://open3dlab.com](https://open3dlab.com)|Not implemented ❌|❌|❌|❌|❌|
+|SFMLab|[https://sfmlab.com](https://sfmlab.com)|Working ✔️|✔️|✔️|❌|❌|
+|SmutBase|[https://smutba.se](https://smutba.se)|Working ✔️|✔️|✔️|❌|❌|
+|Open3DLab|[https://open3dlab.com](https://open3dlab.com)|Working ✔️|✔️|✔️|❌|❌|
 
 
 Legend:
