@@ -1,7 +1,7 @@
 <template>
   <div class="modal modal--settings">
     <aside class="modal_tabs">
-      <label>{{ $t('modals.settings.tabs.common.title') }}</label>
+      <label>{{ $t('modals.settings.title') }}</label>
       <div>
         <button
           class="button"
@@ -32,9 +32,6 @@
       </div>
     </aside>
     <main>
-      <header class="modal_header">
-        <h2>{{ $t('modals.settings.title') }}</h2>
-      </header>
       <div class="modal_content">
         <component :is="selected" />
       </div>

@@ -184,28 +184,42 @@
         background-color: var(--blockColorLighter)
         margin: -1rem
         margin-inline-end: 2rem
-        flex: 0 0 300px
+        flex: 0 0 320px
         label
           display: block
           color: var(--textColor)
-          background-color: var(--blockColor)
-          padding: 1rem
-          font-weight: 100
+          padding: 1.25rem 1rem
+          font-weight: 500
         .button
+          position: relative
           border-radius: 0
           width: 100%
-          padding: 0.5rem 1rem
+          padding: 1rem 1rem
           text-transform: none
           letter-spacing: 0
+          font-size: 1rem
+          font-weight: 300
           color: var(--textColor)
-          &:hover, &.active
+          text-align: left
+          &:after
+            content: ''
+            position: absolute
+            display: block
+            left: 0
+            top: 50%
+            width: 4px
+            height: 1.5rem
+            opacity: 0
             background-color: $primary
-            color: $white
+            transform: translateY(-50%)
+          &:hover
+            background-color: var(--blockColor)
+          &.active
+            &:after
+              opacity: 1
       &_content
         height: calc(100vh - 32px)
         margin-inline-end: -1rem
-      &_header
-        padding: 0.625rem 1rem
       &_header, &_actions
         margin-inline-start: -2rem
   &--updater

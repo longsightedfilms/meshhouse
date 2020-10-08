@@ -18,11 +18,12 @@ import {
 import {
   getParameterByExtension,
   filterByModels,
-  modelsExtensions,
   formatBytes,
   findDatabaseIndex,
   watchDatabases
 } from './functions';
+
+import { modelsExtensions } from '@/functions/extension';
 
 import {
   initDatabases,

@@ -2,6 +2,7 @@
   <div v-bar>
     <div>
       <div class="tab tab--programs">
+        <h1>{{ $t('modals.settings.tabs.dcc.title') }}</h1>
         <div class="programs">
           <div class="program">
             <div class="program-header">

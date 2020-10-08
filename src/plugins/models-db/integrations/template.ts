@@ -22,12 +22,32 @@ export abstract class Integration {
    * Run query without rows feedback
    * @param query - query string
    */
-  abstract runQuery(query: string): Promise<boolean | Error>
+  runQuery(query: string): Promise<boolean | Error> {
+    return new Promise((resolve, reject): void => {
+      this.db.run(query, (err: Error) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(true);
+        }
+      });
+    });
+  }
   /**
    * Run query with rows feedback
    * @param query - query string
    */
-  abstract fetchQuery(query: string): Promise<Model[] | Error>
+  fetchQuery(query: string): Promise<Model[] | Error> {
+    return new Promise((resolve, reject): void => {
+      this.db.all(query, (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
+  }
   /**
    * Get all items from database
    * @param query - query string

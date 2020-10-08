@@ -2,6 +2,7 @@
   <div v-bar>
     <div>
       <div class="tab">
+        <h1>{{ $t('modals.settings.tabs.common.title') }}</h1>
         <language-selector />
         <theme-selector />
         <last-page-selector />

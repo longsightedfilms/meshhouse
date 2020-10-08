@@ -20,7 +20,8 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import Multiselect from 'vue-multiselect';
 import { Fragment } from 'vue-fragment';
-import { handleDatabases, findDatabaseIndex, modelsExtensions } from '@/plugins/models-db/functions';
+import { handleDatabases, findDatabaseIndex } from '@/plugins/models-db/functions';
+import { modelsExtensions } from '@/functions/extension';
 
 @Component({
   components: {

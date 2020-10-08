@@ -7,36 +7,62 @@ import fs from 'fs';
 import path from 'path';
 import notifier from 'node-notifier';
 import store from '@/store/main';
-import { Integration } from '../template';
-import axios from 'axios';
+import { Integration } from '../../template';
+import axios, { AxiosInstance } from 'axios';
 import { i18n } from '@/locales/i18n';
-
 import sanitize from 'sanitize-filename';
 
-const url = 'https://open3dlab.com/';
-
 import { databases } from '@/plugins/models-db/init';
-import { installFile } from '@/functions/archive';
-
+import { slugifyToExtension } from '@/functions/extension';
 import {
   isDownloadLink,
   isDBModel
 } from '@/functions/databases';
+import { installFile } from '@/functions/archive';
+import { createOSNotification } from '@/functions/notifier';
 
 axios.defaults.withCredentials = true;
 
-const open3dLabInstance = axios.create({
-  baseURL: url,
-  responseType: 'text',
-  timeout: 10000,
-  withCredentials: true,
-});
+/**
+ * SFMLab-based site integration class
+ * @param slug Site slug
+ * @param name Site full name
+ * @param url Site URL
+ */
+export default class SFMLabBaseIntegration extends Integration {
+  /**
+   * Site slug
+   */
+  slug = '';
+  /**
+   * Site full title
+   */
+  name = '';
+  /**
+   * Site base url (ex. https://example.com)
+   */
+  url = '';
+  /**
+   * Base axios instance
+   */
+  sfmlabInstance: AxiosInstance
 
-export default class SFMLab extends Integration {
-  constructor() {
-    super('open3dlab');
+  constructor(slug: string, name: string, url: string) {
+    super(slug);
+    this.slug = slug;
+    this.name = name;
+    this.url = url;
+
+    this.sfmlabInstance = axios.create({
+      baseURL: this.url,
+      responseType: 'text',
+      timeout: 10000,
+      withCredentials: true,
+    });
+
     this.initializeLocalDatabase();
   }
+
   async initializeLocalDatabase(): Promise<boolean> {
     const query = `CREATE TABLE IF NOT EXISTS 'models'(
       "id"	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -52,29 +78,6 @@ export default class SFMLab extends Integration {
     )`;
     await this.runQuery(query);
     return Promise.resolve(true);
-  }
-  runQuery(query: string): Promise<boolean | Error> {
-    return new Promise((resolve, reject): void => {
-      this.db.run(query, (err: Error) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(true);
-        }
-      });
-    });
-  }
-
-  fetchQuery(query: string): Promise<Model[] | Error> {
-    return new Promise((resolve, reject): void => {
-      this.db.all(query, (err, rows) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows);
-        }
-      });
-    });
   }
 
   async checkIsInstalledModel(id: number): Promise<boolean | Error> {
@@ -113,7 +116,7 @@ export default class SFMLab extends Integration {
       store.commit('setOfflineStatus', false);
       store.commit('setLoadingStatus', false);
 
-      const root = await open3dLabInstance.get('/', {
+      const root = await this.sfmlabInstance.get('/', {
         params: params,
         withCredentials: true
       });
@@ -136,8 +139,8 @@ export default class SFMLab extends Integration {
         const title = element.querySelector('.entry__body .entry__title a')?.innerHTML;
         const link = element.querySelector('.entry__body .entry__title a')?.getAttribute('href');
         const id = (link?.match(/\d+/) as string[])[0];
-        const image = element.querySelector('.entry__heading a img')?.getAttribute('src') || '';
-        const category = element.querySelector('.entry__tags .entry__tag')?.innerHTML;
+        const image = element.querySelector('.entry__heading a img')?.getAttribute('src') ?? '';
+        const category = element.querySelector('.entry__tags .entry__tag')?.innerHTML ?? '';
 
         const dbQuery = `SELECT * FROM models WHERE remoteId=${id}`;
         const item = (await this.fetchQuery(dbQuery) as Model[]);
@@ -147,7 +150,7 @@ export default class SFMLab extends Integration {
           remoteId: Number(id),
           name: title ?? '',
           image: image,
-          extension: '.sfm',
+          extension: this.slug === 'sfmlab' ? '.sfm' : slugifyToExtension(category),
           category: category ?? '',
           size: item.length !== 0 ? item[0].size : 0,
           folderPath: item.length !== 0 ? item[0].folderPath : '',
@@ -197,7 +200,7 @@ export default class SFMLab extends Integration {
     try {
       store.commit('setOfflineStatus', false);
       store.commit('setLoadingStatus', false);
-      const root = await open3dLabInstance.get(`/project/${model.id}`);
+      const root = await this.sfmlabInstance.get(`/project/${model.id}`);
       const parser = new DOMParser();
       const dom = parser.parseFromString(root.data, 'text/html');
 
@@ -221,6 +224,8 @@ export default class SFMLab extends Integration {
       const item = {
         id: model.id,
         remoteId: model.id,
+        extension: model.extension,
+        category: model.category,
         title: title,
         description: description,
         images: images,
@@ -291,7 +296,7 @@ export default class SFMLab extends Integration {
   async fetchDownloadLink(projectID: number): Promise<SFMLabLink[] | Error> {
     store.commit('setLoadingStatus', false);
     try {
-      const root = await open3dLabInstance.get(`/project/${projectID}/`);
+      const root = await this.sfmlabInstance.get(`/project/${projectID}/`);
       const parser = new DOMParser();
       const dom = parser.parseFromString(root.data, 'text/html');
 
@@ -304,7 +309,7 @@ export default class SFMLab extends Integration {
         const linksArray = [];
 
         for (let i = 0; i < links.length; i++) {
-          const downloadPage = await open3dLabInstance.get((links[i].getAttribute('href') as string));
+          const downloadPage = await this.sfmlabInstance.get((links[i].getAttribute('href') as string));
           const dom = parser.parseFromString(downloadPage.data, 'text/html');
 
           const downloadLink = dom.querySelector('.content-container .main-upload .project-description-div p a');
@@ -340,18 +345,18 @@ export default class SFMLab extends Integration {
 
     await this.runQuery(dbQuery);
     // Update databases record
-    const db = databases.get('databases.integrations.open3dlab');
+    const db = databases.get(`databases.integrations.${this.slug}`);
     db.totalsize -= item.size ?? 0;
     db.count--;
 
-    databases.set('databases.integrations.open3dlab', db);
+    databases.set(`databases.integrations.${this.slug}`, db);
     store.commit('setApplicationDatabases', databases.get('databases'));
-    store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? 'sfmlab');
+    store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? this.slug);
     eventBus.emit('item-deleted');
 
     const notifierObject = {
       appName: 'com.longsightedfilms.meshhouse',
-      title: i18n.t('notifications.delete.title', { site: 'Open3DLab' }).toString(),
+      title: i18n.t('notifications.delete.title', { site: this.name }).toString(),
       message: i18n.t('notifications.delete.text', { title: item.name }).toString(),
       icon: path.join(__static, '../build/icons', '512x512.png'),
       wait: true
@@ -390,7 +395,7 @@ export default class SFMLab extends Integration {
           // Notify when downloaded
           const notifierObject = {
             appName: 'com.longsightedfilms.meshhouse',
-            title: i18n.t('notifications.update.title', { site: 'SFMLab' }).toString(),
+            title: i18n.t('notifications.update.title', { site: this.name }).toString(),
             message: i18n.t('notifications.update.text', { title: item.name }).toString(),
             icon: path.join(__static, '../build/icons', '512x512.png'),
             wait: true
@@ -405,7 +410,8 @@ export default class SFMLab extends Integration {
   }
 
   async downloadItem(item: Model, downloadLink: SFMLabLink): Promise<boolean | Error> {
-    const isFolderSet = databases.get('databases.integrations.open3dlab').path !== null;
+    let isNewModel = true;
+    const isFolderSet = databases.get(`databases.integrations.${this.slug}`).path !== null;
 
     if (!isFolderSet) {
       return Promise.reject(new Error('Path not set'));
@@ -416,7 +422,7 @@ export default class SFMLab extends Integration {
     const download = {
       img: item.image,
       title: item.name,
-      path: path.join(databases.get('databases.integrations.open3dlab').path, sanitize(item.name)),
+      path: path.join(databases.get(`databases.integrations.${this.slug}`).path, sanitize(item.name)),
       totalSize: 0,
       downloadedSize: 0,
       startedAt: new Date(),
@@ -428,7 +434,7 @@ export default class SFMLab extends Integration {
       const link = downloadLink.link;
       const filename = downloadLink.filename;
 
-      const file: Blob = (await open3dLabInstance.get(link, {
+      const file: Blob = (await this.sfmlabInstance.get(link, {
         cancelToken: cancelToken.token,
         responseType: 'blob',
         timeout: 0,
@@ -442,7 +448,7 @@ export default class SFMLab extends Integration {
         }
       })).data;
       // Unpack archive in folder
-      await installFile(file, item, filename, 'open3dlab');
+      await installFile(file, item, filename, this.slug);
 
       // Check if file exists in DB and update it
       const checkQuery = `SELECT * FROM 'models'
@@ -465,28 +471,28 @@ export default class SFMLab extends Integration {
             WHERE remoteId=${result[0].remoteId}
           `;
           await this.runQuery(updateQuery);
+          isNewModel = false;
         }
       }
 
       // Notify when downloaded
-      const notifierObject = {
-        appName: 'com.longsightedfilms.meshhouse',
-        title: i18n.t('notifications.download.title', { site: 'Open3DLab' }).toString(),
-        message: i18n.t('notifications.download.text', { title: item.name }).toString(),
-        icon: path.join(__static, '../build/icons', '512x512.png'),
-        wait: true
-      };
-      notifier.notify(notifierObject);
+      createOSNotification(
+        i18n.t('notifications.download.title', { site: this.name }).toString(),
+        i18n.t('notifications.download.text', { title: item.name }).toString()
+      );
       eventBus.emit('download-completed');
 
       // Update databases record
-      const db = databases.get('databases.integrations.open3dlab');
+      const db = databases.get(`databases.integrations.${this.slug}`);
       db.totalsize += download.totalSize;
-      db.count++;
 
-      databases.set('databases.integrations.open3dlab', db);
+      if (isNewModel) {
+        db.count++;
+      }
+
+      databases.set(`databases.integrations.${this.slug}`, db);
       store.commit('setApplicationDatabases', databases.get('databases'));
-      store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? 'open3dlab');
+      store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? this.slug);
 
       return Promise.resolve(true);
     } catch (e) {
