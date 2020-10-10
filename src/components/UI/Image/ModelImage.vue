@@ -21,6 +21,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
+import { getLocalLink } from '@/functions/image';
 
 @Component({
   props: {
@@ -31,13 +32,17 @@ import Component from 'vue-class-component';
   }
 })
 export default class ModelImage extends Vue {
+  get imageLink(): string {
+    return getLocalLink(this.$props.item.image);
+  }
+
   get isLocalItem(): boolean {
     return Object.hasOwnProperty.call(this.$props.item, 'installed');
   }
 
   get retrieveImage(): string {
     return this.$props.item.image !== ''
-      ? this.$forceReloadImage(this.$props.item.image)
+      ? this.$forceReloadImage(this.imageLink)
       : `/assets/files/${this.$props.item.extension.substr(1)}.svg`;
   }
 

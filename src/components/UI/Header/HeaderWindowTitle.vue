@@ -36,7 +36,7 @@
     </button>
     <div class="title">
       <img
-        src="/assets/integrations/meshhouse.svg"
+        :src="appIcon"
         alt="Meshhouse"
       >
       <p>{{ $store.state.controls.title }}</p>
@@ -45,10 +45,32 @@
 </template>
 
 <script lang="ts">
+import { ipcRenderer } from 'electron';
 import { Vue, Component } from 'vue-property-decorator';
 
 @Component({})
 export default class HeaderWindowTitle extends Vue {
+  os = 'linux';
+
+  get appIcon(): string {
+    let icon = 'icon.png';
+
+    if (this.os === 'win32') {
+      icon = 'icon-win.png';
+    }
+    if (this.os === 'darwin') {
+      icon = 'icon-mac.png';
+    }
+
+    return `/${icon}`;
+  }
+
+  mounted(): void {
+    ipcRenderer.send('get-os');
+    ipcRenderer.once('return-os', (event: any, arg) => {
+      this.os = arg;
+    });
+  }
 
   back(): void {
     this.$modal.hideAll();

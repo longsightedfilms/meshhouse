@@ -5,6 +5,7 @@ import ElectronStore from 'electron-store';
 import { app, protocol, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { autoUpdater } from 'electron-updater';
+import { getIconForOS } from '@/functions/os';
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
 const settings: ElectronStore<ApplicationSettings> = new ElectronStore({
@@ -16,7 +17,7 @@ const applicationOptions = {
   height: settings.get('applicationWindow.height') || 768,
   minWidth: 1024,
   minHeight: 700,
-  icon: path.join(__static, '../build/icons', '512x512.png'),
+  icon: getIconForOS(),
   frame: process.platform === 'win32' ? false : true,
   show: false,
   resizable: true,
@@ -24,8 +25,8 @@ const applicationOptions = {
   webPreferences: {
     experimentalFeatures: true,
     nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-    webSecurity: false,
     webviewTag: true,
+    webSecurity: false,
   },
 };
 
@@ -77,6 +78,13 @@ function createWindow(
   });
   return appWin;
 }
+
+app.whenReady().then(() => {
+  protocol.registerFileProtocol('local', (request, callback) => {
+    const pathname = decodeURI(request.url.replace(/local:\/\/\/|\?.+/gm, ''));
+    callback(pathname);
+  });
+});
 
 //app.disableHardwareAcceleration();
 //app.commandLine.appendSwitch('disable-software-rasterizer')
@@ -163,4 +171,8 @@ ipcMain.on('dropOut', (event, filePath) => {
     file: filePath,
     icon: path.join(__static, '../build/icons', '64x64.png')
   });
+});
+
+ipcMain.on('get-os', () => {
+  appWin?.webContents.send('return-os', process.platform);
 });

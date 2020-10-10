@@ -15,7 +15,9 @@
     "electron:build:linux": "vue-cli-service electron:build --linux --publish=always",
     "electron:build:mac": "vue-cli-service electron:build --macos --publish=always",
     "electron:build:win": "vue-cli-service electron:build --windows --publish=always",
-    "electron:generate-icons": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
+    "electron:generate-icons:win": "electron-icon-builder --input=./public/icon-win.png --output=build --flatten",
+    "electron:generate-icons:mac": "electron-icon-builder --input=./public/icon-mac.png --output=build --flatten",
+    "electron:generate-icons:linux": "electron-icon-builder --input=./public/icon.png --output=build --flatten",
     "electron:serve": "vue-cli-service electron:serve",
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"

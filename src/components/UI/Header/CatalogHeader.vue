@@ -90,6 +90,7 @@ import EventBus from '@/eventBus';
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { colorContrast } from '@/plugins/models-db/functions';
+import { getLocalLink } from '@/functions/image';
 import EditCatalogModal from '@/views/Modals/Edit/EditCatalogModal.vue';
 
 @Component({
@@ -102,6 +103,10 @@ import EditCatalogModal from '@/views/Modals/Edit/EditCatalogModal.vue';
 })
 export default class CatalogHeader extends Vue {
   blur = 'filter: blur(0px); transform: scale(1.0);'
+
+  get imageLink(): string {
+    return getLocalLink(this.$props.database.background);
+  }
 
   get avatarTextColorClass(): string {
     return colorContrast(this.$props.database.color);
@@ -118,7 +123,7 @@ export default class CatalogHeader extends Vue {
   get catalogBackground(): string {
     if (this.$props.database.background !== '') {
       if (!this.$props.database.background.includes('@/')) {
-        return this.$forceReloadImage(this.$props.database.background);
+        return this.$forceReloadImage(this.imageLink);
       } else {
         return `/assets/integrations/backgrounds/${this.$props.database.url}.webp`;
       }

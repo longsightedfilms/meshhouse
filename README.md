@@ -1,5 +1,5 @@
 <p align="center">
-    <a href="https://github.com/longsightedfilms/meshhouse/"><img src="https://raw.githubusercontent.com/longsightedfilms/meshhouse/dev/public/assets/integrations/meshhouse.svg?sanitize=true" width="400" /></a>
+    <a href="https://github.com/longsightedfilms/meshhouse/"><img src="https://raw.githubusercontent.com/longsightedfilms/meshhouse/dev/public/assets/integrations/wide/meshhouse.svg?sanitize=true" width="600" /></a>
 </p>
 <p align="center">
     <a href="https://github.com/longsightedfilms/meshhouse/releases"><img alt="GitHub release (latest SemVer including pre-releases)" src="https://img.shields.io/github/v/release/longsightedfilms/meshhouse?include_prereleases&style=for-the-badge"></a>

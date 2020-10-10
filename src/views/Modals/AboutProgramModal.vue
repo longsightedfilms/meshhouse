@@ -1,10 +1,9 @@
 <template>
   <div class="modal modal--about">
-    <img
-      class="logo"
-      src="/assets/integrations/meshhouse.svg"
-    >
-    <h1>Meshhouse {{ applicationVersion }}</h1>
+    <div class="logo">
+      <img src="/assets/integrations/wide/meshhouse.svg">
+      <p>v{{ applicationVersion }}</p>
+    </div>
     <div class="modal_content">
       <p>{{ $t('modals.about.textDescription') }}</p>
       <p>{{ returnContributorsAsText }}</p>

@@ -5,7 +5,9 @@
     @contextmenu.prevent="onRightClick"
     @dragstart="onDrag"
   >
-    <model-image :item="item" />
+    <model-image
+      :item="item"
+    />
     <div class="card_title">
       <p>{{ item.name }}</p>
     </div>

@@ -1,7 +1,5 @@
-declare const __static: string;
-
-import path from 'path';
 import notifier from 'node-notifier';
+import { getIconForOS } from './os';
 
 /**
  * Creates a notification in OS
@@ -13,7 +11,7 @@ export function createOSNotification(title: string, message: string): void {
     appName: 'com.longsightedfilms.meshhouse',
     title,
     message,
-    icon: path.join(__static, '../build/icons', '512x512.png'),
+    icon: getIconForOS(),
     wait: true
   };
   notifier.notify(notifierObject);
