@@ -144,7 +144,9 @@ type Model = {
   category: string | null;
   size?: number;
   image: string;
+  images?: string[];
   installed?: boolean;
+  downloadLinks?: SFMLabLink[];
 }
 
 type ImageProperties = Model & { imageChanged: boolean }
@@ -267,4 +269,12 @@ type SFMLabFetch = {
 type SFMLabLink = {
   link: string;
   filename: string;
+}
+
+type SFMLabParams = {
+  category?: string;
+  order_by?: string;
+  license?: number;
+  search_text?: string;
+  page?: number;
 }

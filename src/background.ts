@@ -25,8 +25,7 @@ const applicationOptions = {
   webPreferences: {
     experimentalFeatures: true,
     nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-    webviewTag: true,
-    webSecurity: false,
+    webviewTag: true
   },
 };
 

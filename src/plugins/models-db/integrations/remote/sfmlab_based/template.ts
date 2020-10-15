@@ -13,15 +13,11 @@ import { i18n } from '@/locales/i18n';
 import sanitize from 'sanitize-filename';
 
 import { databases } from '@/plugins/models-db/init';
-import { slugifyToExtension } from '@/functions/extension';
 import {
-  isDownloadLink,
   isDBModel
 } from '@/functions/databases';
 import { installFile } from '@/functions/archive';
 import { createOSNotification } from '@/functions/notifier';
-
-axios.defaults.withCredentials = true;
 
 /**
  * SFMLab-based site integration class
@@ -47,17 +43,15 @@ export default class SFMLabBaseIntegration extends Integration {
    */
   sfmlabInstance: AxiosInstance
 
-  constructor(slug: string, name: string, url: string) {
+  constructor(slug: string, name: string) {
     super(slug);
     this.slug = slug;
     this.name = name;
-    this.url = url;
 
     this.sfmlabInstance = axios.create({
-      baseURL: this.url,
+      baseURL: 'https://proxy-api.meshhouse.art',
       responseType: 'text',
       timeout: 10000,
-      withCredentials: true,
     });
 
     this.initializeLocalDatabase();
@@ -93,9 +87,9 @@ export default class SFMLabBaseIntegration extends Integration {
   async fetchItemsFromDatabase(page?: string): Promise<SFMLabFetch | Error> {
     try {
       const filters = store.state.controls.filters;
-      const params: any = {};
+      const params: SFMLabParams = {};
       if (filters.where.category !== -1) {
-        params.category = filters.where.category;
+        params.category = String(filters.where.category);
       }
 
       if (filters.where.license !== -1) {
@@ -107,7 +101,7 @@ export default class SFMLabBaseIntegration extends Integration {
       }
 
       if (page !== undefined) {
-        params.page = page;
+        params.page = Number(page);
       }
 
       if (filters.where.name !== '') {
@@ -116,53 +110,29 @@ export default class SFMLabBaseIntegration extends Integration {
       store.commit('setOfflineStatus', false);
       store.commit('setLoadingStatus', false);
 
-      const root = await this.sfmlabInstance.get('/', {
-        params: params,
-        withCredentials: true
-      });
-
-      const parser = new DOMParser();
-      const dom = parser.parseFromString(root.data, 'text/html');
-
-      const body = dom.querySelectorAll('.content-container .entry-content .entry-list .entry');
-      const options = dom.querySelectorAll('.content-container .sidebar .panel .panel__body select#id_category option');
-      const lics = dom.querySelectorAll('.content-container .sidebar .panel .panel__body select#id_license option');
-
-      const paginator = dom.querySelector('.content-container .pagination');
+      const fetch: SFMLabFetch = (await this.sfmlabInstance.get(`/integrations/${this.slug}/models`, {
+        params: params
+      })).data;
 
       const models: Model[] = [];
-      const licenses = this.fetchLicenses(lics);
-      const categories = this.fetchCategories(options);
-      const lastPage = this.detectLastPage(paginator);
 
-      for (const element of body) {
-        const title = element.querySelector('.entry__body .entry__title a')?.innerHTML;
-        const link = element.querySelector('.entry__body .entry__title a')?.getAttribute('href');
-        const id = (link?.match(/\d+/) as string[])[0];
-        const image = element.querySelector('.entry__heading a img')?.getAttribute('src') ?? '';
-        const category = element.querySelector('.entry__tags .entry__tag')?.innerHTML ?? '';
-
-        const dbQuery = `SELECT * FROM models WHERE remoteId=${id}`;
+      for (const model of fetch.models) {
+        const dbQuery = `SELECT * FROM models WHERE remoteId=${model.id}`;
         const item = (await this.fetchQuery(dbQuery) as Model[]);
 
-        models.push({
-          id: Number(id),
-          remoteId: Number(id),
-          name: title ?? '',
-          image: image,
-          extension: this.slug === 'sfmlab' ? '.sfm' : slugifyToExtension(category),
-          category: category ?? '',
-          size: item.length !== 0 ? item[0].size : 0,
-          folderPath: item.length !== 0 ? item[0].folderPath : '',
-          path: item.length !== 0 ? item[0].path : '',
-          installed: item.length !== 0,
-        });
+        model.remoteId = model.id;
+        model.size = item.length !== 0 ? item[0].size : 0;
+        model.folderPath = item.length !== 0 ? item[0].folderPath : '';
+        model.path = item.length !== 0 ? item[0].path : '';
+        model.installed = item.length !== 0;
+
+        models.push(model);
       }
       return {
         models: models,
-        categories: categories,
-        licenses: licenses,
-        totalPages: lastPage
+        categories: fetch.categories,
+        licenses: fetch.licenses,
+        totalPages: fetch.totalPages
       };
     } catch (e) {
       if (e.code === 'ECONNABORTED') {
@@ -196,42 +166,16 @@ export default class SFMLabBaseIntegration extends Integration {
     }
   }
 
-  async fetchSingleModel(model: Model): Promise<any | Error> {
+  async fetchSingleModel(model: Model): Promise<void | Error> {
     try {
       store.commit('setOfflineStatus', false);
       store.commit('setLoadingStatus', false);
-      const root = await this.sfmlabInstance.get(`/project/${model.id}`);
-      const parser = new DOMParser();
-      const dom = parser.parseFromString(root.data, 'text/html');
-
-      const title = dom.querySelector('.container h1#file_title')?.innerHTML;
-      const description = dom.querySelector('.content-container .main-upload .panel .panel__body')?.innerHTML;
-      const fileSize = dom.querySelector('.content-container .main-upload table tbody tr td:last-child')?.innerHTML;
-      const domImages = dom.querySelectorAll('.content-container .main-upload .text-center a picture.project-detail-image-main img');
-
-      const images: string[] = [];
-
-      domImages.forEach((element: Element) => {
-        images.push(`${element.getAttribute('src')}`);
-      });
-      if (domImages.length === 0) {
-        const thubmnail = dom.querySelector('.content-container .side-upload .panel .panel__body img')?.getAttribute('src');
-        images.push(`${thubmnail}`);
-      }
-
+      const fetch = await this.sfmlabInstance.get(`/integrations/${this.slug}/models/${model.id}`);
+      const item = fetch.data;
       const installed = await this.checkIsInstalledModel(model.id);
 
-      const item = {
-        id: model.id,
-        remoteId: model.id,
-        extension: model.extension,
-        category: model.category,
-        title: title,
-        description: description,
-        images: images,
-        size: fileSize,
-        installed: installed
-      };
+      item.installed = installed;
+      item.remoteId = item.id;
 
       store.commit('setProperties', item);
     } catch (e) {
@@ -244,45 +188,6 @@ export default class SFMLabBaseIntegration extends Integration {
     }
   }
 
-  fetchLicenses(options: NodeListOf<Element>): SFMLabLicense[] {
-    const licenses: SFMLabLicense[] = [];
-
-    options?.forEach((element: any) => {
-      if (element.innerText !== '---------') {
-        licenses.push({
-          id: element.value,
-          name: element.innerText
-        });
-      }
-    });
-    return licenses;
-  }
-
-  fetchCategories(options: NodeListOf<Element>): Category[] {
-    const categories: Category[] = [];
-
-    options?.forEach((element: any) => {
-      if (element.innerText !== '---------') {
-        categories.push({
-          id: element.value,
-          parentId: -1,
-          slug: element.value,
-          name: element.innerText
-        });
-      }
-    });
-    return categories;
-  }
-
-  detectLastPage(paginator: Element | null): number {
-    const activeLink = paginator?.querySelector('li.active a')?.innerHTML;
-    const lastLink = paginator?.querySelector('li.last a')?.getAttribute('href');
-
-    return lastLink !== null
-      ? Number(lastLink?.split('page=')[1])
-      : Number(activeLink);
-  }
-
   dynamicQueryBuilder(params: QueryParameters): string {
     throw new Error('Method not implemented.');
   }
@@ -291,49 +196,6 @@ export default class SFMLabBaseIntegration extends Integration {
   }
   async reindexCatalog(files: string[]): Promise<DatabaseUpdateInformation> {
     throw new Error('Method not implemented.');
-  }
-
-  async fetchDownloadLink(projectID: number): Promise<SFMLabLink[] | Error> {
-    store.commit('setLoadingStatus', false);
-    try {
-      const root = await this.sfmlabInstance.get(`/project/${projectID}/`);
-      const parser = new DOMParser();
-      const dom = parser.parseFromString(root.data, 'text/html');
-
-      const links = dom.querySelectorAll('.content-container .main-upload table tbody tr td a:first-child');
-
-      const filename = dom.querySelectorAll('.content-container .main-upload table tbody tr td .js-edit-input__wrapper strong');
-
-      if (links !== null) {
-        store.commit('setLoadingStatus', true);
-        const linksArray = [];
-
-        for (let i = 0; i < links.length; i++) {
-          const downloadPage = await this.sfmlabInstance.get((links[i].getAttribute('href') as string));
-          const dom = parser.parseFromString(downloadPage.data, 'text/html');
-
-          const downloadLink = dom.querySelector('.content-container .main-upload .project-description-div p a');
-
-          if (downloadLink !== null) {
-            linksArray.push({
-              link: downloadLink.getAttribute('href') || '',
-              filename: filename[i].innerHTML || ''
-            });
-          }
-        }
-
-        return linksArray;
-      }
-    } catch (e) {
-      store.commit('setLoadingStatus', true);
-      return Promise.reject(new Error(e));
-    }
-    return [
-      {
-        link: '',
-        filename: ''
-      }
-    ];
   }
 
   async deleteItem(item: Model): Promise<boolean | Error> {
@@ -368,8 +230,15 @@ export default class SFMLabBaseIntegration extends Integration {
 
   async downloadHandle(item: Model): Promise<void | Error> {
     try {
-      const links = await this.fetchDownloadLink(item.remoteId || 0);
-      if (isDownloadLink(links)) {
+      let links: SFMLabLink[] | undefined = undefined;
+      if (!Object.hasOwnProperty.call(item, 'downloadLinks')) {
+        await this.fetchSingleModel(item);
+        links = store.state.controls.properties.downloadLinks;
+      } else {
+        links = item.downloadLinks;
+      }
+
+      if (links !== undefined) {
         if (links.length > 1) {
           eventBus.emit('multiple-links');
           store.commit('setDownloadLinks', links);
@@ -386,8 +255,15 @@ export default class SFMLabBaseIntegration extends Integration {
 
   async updateHandle(item: Model): Promise<void | Error> {
     try {
-      const links = await this.fetchDownloadLink(item.remoteId || 0);
-      if (isDownloadLink(links)) {
+      let links: SFMLabLink[] | undefined = undefined;
+      if (!Object.hasOwnProperty.call(item, 'downloadLinks')) {
+        await this.fetchSingleModel(item);
+        links = store.state.controls.properties.downloadLinks;
+      } else {
+        links = item.downloadLinks;
+      }
+
+      if (links !== undefined) {
         if (links.length > 1) {
           eventBus.emit('multiple-links');
           store.commit('setDownloadLinks', links);
@@ -420,7 +296,7 @@ export default class SFMLabBaseIntegration extends Integration {
     const cancelToken = axios.CancelToken.source();
 
     const download = {
-      img: item.image,
+      img: item.images !== undefined ? item.images[0] : '',
       title: item.name,
       path: path.join(databases.get(`databases.integrations.${this.slug}`).path, sanitize(item.name)),
       totalSize: 0,
