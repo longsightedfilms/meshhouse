@@ -241,7 +241,15 @@
             &::-webkit-progress-value
               background-color: $primary
   &--model-info
+    padding-top: 6rem
     height: calc(100vh - 48px)
+    .modal_header
+      position: absolute
+      top: 1rem
+      width: 100%
+      z-index: 2
+      background-color: var(--blockColorGlass)
+      backdrop-filter: blur(20px)
     .modal_content
       .model-info__image
         margin: 0 -1rem 2rem
@@ -303,3 +311,5 @@
   .modal
     button.back
       display: none
+    &--model-info
+      padding-top: 5rem

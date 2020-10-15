@@ -21,6 +21,9 @@ export default {
         },
         hideIntegrations: {
           title: 'Скрывать интеграции'
+        },
+        minimalisticHeaders: {
+          title: 'Компактные шапки каталогов'
         }
       }
     },

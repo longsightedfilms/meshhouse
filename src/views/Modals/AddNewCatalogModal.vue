@@ -142,7 +142,10 @@
           :progress="100"
         />
         <p>{{ $t('modals.addCatalog.preview.wideCard') }}</p>
-        <catalog-header :database="properties" />
+        <catalog-header
+          :database="properties"
+          sample
+        />
       </div>
     </div>
     <div class="modal_actions">

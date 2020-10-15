@@ -21,6 +21,9 @@ export default {
         },
         hideIntegrations: {
           title: 'Hide integrations'
+        },
+        minimalisticHeaders: {
+          title: 'Compact catalog headers'
         }
       }
     },

@@ -1,12 +1,11 @@
 <template>
   <header
     v-if="database !== undefined"
-    class="catalog-header"
+    :class="mainClass"
   >
     <div class="catalog-header__image">
       <img
         class="catalog-header__image-background"
-        :style="blur"
         :src="catalogBackground"
       >
       <div class="catalog-header__logo">
@@ -35,6 +34,30 @@
       </div>
     </div>
     <div class="catalog-header__info">
+      <div class="catalog-header__info-logo">
+        <img
+          v-if="database.icon !== ''"
+          class="catalog-header__info-logo-image"
+          :src="catalogIcon"
+        >
+        <div
+          v-else
+          class="avatar"
+          :style="avatarStyle(database)"
+        >
+          <p
+            :class="avatarTextColorClass"
+          >
+            {{ avatarTextPreview }}
+          </p>
+        </div>
+        <p
+          v-if="database.localDB"
+          class="catalog-header__info-logo-title"
+        >
+          {{ database.title }}
+        </p>
+      </div>
       <span
         v-if="!database.localDB && $store.state.controls.isOffline"
         class="badge"
@@ -98,11 +121,18 @@ import EditCatalogModal from '@/views/Modals/Edit/EditCatalogModal.vue';
     database: {
       type: Object,
       required: false
+    },
+    sample: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   }
 })
 export default class CatalogHeader extends Vue {
-  blur = 'filter: blur(0px); transform: scale(1.0);'
+  get mainClass(): string {
+    return `catalog-header ${!this.$props.sample && this.$store.state.controls.minimalisticHeaders ? 'catalog-header--minimal' : ''}`;
+  }
 
   get imageLink(): string {
     return getLocalLink(this.$props.database.background);
@@ -141,28 +171,6 @@ export default class CatalogHeader extends Vue {
       }
     } else {
       return '';
-    }
-  }
-
-  mounted(): void {
-    const element = (this as any).$root.$children[0].$refs.inner;
-    element.addEventListener('scroll', () => {
-      this.dynamicBlur(element);
-    }, { passive: true });
-  }
-
-  beforeDestroy(): void {
-    const element = (this as any).$root.$children[0].$refs.inner;
-    element.removeEventListener('scroll', () => {
-      this.dynamicBlur(element);
-    }, { passive: true });
-  }
-
-  dynamicBlur(element: HTMLElement): void {
-    if (element.scrollTop >= 400) {
-      this.blur = 'filter: blur(20px); transform: scale(1.09);';
-    } else {
-      this.blur = `filter: blur(${0 + (element.scrollTop / 20)}px); transform: scale(${1 + (element.scrollTop / 5000)})`;
     }
   }
 

@@ -11,6 +11,7 @@ type ControlsState = {
   categoriesVisible: boolean;
   databasesVisible: boolean;
   hideIntegrations: boolean;
+  minimalisticHeaders: boolean;
   imageRandomizer: number;
   isOffline: boolean;
   isLoaded: boolean;

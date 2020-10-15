@@ -16,6 +16,16 @@
             @change="(event) => handleSliderChange(event, 'hideIntegrations')"
           />
         </div>
+        <div class="setting setting--switch">
+          <label class="title">{{ $t('modals.settings.tabs.common.content.minimalisticHeaders.title') }}</label>
+          <toggle-button
+            :value="minimalisticHeaders"
+            :width="42"
+            :height="18"
+            :sync="true"
+            @change="(event) => handleSliderChange(event, 'minimalisticHeaders')"
+          />
+        </div>
       </div>
     </div>
   </div>
@@ -40,6 +50,7 @@ import { ToggleButton } from 'vue-js-toggle-button';
 
 export default class MainSettings extends Vue {
   hideIntegrations = Boolean(this.$settingsGet('hideIntegrations'))
+  minimalisticHeaders = Boolean(this.$settingsGet('minimalisticHeaders'))
 
   handleSliderChange(event: VueToggleChangeEvent, setting: string): void {
     (this as any)[setting] = event.value;

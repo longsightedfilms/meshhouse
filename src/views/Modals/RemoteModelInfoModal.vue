@@ -36,7 +36,7 @@
               />
             </svg>
           </button>
-          <h1>{{ $store.state.controls.properties.title }}</h1>
+          <h1>{{ $store.state.controls.properties.name }}</h1>
           <div class="catalog-header__info-block">
             <vue-icon
               icon="stack"

@@ -57,15 +57,6 @@ import SidebarLink from '@/components/UI/Sidebar/SidebarLink.vue';
   }
 })
 export default class ApplicationSidebar extends Vue {
-  mounted(): void {
-    if(this.$settingsGet('databasesVisible') !== undefined) {
-      this.$store.commit('setDBVisibility', this.$settingsGet('databasesVisible'));
-    }
-    if(this.$settingsGet('hideIntegrations') !== undefined) {
-      this.$store.commit('hideIntegrations', this.$settingsGet('hideIntegrations'));
-    }
-  }
-
   get flipIcon(): object {
     return !this.isVisible ? {
       transform: 'translateX(-1px) rotate(180deg)'

@@ -2,6 +2,7 @@ declare const __static: string;
 
 import path from 'path';
 import ElectronStore from 'electron-store';
+import { UAParser } from 'ua-parser-js';
 import { app, protocol, BrowserWindow, ipcMain } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { autoUpdater } from 'electron-updater';
@@ -38,6 +39,14 @@ let createdAppProtocol = false;
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
 ]);
+
+function generateUserAgent(originAgent: string): string {
+  const parser = new UAParser(originAgent);
+  const { browser } = parser.getResult();
+  const originAgentOS = originAgent.match(/\([a-zA-Z\s0-9_.;]+\)/gm) ?? [];
+
+  return `Mozilla/5.0 ${originAgentOS[0]} MeshHouseClient/${process.env.VUE_APP_VERSION} ${browser.name}/${browser.version}`;
+}
 
 function createWindow(
   devPath: string,
@@ -83,6 +92,10 @@ app.whenReady().then(() => {
     const pathname = decodeURI(request.url.replace(/local:\/\/\/|\?.+/gm, ''));
     callback(pathname);
   });
+
+  const agent = generateUserAgent(appWin?.webContents.getUserAgent() ?? '');
+  appWin?.webContents.setUserAgent(agent);
+  console.log(appWin?.webContents.getUserAgent());
 });
 
 //app.disableHardwareAcceleration();

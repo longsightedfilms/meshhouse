@@ -13,6 +13,7 @@ export default {
     categoriesVisible: true,
     databasesVisible: false,
     hideIntegrations: false,
+    minimalisticHeaders: false,
     imageRandomizer: 0,
     isOffline: false,
     isLoaded: false,
@@ -80,6 +81,9 @@ export default {
     },
     setUpdateDownloadComplete(state: ControlsState, payload: boolean): void {
       state.updates.downloaded = payload;
+    },
+    minimalisticHeaders(state: ControlsState, payload: boolean): void {
+      state.minimalisticHeaders = payload;
     },
     hideIntegrations(state: ControlsState, payload: boolean): void {
       state.hideIntegrations = payload;

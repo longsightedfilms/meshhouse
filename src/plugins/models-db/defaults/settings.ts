@@ -10,5 +10,6 @@ export default {
   theme: 'light',
   lastPage: 'main',
   categoriesVisible: true,
-  hideIntegrations: false
+  hideIntegrations: false,
+  minimalisticHeaders: false
 };

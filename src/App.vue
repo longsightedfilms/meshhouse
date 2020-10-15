@@ -96,9 +96,16 @@ export default class App extends Vue {
     const theme = this.$settingsGet('theme') || 'light';
     const lastOpened = this.$settingsGet('applicationWindow.lastOpened');
     const pageOpened = this.$settingsGet('lastPage') || 'main';
+    const minimalisticHeaders = this.$settingsGet('minimalisticHeaders');
+
+    const databasesVisible = this.$settingsGet('databasesVisible');
+    const hideIntegrations = this.$settingsGet('hideIntegrations');
 
     this.$store.commit('setTheme', theme);
     this.$store.commit('setCurrentLastPage', pageOpened);
+    this.$store.commit('minimalisticHeaders', minimalisticHeaders);
+    this.$store.commit('hideIntegrations', hideIntegrations);
+    this.$store.commit('setDBVisibility', databasesVisible);
 
     await this.$watchDatabases();
 

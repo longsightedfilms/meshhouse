@@ -6,5 +6,6 @@ export default {
   }),
   '>=0.2.7': ((settings: ElectronStore<ApplicationSettings>): void => {
     settings.set('hideIntegrations', false);
+    settings.set('minimalisticHeaders', false);
   }),
 };
