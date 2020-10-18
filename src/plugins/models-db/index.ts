@@ -25,6 +25,8 @@ import {
 
 import { modelsExtensions } from '@/functions/extension';
 
+import { formatDateRelative } from '@/functions/date';
+
 import {
   initDatabases,
   initAppSettings,
@@ -207,5 +209,9 @@ export function ModelsDB(Vue: typeof _Vue): void {
 
   Vue.prototype.$sanitizeHTML = function(html: string): string {
     return sanitizeHTML(html);
+  };
+
+  Vue.prototype.$formatDateRelative = function(timestamp: number): string {
+    return formatDateRelative(timestamp);
   };
 }

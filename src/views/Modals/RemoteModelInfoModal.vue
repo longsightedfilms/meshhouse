@@ -80,6 +80,7 @@
                   <img
                     :src="image"
                     :alt="$store.state.controls.properties.title"
+                    loading="lazy"
                   >
                 </div>
               </swiper-slide>
@@ -107,7 +108,37 @@
               />
             </swiper>
           </div>
-          <div v-html="$sanitizeHTML($store.state.controls.properties.description)" />
+          <h1>{{ $t('modals.model.description') }}</h1>
+          <div
+            @click="handleClicks"
+            v-html="$sanitizeHTML($store.state.controls.properties.description)"
+          />
+          <div class="commentaries">
+            <h1>{{ $t('modals.model.comments') }}</h1>
+            <div
+              v-for="(comment, idx) in $store.state.controls.properties.comments"
+              :key="`comment-${idx}`"
+              class="commentary"
+            >
+              <div class="commentary__info">
+                <b class="commentary__username">
+                  {{ comment.username }}
+                </b>
+                <p class="commentary__date">
+                  {{ $formatDateRelative(comment.date) }}
+                </p>
+                <img
+                  :src="comment.avatar"
+                  :alt="comment.username"
+                  class="commentary__avatar"
+                  loading="lazy"
+                >
+              </div>
+              <p class="commentary__message">
+                {{ comment.message }}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -168,6 +199,19 @@ export default class RemoteModelInfoModal extends Vue {
     const item = this.$store.state.controls.properties;
     const db = new Integrations[this.$route.params.database]();
     await db.deleteItem(item);
+  }
+
+  handleClicks(event: any): void {
+    event.preventDefault();
+
+    let { target } = event;
+    while (target && target.tagName !== 'A') {
+      target = target.parentNode;
+    }
+
+    if (target && target.href) {
+      this.$openItem(target.href);
+    }
   }
 }
 </script>

@@ -36,5 +36,10 @@ declare module 'vue/types/vue' {
      * @param html HTML string
      */
     $sanitizeHTML(html: string): string;
+    /**
+     * Format date using date-fns package
+     * @param timestamp Timestamp
+     */
+    $formatDateRelative(timestamp: number): string;
   }
 }

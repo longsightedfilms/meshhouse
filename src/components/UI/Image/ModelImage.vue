@@ -3,6 +3,7 @@
     <img
       :class="imageClass"
       :src="retrieveImage"
+      :loading="isRemoteItem ? 'lazy' : 'eager'"
     >
     <img
       v-if="item.image !== ''"
@@ -10,7 +11,7 @@
       :src="iconFile"
     >
     <span
-      v-if="isLocalItem && item.installed"
+      v-if="isRemoteItem && item.installed"
       class="icon-badge"
     >
       <vue-icon icon="checked" />
@@ -36,11 +37,14 @@ export default class ModelImage extends Vue {
     return getLocalLink(this.$props.item.image);
   }
 
-  get isLocalItem(): boolean {
+  get isRemoteItem(): boolean {
     return Object.hasOwnProperty.call(this.$props.item, 'installed');
   }
 
   get retrieveImage(): string {
+    if (this.isRemoteItem) {
+      return this.imageLink;
+    }
     return this.$props.item.image !== ''
       ? this.$forceReloadImage(this.imageLink)
       : `/assets/files/${this.$props.item.extension.substr(1)}.svg`;

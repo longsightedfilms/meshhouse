@@ -148,6 +148,7 @@ type Model = {
   images?: string[];
   installed?: boolean;
   downloadLinks?: SFMLabLink[];
+  comments?: ModelComment[];
 }
 
 type ImageProperties = Model & { imageChanged: boolean }
@@ -278,4 +279,11 @@ type SFMLabParams = {
   license?: number;
   search_text?: string;
   page?: number;
+}
+
+type ModelComment = {
+  username: string;
+  avatar: string;
+  message: string;
+  date: number;
 }

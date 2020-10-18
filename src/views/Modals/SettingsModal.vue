@@ -27,7 +27,7 @@
           :class="selected === item.component ? 'active' : ''"
           @click="selected = item.component"
         >
-          {{ item.title }}
+          {{ $t(item.title) }}
         </button>
       </div>
     </aside>
@@ -69,7 +69,7 @@ export default class ModalSettings extends Vue {
 
   integrationsList: integrationComponent[] = [
     {
-      title: this.$root.$t('modals.settings.tabs.integrations.title'),
+      title: 'modals.settings.tabs.integrations.title',
       component: 'IntegrationsSettings'
     }
   ]
