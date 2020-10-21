@@ -26,6 +26,18 @@
             @change="(event) => handleSliderChange(event, 'minimalisticHeaders')"
           />
         </div>
+        <div class="setting setting--switch">
+          <label class="title">{{ $t('modals.settings.tabs.common.content.showInTray.title') }}</label>
+          <toggle-button
+            :value="showInTray"
+            :width="42"
+            :height="18"
+            :sync="true"
+            @change="(event) => handleSliderChange(event, 'showInTray')"
+          />
+        </div>
+        <i>{{ $t('modals.settings.tabs.common.content.showInTray.note') }}</i>
+        <p>{{ $t('modals.settings.restartRequired') }}</p>
       </div>
     </div>
   </div>
@@ -51,11 +63,13 @@ import { ToggleButton } from 'vue-js-toggle-button';
 export default class MainSettings extends Vue {
   hideIntegrations = Boolean(this.$settingsGet('hideIntegrations'))
   minimalisticHeaders = Boolean(this.$settingsGet('minimalisticHeaders'))
+  showInTray = Boolean(this.$settingsGet('showInTray'))
 
   handleSliderChange(event: VueToggleChangeEvent, setting: string): void {
     (this as any)[setting] = event.value;
     this.$settingsSet(setting, (this as any)[setting]);
-    this.$store.commit(setting, (this as any)[setting]);
+    const settings = this.$settingsGetAll();
+    this.$store.commit('setApplicationSettings', settings);
   }
 }
 </script>

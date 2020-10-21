@@ -8,7 +8,7 @@
       <label>{{ $t('views.catalog.filters.thumbnailSize') }}</label>
       <div class="slider">
         <vue-slider
-          v-model="$store.state.controls.thumbnailSize"
+          v-model="$store.state.controls.applicationSettings.thumbnailSize"
           :drag-on-click="true"
           :min="64"
           :max="512"

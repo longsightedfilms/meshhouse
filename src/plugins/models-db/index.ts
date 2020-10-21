@@ -42,6 +42,10 @@ export function ModelsDB(Vue: typeof _Vue): void {
     return i18n.locale === 'ar';
   };
 
+  Vue.prototype.$settingsGetAll = function(): ApplicationSettings {
+    return settings.store;
+  };
+
   Vue.prototype.$settingsGet = function(setting: string): string {
     return settings.get(setting);
   };

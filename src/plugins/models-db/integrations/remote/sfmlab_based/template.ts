@@ -11,6 +11,7 @@ import { Integration } from '../../template';
 import axios, { AxiosInstance } from 'axios';
 import { i18n } from '@/locales/i18n';
 import sanitize from 'sanitize-filename';
+import { ipcRenderer } from 'electron';
 
 import { databases } from '@/plugins/models-db/init';
 import {
@@ -18,6 +19,7 @@ import {
 } from '@/functions/databases';
 import { installFile } from '@/functions/archive';
 import { createOSNotification } from '@/functions/notifier';
+import { setTimeout } from 'timers';
 
 /**
  * SFMLab-based site integration class
@@ -307,6 +309,8 @@ export default class SFMLabBaseIntegration extends Integration {
     store.commit('addDownloadItem', download);
 
     try {
+      ipcRenderer.send('set-window-progress', 2);
+
       const link = downloadLink.link;
       const filename = downloadLink.filename;
 
@@ -315,14 +319,20 @@ export default class SFMLabBaseIntegration extends Integration {
         responseType: 'blob',
         timeout: 0,
         onDownloadProgress: (progressEvent) => {
-          const loaded = progressEvent.loaded;
-          const total = progressEvent.total;
+          const loaded = Number(progressEvent.loaded);
+          const total = Number(progressEvent.total);
           download.totalSize = Number(total);
           download.downloadedSize = Number(loaded);
 
           store.commit('updateDownloadItem', download);
+
+          const percents = Math.round((loaded / total) * 100) / 100;
+
+          ipcRenderer.send('set-window-progress', percents);
         }
       })).data;
+
+      ipcRenderer.send('set-window-progress', 2);
       // Unpack archive in folder
       await installFile(file, item, filename, this.slug);
 
@@ -369,6 +379,8 @@ export default class SFMLabBaseIntegration extends Integration {
       databases.set(`databases.integrations.${this.slug}`, db);
       store.commit('setApplicationDatabases', databases.get('databases'));
       store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? this.slug);
+
+      ipcRenderer.send('set-window-progress', -1);
 
       return Promise.resolve(true);
     } catch (e) {

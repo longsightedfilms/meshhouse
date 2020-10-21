@@ -9,19 +9,21 @@ export default {
         path: '',
       },
     },
+    applicationSettings: {
+      theme: 'light',
+      categoriesVisible: true,
+      databasesVisible: false,
+      hideIntegrations: false,
+      minimalisticHeaders: false,
+      lastPage: 'main',
+      thumbnailSize: 256,
+    },
     fullscreen: false,
-    categoriesVisible: true,
-    databasesVisible: false,
-    hideIntegrations: false,
-    minimalisticHeaders: false,
     imageRandomizer: 0,
     isOffline: false,
     isLoaded: false,
     isModalVisible: false,
-    lastPage: 'main',
     properties: {},
-    thumbnailSize: 256,
-    theme: 'light',
     title: 'Meshhouse',
     downloadLinks: [],
     updates: {
@@ -34,16 +36,16 @@ export default {
       state.imageRandomizer++;
     },
     setCurrentLastPage(state: ControlsState, payload: 'main' | 'lastCatalog'): void {
-      state.lastPage = payload;
+      state.applicationSettings.lastPage = payload;
     },
     setThumbnailSize(state: ControlsState, size: number): void {
-      state.thumbnailSize = size;
+      state.applicationSettings.thumbnailSize = size;
     },
     setCategoriesVisibility(state: ControlsState, visibility: boolean): void {
-      state.categoriesVisible = visibility;
+      state.applicationSettings.categoriesVisible = visibility;
     },
     setDBVisibility(state: ControlsState, visibility: boolean): void {
-      state.databasesVisible = visibility;
+      state.applicationSettings.databasesVisible = visibility;
     },
     setFilterOrder(state: ControlsState, payload: string): void {
       state.filters.order = payload;
@@ -71,7 +73,7 @@ export default {
       state.properties = payload;
     },
     setTheme(state: ControlsState, payload: Theme): void {
-      state.theme = payload;
+      state.applicationSettings.theme = payload;
     },
     setTitle(state: ControlsState, payload: string): void {
       state.title = payload;
@@ -82,14 +84,11 @@ export default {
     setUpdateDownloadComplete(state: ControlsState, payload: boolean): void {
       state.updates.downloaded = payload;
     },
-    minimalisticHeaders(state: ControlsState, payload: boolean): void {
-      state.minimalisticHeaders = payload;
-    },
-    hideIntegrations(state: ControlsState, payload: boolean): void {
-      state.hideIntegrations = payload;
-    },
     setDownloadLinks(state: ControlsState, payload: SFMLabLink[]): void {
       state.downloadLinks = payload;
+    },
+    setApplicationSettings(state: ControlsState, payload: ApplicationSettings): void {
+      state.applicationSettings = payload;
     }
   },
 };

@@ -12,9 +12,20 @@ function mapLocateToFNS(locale: string): string {
 }
 
 export function formatDateRelative(timestamp: number): string {
-  const timestampDate = new Date(timestamp);
-  const date = new Date();
-  return formatRelative(timestampDate, date, {
-    locale: locales[mapLocateToFNS(i18n.locale)]
-  });
+  try {
+    let timestampDate: Date;
+    if (timestamp === undefined) {
+      timestampDate = new Date(0);
+    } else {
+      timestampDate = new Date(timestamp);
+    }
+
+    const date = new Date();
+    return formatRelative(timestampDate, date, {
+      locale: locales[mapLocateToFNS(i18n.locale)]
+    });
+  } catch (error) {
+    return 'unknown';
+  }
+
 }

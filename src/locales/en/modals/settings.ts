@@ -24,6 +24,10 @@ export default {
         },
         minimalisticHeaders: {
           title: 'Compact catalog headers'
+        },
+        showInTray: {
+          title: ' Show icon in system tray',
+          note: 'If enabled, window also will be minimized in tray'
         }
       }
     },
@@ -44,4 +48,5 @@ export default {
     }
   },
   title: 'MeshHouse settings',
+  restartRequired: 'To apply changes restart application'
 };

@@ -58,10 +58,10 @@ export default class App extends Vue {
     const theme = this.$settingsGet('theme') || 'light';
     const isFullScreen = this.$store.state.controls.fullscreen;
 
-    remote.nativeTheme.themeSource = this.$store.state.controls.theme;
+    remote.nativeTheme.themeSource = this.$store.state.controls.applicationSettings.theme;
 
     if (theme !== 'system') {
-      cssTheme = this.$store.state.controls.theme === 'light' ? 'theme--light' : 'theme--dark';
+      cssTheme = this.$store.state.controls.applicationSettings.theme === 'light' ? 'theme--light' : 'theme--dark';
     } else {
       cssTheme = systemThemeDark ? 'theme--dark' : 'theme--light';
     }
@@ -93,24 +93,14 @@ export default class App extends Vue {
 
   async loadStartupSettings(): Promise<void> {
     this.$i18n.locale = this.$settingsGet('language');
-    const theme = this.$settingsGet('theme') || 'light';
-    const lastOpened = this.$settingsGet('applicationWindow.lastOpened');
-    const pageOpened = this.$settingsGet('lastPage') || 'main';
-    const minimalisticHeaders = this.$settingsGet('minimalisticHeaders');
+    const settings = this.$settingsGetAll();
 
-    const databasesVisible = this.$settingsGet('databasesVisible');
-    const hideIntegrations = this.$settingsGet('hideIntegrations');
-
-    this.$store.commit('setTheme', theme);
-    this.$store.commit('setCurrentLastPage', pageOpened);
-    this.$store.commit('minimalisticHeaders', minimalisticHeaders);
-    this.$store.commit('hideIntegrations', hideIntegrations);
-    this.$store.commit('setDBVisibility', databasesVisible);
+    this.$store.commit('setApplicationSettings', settings);
 
     await this.$watchDatabases();
 
-    if (pageOpened === 'lastCatalog') {
-      this.$router.push(lastOpened);
+    if (settings.lastPage === 'lastCatalog') {
+      this.$router.push(settings.applicationWindow.lastOpened);
     } else {
       this.$router.push('/');
     }

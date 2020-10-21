@@ -3,7 +3,7 @@ declare const __static: string;
 import path from 'path';
 import ElectronStore from 'electron-store';
 import { UAParser } from 'ua-parser-js';
-import { app, protocol, BrowserWindow, ipcMain } from 'electron';
+import { app, protocol, BrowserWindow, ipcMain, Menu, Tray } from 'electron';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { autoUpdater } from 'electron-updater';
 import { getIconForOS } from '@/functions/os';
@@ -26,6 +26,7 @@ const applicationOptions = {
   webPreferences: {
     experimentalFeatures: true,
     nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+    webSecurity: false,
     webviewTag: true
   },
 };
@@ -34,6 +35,7 @@ const applicationOptions = {
 // be closed automatically when the JavaScript object is garbage collected.
 let appWin: BrowserWindow | null = null;
 let createdAppProtocol = false;
+let tray: Tray | null = null;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -46,6 +48,34 @@ function generateUserAgent(originAgent: string): string {
   const originAgentOS = originAgent.match(/\([a-zA-Z\s0-9_.;]+\)/gm) ?? [];
 
   return `Mozilla/5.0 ${originAgentOS[0]} MeshHouseClient/${process.env.VUE_APP_VERSION} ${browser.name}/${browser.version}`;
+}
+
+function handleTray(): void {
+  tray = new Tray(getIconForOS());
+  tray.setToolTip(`Meshhouse ${process.env.VUE_APP_VERSION}`);
+
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Show window',
+      type: 'normal',
+      click: ((): void => {
+        appWin?.show();
+        appWin?.focus();
+      })
+    },
+    {
+      type: 'separator'
+    },
+    {
+      role: 'quit'
+    }
+  ]);
+
+  tray.setContextMenu(contextMenu);
+  tray.addListener('double-click', (() => {
+    appWin?.show();
+    appWin?.focus();
+  }));
 }
 
 function createWindow(
@@ -72,9 +102,24 @@ function createWindow(
     appWin.loadURL(`app://./${prodPath}`);
   }
 
+  if (settings.get('showInTray')) {
+    appWin?.on('minimize', (event: Electron.Event) => {
+      event.preventDefault();
+      appWin?.hide();
+    });
+  }
+
   appWin.on('close', () => {
-    settings.set('applicationWindow.width', appWin?.getBounds().width ?? 1024);
-    settings.set('applicationWindow.height', appWin?.getBounds().height ?? 768);
+    const session = appWin?.webContents.session;
+    // Debloat local cache on app exit
+    session?.clearCache().then(() => {
+      session?.clearStorageData({
+        storages: ['appcache', 'shadercache', 'cachestorage']
+      });
+    }).then(() => {
+      settings.set('applicationWindow.width', appWin?.getBounds().width ?? 1024);
+      settings.set('applicationWindow.height', appWin?.getBounds().height ?? 768);
+    });
   });
 
   appWin.on('closed', () => {
@@ -96,6 +141,10 @@ app.whenReady().then(() => {
   const agent = generateUserAgent(appWin?.webContents.getUserAgent() ?? '');
   appWin?.webContents.setUserAgent(agent);
   console.log(appWin?.webContents.getUserAgent());
+
+  if (settings.get('showInTray')) {
+    handleTray();
+  }
 });
 
 //app.disableHardwareAcceleration();
@@ -187,4 +236,11 @@ ipcMain.on('dropOut', (event, filePath) => {
 
 ipcMain.on('get-os', () => {
   appWin?.webContents.send('return-os', process.platform);
+});
+
+/**
+ * Set progress status in taskbar
+ */
+ipcMain.on('set-window-progress', (event, value) => {
+  appWin?.setProgressBar(value);
 });

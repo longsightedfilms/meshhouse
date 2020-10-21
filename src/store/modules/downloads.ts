@@ -1,4 +1,5 @@
 import eventBus from '@/eventBus';
+import { ipcRenderer } from 'electron';
 
 export default {
   state: [
@@ -23,6 +24,7 @@ export default {
       state[idx].cancelToken.cancel();
       state[idx].totalSize = -1;
       state[idx].downloadedSize = -1;
+      ipcRenderer.send('set-window-progress', -1);
     },
     clearDownloadsList(state: Download[]): void {
       state = [];

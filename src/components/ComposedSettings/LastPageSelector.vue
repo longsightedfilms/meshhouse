@@ -33,7 +33,7 @@ export default class LastPageSelector extends Vue {
   currentLastPage = ''
 
   mounted(): void {
-    this.currentLastPage = this.$store.state.controls.lastPage;
+    this.currentLastPage = this.$store.state.controls.applicationSettings.lastPage;
   }
 
   onChange(event: Event): void {

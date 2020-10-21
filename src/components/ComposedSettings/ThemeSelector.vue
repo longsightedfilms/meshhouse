@@ -36,7 +36,7 @@ export default class ThemeSelector extends Vue {
   currentTheme = ''
 
   mounted(): void {
-    this.currentTheme = this.$store.state.controls.theme;
+    this.currentTheme = this.$store.state.controls.applicationSettings.theme;
   }
 
   onChange(event: Event): void {

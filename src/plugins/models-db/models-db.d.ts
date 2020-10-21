@@ -7,6 +7,7 @@ declare module 'vue/types/vue' {
      */
     $isRTL(): boolean;
     $settingsGet(setting: string): string;
+    $settingsGetAll(): ApplicationSettings;
     $settingsSet(key: string, value: string | number | boolean): void;
     $dccGetConfig(): object;
     $dccSetConfig(config: object): void;

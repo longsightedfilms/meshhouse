@@ -11,5 +11,6 @@ export default {
   lastPage: 'main',
   categoriesVisible: true,
   hideIntegrations: false,
-  minimalisticHeaders: false
+  minimalisticHeaders: false,
+  showInTray: false
 };
