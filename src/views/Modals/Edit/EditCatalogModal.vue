@@ -44,6 +44,7 @@
                     :title="properties.path"
                     class="input input--file"
                     @click.prevent="handleDirectoryInputClick"
+                    disabled
                   >
                     <span v-if="properties.path !== ''">{{ properties.path }}</span>
                     <span

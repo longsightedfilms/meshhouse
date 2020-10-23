@@ -110,15 +110,15 @@ function createWindow(
   }
 
   appWin.on('close', () => {
+    settings.set('applicationWindow.width', appWin?.getBounds().width ?? 1024);
+    settings.set('applicationWindow.height', appWin?.getBounds().height ?? 768);
+
     const session = appWin?.webContents.session;
     // Debloat local cache on app exit
     session?.clearCache().then(() => {
       session?.clearStorageData({
         storages: ['appcache', 'shadercache', 'cachestorage']
       });
-    }).then(() => {
-      settings.set('applicationWindow.width', appWin?.getBounds().width ?? 1024);
-      settings.set('applicationWindow.height', appWin?.getBounds().height ?? 768);
     });
   });
 
