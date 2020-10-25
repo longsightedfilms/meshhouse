@@ -2,7 +2,7 @@ import store from '@/store/main';
 import fs from 'fs';
 import path from 'path';
 import ElectronStore from 'electron-store';
-import { remote } from 'electron';
+import { ipcRenderer } from 'electron';
 
 // Import defaults
 import databaseDefault from './defaults/database';
@@ -30,21 +30,23 @@ export const dcc: ElectronStore<DCCSettings> = new ElectronStore({
   projectVersion: process.env.VUE_APP_VERSION
 } as StoreSettings);
 
+const userDataPath = ipcRenderer.sendSync('get-user-data-path');
+
 export function initDatabases(): void {
-  if (!fs.existsSync(path.join(remote.app.getPath('userData'), 'databases.json'))) {
+  if (!fs.existsSync(path.join(userDataPath, 'databases.json'))) {
     databases.set({ databases: databaseDefault });
   }
   store.commit('setApplicationDatabases', databases.get('databases'));
 }
 
 export function initAppSettings(): void {
-  if (!fs.existsSync(path.join(remote.app.getPath('userData'), 'settings.json'))) {
+  if (!fs.existsSync(path.join(userDataPath, 'settings.json'))) {
     settings.set(settingsDefault);
   }
 }
 
 export function initDCCSettings(): void {
-  if (!fs.existsSync(path.join(remote.app.getPath('userData'), 'dcc-config.json'))) {
+  if (!fs.existsSync(path.join(userDataPath, 'dcc-config.json'))) {
     dcc.set(dccDefault);
   }
 }

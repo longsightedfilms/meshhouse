@@ -19,15 +19,15 @@
     background-color: var(--blockColor)
     border: 1px solid #bbb
     min-width: 22rem
+    clip-path: polygon(0 0, 100% 0%, 100% 0, 0 0)
     transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1)
-    transform: translateY(-100%)
     pointer-events: none
     z-index: -1
     overflow: visible
     &.show
       pointer-events: all
+      clip-path: polygon(-2rem 0, calc(100% + 2rem) 0%, calc(100% + 2rem) calc(100% + 2rem), -2rem calc(100% + 2rem))
       transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1)
-      transform: translateY(0.5rem)
       box-shadow: 0 1rem 1rem rgba(0,0,0,0.3)
     >.title, .download__item>.title, .filter__container>.title
       position: relative

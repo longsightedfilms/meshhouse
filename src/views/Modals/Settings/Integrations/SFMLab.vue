@@ -16,7 +16,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { remote } from 'electron';
 
 @Component({})
 export default class SFMLabSettings extends Vue {}

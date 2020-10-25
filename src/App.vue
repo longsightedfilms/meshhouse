@@ -8,7 +8,7 @@
         class="application__content"
       >
         <div ref="inner">
-          <div style="max-height: calc(100vh - 80px)">
+          <div class="application__inner">
             <router-view />
           </div>
         </div>
@@ -26,7 +26,7 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
 import ApplicationHeader from '@/components/UI/Header/ApplicationHeader.vue';
 import ApplicationSidebar from '@/components/UI/Sidebar/ApplicationSidebar.vue';
 
-import { remote } from 'electron';
+import { ipcRenderer } from 'electron';
 
 @Component({
   components: {
@@ -40,7 +40,7 @@ import { remote } from 'electron';
         lang: this.$i18n.locale
       },
       bodyAttrs: {
-        class: (this as App).applicationClass()
+        class: ((this as App).applicationClass())
       },
       titleTemplate: ((chunk): string => (chunk !== '' ? `${chunk} - Meshhouse` : 'Meshhouse')),
       changed: (newInfo): void => {
@@ -54,19 +54,22 @@ export default class App extends Vue {
   applicationClass(): string {
     let bodyClass = 'application';
     let cssTheme = '';
-    const systemThemeDark = remote.nativeTheme.shouldUseDarkColors;
+
     const theme = this.$settingsGet('theme') || 'light';
     const isFullScreen = this.$store.state.controls.fullscreen;
 
-    remote.nativeTheme.themeSource = this.$store.state.controls.applicationSettings.theme;
+    const systemThemeDark = ipcRenderer.sendSync('should-use-dark-theme');
+    const os = ipcRenderer.sendSync('get-os');
+
+    ipcRenderer.invoke('set-theme-source', this.$store.state.settings.theme);
 
     if (theme !== 'system') {
-      cssTheme = this.$store.state.controls.applicationSettings.theme === 'light' ? 'theme--light' : 'theme--dark';
+      cssTheme = this.$store.state.settings.theme === 'light' ? 'theme--light' : 'theme--dark';
     } else {
       cssTheme = systemThemeDark ? 'theme--dark' : 'theme--light';
     }
 
-    switch(remote.process.platform) {
+    switch(os) {
     case 'win32':
       if(!isFullScreen) {
         bodyClass += ' application--windows';
@@ -100,7 +103,9 @@ export default class App extends Vue {
     await this.$watchDatabases();
 
     if (settings.lastPage === 'lastCatalog') {
-      this.$router.push(settings.applicationWindow.lastOpened);
+      if (this.$route.fullPath !== settings.applicationWindow.lastOpened) {
+        this.$router.push(settings.applicationWindow.lastOpened);
+      }
     } else {
       this.$router.push('/');
     }

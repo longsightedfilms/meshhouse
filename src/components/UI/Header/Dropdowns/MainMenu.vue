@@ -54,7 +54,7 @@ import AboutProgramModal from '@/views/Modals/AboutProgramModal.vue';
 import UpdateAvailableModal from '@/views/Modals/Updater/UpdateAvailableModal.vue';
 import UpdateNotAvailableModal from '@/views/Modals/Updater/UpdateNotAvailableModal.vue';
 
-import { shell, ipcRenderer, remote } from 'electron';
+import { ipcRenderer } from 'electron';
 
 @Component({
   components: {
@@ -129,26 +129,26 @@ export default class MainMenuDropdown extends Vue {
   }
 
   openHelp(): void {
-    shell.openExternal('https://github.com/longsightedfilms/meshhouse/wiki');
+    ipcRenderer.invoke('open-external', 'https://docs.meshhouse.art/');
   }
 
   openReleaseNotes(): void {
-    const version = process.env.VUE_APP_VERSION !== undefined ? process.env.VUE_APP_VERSION : '0.0.0';
-    shell.openExternal(`https://github.com/longsightedfilms/meshhouse/releases/tag/v${version}`);
+    let version = process.env.VUE_APP_VERSION !== undefined ? process.env.VUE_APP_VERSION : '0.0.0';
+    version = version.replace(/\./gm, '-');
+    ipcRenderer.invoke('open-external', `https://docs.meshhouse.art/changelog#v-${version}`);
   }
 
   checkUpdates(): void {
     ipcRenderer.send('check-update');
   }
 
-  toggleFullscreen(): void {
-    const window = remote.getCurrentWindow();
-    window.setFullScreen(!window.isFullScreen());
-    this.$store.commit('setFullscreen', window.isFullScreen());
+  async toggleFullscreen(): Promise<void> {
+    await ipcRenderer.invoke('set-fullscreen');
+    this.$store.commit('setFullscreen', ipcRenderer.sendSync('is-fullscreen'));
   }
 
   get currentOS(): string {
-    return remote.process.platform;
+    return ipcRenderer.sendSync('get-os');
   }
 }
 </script>

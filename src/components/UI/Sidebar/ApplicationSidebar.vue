@@ -64,11 +64,11 @@ export default class ApplicationSidebar extends Vue {
   }
 
   get isVisible(): boolean {
-    return this.$store.state.controls.applicationSettings.databasesVisible;
+    return this.$store.state.settings.databasesVisible;
   }
 
   get ifIntegrationsHidden(): boolean {
-    return this.$store.state.controls.applicationSettings.hideIntegrations;
+    return this.$store.state.settings.hideIntegrations;
   }
 
   computeProgressLength(title: string): number {
@@ -89,8 +89,8 @@ export default class ApplicationSidebar extends Vue {
   }
 
   toggleVisibility(val: boolean): void {
-    this.$store.commit('setDBVisibility', !this.$store.state.controls.applicationSettings.databasesVisible);
-    this.$settingsSet('databasesVisible', this.$store.state.controls.applicationSettings.databasesVisible);
+    this.$store.commit('setDBVisibility', !this.$store.state.settings.databasesVisible);
+    this.$settingsSet('databasesVisible', this.$store.state.settings.databasesVisible);
   }
 }
 </script>

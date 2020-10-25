@@ -1,10 +1,10 @@
-import { remote } from 'electron';
+import { ipcRenderer } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import sqlite3 from 'sqlite3';
 
 export abstract class Integration {
-  directory = path.join(remote.app.getPath('userData'), '/databases/')
+  directory = path.join(ipcRenderer.sendSync('get-user-data-path'), '/databases/')
   db: sqlite3.Database
 
   constructor(name: string) {

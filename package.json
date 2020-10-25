@@ -29,6 +29,7 @@
     "axios": "^0.19.2",
     "chokidar": "^3.4.0",
     "date-fns": "^2.16.1",
+    "electron-acrylic-window": "^0.4.7",
     "electron-store": "^5.2.0",
     "electron-updater": "^4.3.1",
     "mitt": "^2.1.0",

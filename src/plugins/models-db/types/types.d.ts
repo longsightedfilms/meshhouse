@@ -3,6 +3,7 @@ type ApplicationStore = {
   controls: ControlsState;
   db: DatabaseState;
   downloads: Download[];
+  settings: SettingsState;
 }
 
 type ControlsState = {
@@ -21,7 +22,6 @@ type ControlsState = {
   thumbnailSize: string | number;
   theme: Theme;
   title: string;
-  applicationSettings: ApplicationSettings;
   downloadLinks: SFMLabLink[];
   updates: {
     downloading: boolean;
@@ -187,6 +187,8 @@ type ModelsTablePragma = {
 }
 
 // Settings
+
+type SettingsState = Settings;
 
 type StoreSettings = {
   [key: string]: any;

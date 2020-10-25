@@ -169,7 +169,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { remote } from 'electron';
+import { ipcRenderer } from 'electron';
 import path from 'path';
 import fs from 'fs';
 import sharp from 'sharp';
@@ -216,7 +216,7 @@ export default class EditCatalogModal extends Vue {
   }
 
   get folderPlaceholder(): string {
-    switch(remote.process.platform) {
+    switch(ipcRenderer.sendSync('get-os')) {
     case 'win32':
       return 'C:\\Models\\My fancy models';
     case 'linux':
@@ -243,9 +243,10 @@ export default class EditCatalogModal extends Vue {
   }
 
   async handleDirectoryInputClick(): Promise<void> {
-    const dialog = await remote.dialog.showOpenDialog({
+    const dialog = await ipcRenderer.invoke('show-open-dialog', {
       properties: ['openDirectory']
     });
+
     const folderPath = dialog.filePaths.length !== 0 ? dialog.filePaths[0].toString() : '';
     const validation = await validate(folderPath, 'required', {
       name: 'catalogPath'
@@ -302,7 +303,7 @@ export default class EditCatalogModal extends Vue {
           const slug = this.properties.title.trim().replace(/[~!@#$%^&*()=+.,?/\\|]+/, '');
 
           // Handle background generation
-          const imageFolder = path.join(remote.app.getPath('userData'),
+          const imageFolder = path.join(ipcRenderer.sendSync('get-user-data-path'),
             '\\imagecache\\',
             '\\backgrounds\\'
           );

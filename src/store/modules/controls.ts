@@ -9,15 +9,6 @@ export default {
         path: '',
       },
     },
-    applicationSettings: {
-      theme: 'light',
-      categoriesVisible: true,
-      databasesVisible: false,
-      hideIntegrations: false,
-      minimalisticHeaders: false,
-      lastPage: 'main',
-      thumbnailSize: 256,
-    },
     fullscreen: false,
     imageRandomizer: 0,
     isOffline: false,
@@ -34,18 +25,6 @@ export default {
   mutations: {
     incrementImageRandomizer(state: ControlsState): void {
       state.imageRandomizer++;
-    },
-    setCurrentLastPage(state: ControlsState, payload: 'main' | 'lastCatalog'): void {
-      state.applicationSettings.lastPage = payload;
-    },
-    setThumbnailSize(state: ControlsState, size: number): void {
-      state.applicationSettings.thumbnailSize = size;
-    },
-    setCategoriesVisibility(state: ControlsState, visibility: boolean): void {
-      state.applicationSettings.categoriesVisible = visibility;
-    },
-    setDBVisibility(state: ControlsState, visibility: boolean): void {
-      state.applicationSettings.databasesVisible = visibility;
     },
     setFilterOrder(state: ControlsState, payload: string): void {
       state.filters.order = payload;
@@ -72,9 +51,6 @@ export default {
     setProperties(state: ControlsState, payload: ImageProperties): void {
       state.properties = payload;
     },
-    setTheme(state: ControlsState, payload: Theme): void {
-      state.applicationSettings.theme = payload;
-    },
     setTitle(state: ControlsState, payload: string): void {
       state.title = payload;
     },
@@ -87,8 +63,5 @@ export default {
     setDownloadLinks(state: ControlsState, payload: SFMLabLink[]): void {
       state.downloadLinks = payload;
     },
-    setApplicationSettings(state: ControlsState, payload: ApplicationSettings): void {
-      state.applicationSettings = payload;
-    }
   },
 };

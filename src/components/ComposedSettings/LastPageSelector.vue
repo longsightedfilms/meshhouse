@@ -25,7 +25,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { remote } from 'electron';
 
 @Component({})
 
@@ -33,7 +32,7 @@ export default class LastPageSelector extends Vue {
   currentLastPage = ''
 
   mounted(): void {
-    this.currentLastPage = this.$store.state.controls.applicationSettings.lastPage;
+    this.currentLastPage = this.$store.state.settings.lastPage;
   }
 
   onChange(event: Event): void {

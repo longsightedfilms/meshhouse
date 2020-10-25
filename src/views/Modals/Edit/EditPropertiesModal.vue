@@ -112,7 +112,7 @@ import fs from 'fs';
 import path from 'path';
 import sharp from 'sharp';
 import uniqid from 'uniqid';
-import { remote } from 'electron';
+import { ipcRenderer } from 'electron';
 import Integrations from '@/plugins/models-db/integrations/main';
 import ModelImage from '@/components/UI/Image/ModelImage.vue';
 import { ValidationObserver, ValidationProvider } from 'vee-validate';
@@ -208,7 +208,7 @@ export default class EditPropertiesModal extends Vue {
       image.ext = '.webp';
       imagePath = path.join(image.dir, image.name) + image.ext;
     } else {
-      imagePath = path.join(remote.app.getPath('userData'), '\\imagecache\\', imageName);
+      imagePath = path.join(ipcRenderer.sendSync('get-user-data-path'), '\\imagecache\\', imageName);
     }
 
     models[0].name = this.properties.name;

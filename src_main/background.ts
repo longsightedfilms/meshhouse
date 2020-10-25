@@ -1,19 +1,43 @@
 declare const __static: string;
+declare const __dirname: string;
 
 import path from 'path';
 import ElectronStore from 'electron-store';
 import { UAParser } from 'ua-parser-js';
-import { app, protocol, BrowserWindow, ipcMain, Menu, Tray } from 'electron';
+import {
+  app,
+  protocol,
+  ipcMain,
+  Menu,
+  Tray,
+  nativeTheme,
+  shell,
+  dialog
+} from 'electron';
+import { BrowserWindow } from 'electron-acrylic-window';
+import type { VibrancyOptions } from 'electron-acrylic-window';
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { autoUpdater } from 'electron-updater';
-import { getIconForOS } from '@/functions/os';
+
+import { getVibrancyOptions } from './functions/theme';
+import { isWindows10, getIconForOS } from './functions/os';
+import { spawn } from 'child_process';
+import { createOSNotification } from './functions/notifier';
+import { installFile } from './functions/archive';
+
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-const settings: ElectronStore<ApplicationSettings> = new ElectronStore({
-  name: 'settings',
+export const settings: ElectronStore<ApplicationSettings> = new ElectronStore({
+  name: 'settings'
+} as StoreSettings);
+export const databases: ElectronStore<DatabaseSettings> = new ElectronStore({
+  name: 'databases'
+} as StoreSettings);
+export const dcc: ElectronStore<DCCSettings> = new ElectronStore({
+  name: 'dcc-config'
 } as StoreSettings);
 
-const applicationOptions = {
+const applicationOptions: any = {
   width: settings.get('applicationWindow.width') || 1024,
   height: settings.get('applicationWindow.height') || 768,
   minWidth: 1024,
@@ -22,14 +46,23 @@ const applicationOptions = {
   frame: process.platform === 'win32' ? false : true,
   show: false,
   resizable: true,
-  backgroundColor: '#2e3131',
   webPreferences: {
+    contextIsolation: false,
     experimentalFeatures: true,
     nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
     webSecurity: false,
-    webviewTag: true
+    webviewTag: true,
+    //preload: path.join(__dirname, 'preload.js')
   },
 };
+
+const theme = settings.get('theme') || 'light';
+
+const vibrancyOptions: VibrancyOptions = getVibrancyOptions(theme);
+
+if (isWindows10()) {
+  applicationOptions.vibrancy = vibrancyOptions;
+}
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -234,8 +267,112 @@ ipcMain.on('dropOut', (event, filePath) => {
   });
 });
 
-ipcMain.on('get-os', () => {
+ipcMain.on('get-os', (event) => {
+  event.returnValue = process.platform;
   appWin?.webContents.send('return-os', process.platform);
+});
+
+ipcMain.on('should-use-dark-theme', (event) => {
+  const darkTheme = nativeTheme.shouldUseDarkColors;
+  event.returnValue = darkTheme;
+});
+
+ipcMain.handle('set-theme-source', (event, theme) => {
+  nativeTheme.themeSource = theme;
+});
+
+ipcMain.handle('get-os', (event) => {
+  return process.platform;
+});
+
+/**
+ * Window handlers
+ */
+ipcMain.on('get-current-window', (event) => {
+  event.returnValue = appWin;
+});
+
+ipcMain.on('is-fullscreen', (event) => {
+  const isInFullscreen = appWin?.isFullScreen() || false;
+  event.returnValue = isInFullscreen;
+});
+
+ipcMain.handle('set-fullscreen', () => {
+  if (appWin !== null) {
+    const isInFullscreen = appWin.isFullScreen();
+    appWin.setFullScreen(!isInFullscreen);
+    return Promise.resolve();
+  }
+});
+
+ipcMain.on('is-maximized', (event) => {
+  event.returnValue = appWin?.isMaximized();
+});
+
+ipcMain.handle('minimize', () => {
+  appWin?.minimize();
+});
+
+ipcMain.handle('maximize', () => {
+  appWin?.maximize();
+});
+
+ipcMain.handle('unmaximize', () => {
+  appWin?.unmaximize();
+});
+
+ipcMain.handle('close', () => {
+  appWin?.close();
+});
+
+/**
+ * Shell handlers
+ */
+
+ipcMain.handle('open-external', (event, url) => {
+  shell.openExternal(url);
+});
+
+ipcMain.handle('open-item', (event, file) => {
+  const filePath = path.normalize(file);
+  shell.openItem(filePath);
+});
+
+ipcMain.handle('open-folder', (event, folder) => {
+  const folderPath = path.normalize(folder);
+  shell.showItemInFolder(folderPath);
+});
+
+ipcMain.handle('shell-spawn', (event, params) => {
+  const { command, args } = params;
+  spawn(command, args);
+});
+
+ipcMain.handle('show-notification', (event, params) => {
+  const { title, message } = params;
+  createOSNotification(title, message);
+});
+
+/**
+ * FS Handlers
+ */
+
+ipcMain.on('get-user-data-path', (event) => {
+  event.returnValue = app.getPath('userData');
+});
+
+ipcMain.handle('unpack-archive', async(event, params) => {
+  const { blob, item, filename, databaseURL } = params;
+  return await installFile(blob, item, filename, databaseURL);
+});
+
+/**
+ * Dialog handlers
+ */
+ipcMain.handle('show-open-dialog', async(event, args) => {
+  if (appWin !== null) {
+    return await dialog.showOpenDialog(appWin, args);
+  }
 });
 
 /**
@@ -244,3 +381,28 @@ ipcMain.on('get-os', () => {
 ipcMain.on('set-window-progress', (event, value) => {
   appWin?.setProgressBar(value);
 });
+
+ipcMain.on('set-window-vibrance', (event, theme) => {
+  if (isWindows10()) {
+    if (appWin !== null) {
+      const vibrancy = getVibrancyOptions(theme);
+      appWin.setVibrancy((vibrancy as any));
+    }
+  }
+});
+
+/**
+ * Vuex cross-process handlers
+ */
+
+/**
+ * Emit event to renderer vuex instance
+ * @param commit commit name
+ * @param params commit arguments
+ */
+export function sendVuexCommit(commit: string, params: any): void {
+  appWin?.webContents.send('vuex-commit-reply', {
+    commit,
+    args: params
+  });
+}

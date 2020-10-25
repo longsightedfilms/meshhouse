@@ -63,30 +63,29 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { remote } from 'electron';
+import { ipcRenderer } from 'electron';
 
 @Component({})
 export default class HeaderWindowButtons extends Vue {
-  appWindow = remote.getCurrentWindow()
-
   maximized = false
 
   minimize(): void {
-    this.appWindow.minimize();
+    ipcRenderer.invoke('minimize');
   }
 
   maximize(): void {
-    if (this.appWindow.isMaximized()) {
-      this.appWindow.unmaximize();
+    const isMaximized = ipcRenderer.sendSync('is-maximized');
+    if (isMaximized) {
+      ipcRenderer.invoke('unmaximize');
       this.maximized = false;
     } else {
-      this.appWindow.maximize();
+      ipcRenderer.invoke('maximize');
       this.maximized = true;
     }
   }
 
   close(): void {
-    this.appWindow.close();
+    ipcRenderer.invoke('close');
   }
 }
 </script>

@@ -32,6 +32,8 @@ module.exports = {
         'node-7z',
         '@zhangfuxing/unrar'
       ],
+      //preload: 'src_main/preload.ts',
+      mainProcessFile: 'src_main/background.ts',
       nodeModulesPath: ['../../node_modules', './node_modules'],
       nodeIntegration: true,
       builderOptions: {
@@ -55,6 +57,9 @@ module.exports = {
           installerIcon: './build/icons/icon.ico',
           license: './build/license.txt',
           allowToChangeInstallationDirectory: true
+        },
+        win: {
+          icon: './build/icons/icon.ico'
         },
         publish: {
           provider: 'github',

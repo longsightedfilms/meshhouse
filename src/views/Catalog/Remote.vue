@@ -121,11 +121,11 @@ export default class RemoteDatabase extends Vue {
   }
 
   get gridClass(): string {
-    return `models-grid models-grid-remote ${this.$store.state.controls.applicationSettings.thumbnailSize === 64 ? 'models-grid--table' : ''}`;
+    return `models-grid models-grid-remote ${this.$store.state.settings.thumbnailSize === 64 ? 'models-grid--table' : ''}`;
   }
 
   get dynamicGrid(): object {
-    const { thumbnailSize } = this.$store.state.controls.applicationSettings;
+    const { thumbnailSize } = this.$store.state.settings;
 
     if (thumbnailSize === 64) {
       return {

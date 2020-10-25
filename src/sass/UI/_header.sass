@@ -9,7 +9,6 @@
   grid-area: Header
   display: flex
   align-items: flex-end
-  background-color: var(--blockColor)
   color: var(--textColor)
   padding: 0 0 0.5rem 0
   z-index: 10
@@ -89,12 +88,20 @@
             margin-inline-end: 0
 .application--fullscreen
   .application__header
+    position: absolute
+    top: 0
+    width: 100vw
     padding: 0.5rem 0 0.5rem 0
+    &:before
+      backdrop-filter: blur(20px)
+      background: var(--blockColorGlass)
 .application--windows
   .application__header
     padding: 2rem 0 0.5rem 0
     &:after
       display: block
+    &:before
+      background: none
     &-navigation
       flex: 1 0 auto
       .breadcrumbs

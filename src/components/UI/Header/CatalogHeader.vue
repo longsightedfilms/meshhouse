@@ -132,7 +132,7 @@ import EditCatalogModal from '@/views/Modals/Edit/EditCatalogModal.vue';
 export default class CatalogHeader extends Vue {
   get mainClass(): string {
     return `catalog-header ${!this.$props.sample
-    && this.$store.state.controls.applicationSettings.minimalisticHeaders
+    && this.$store.state.settings.minimalisticHeaders
       ? 'catalog-header--minimal'
       : ''}`;
   }

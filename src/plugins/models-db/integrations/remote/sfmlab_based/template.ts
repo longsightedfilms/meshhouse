@@ -1,11 +1,9 @@
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/camelcase */
-declare const __static: string;
 
 import eventBus from '@/eventBus';
 import fs from 'fs';
 import path from 'path';
-import notifier from 'node-notifier';
 import store from '@/store/main';
 import { Integration } from '../../template';
 import axios, { AxiosInstance } from 'axios';
@@ -17,9 +15,6 @@ import { databases } from '@/plugins/models-db/init';
 import {
   isDBModel
 } from '@/functions/databases';
-import { installFile } from '@/functions/archive';
-import { createOSNotification } from '@/functions/notifier';
-import { setTimeout } from 'timers';
 
 /**
  * SFMLab-based site integration class
@@ -218,14 +213,10 @@ export default class SFMLabBaseIntegration extends Integration {
     store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? this.slug);
     eventBus.emit('item-deleted');
 
-    const notifierObject = {
-      appName: 'com.longsightedfilms.meshhouse',
+    ipcRenderer.invoke('show-notification', {
       title: i18n.t('notifications.delete.title', { site: this.name }).toString(),
-      message: i18n.t('notifications.delete.text', { title: item.name }).toString(),
-      icon: path.join(__static, '../build/icons', '512x512.png'),
-      wait: true
-    };
-    notifier.notify(notifierObject);
+      message: i18n.t('notifications.delete.text', { title: item.name }).toString()
+    });
 
     return Promise.resolve(true);
   }
@@ -254,7 +245,6 @@ export default class SFMLabBaseIntegration extends Integration {
     }
   }
 
-
   async updateHandle(item: Model): Promise<void | Error> {
     try {
       let links: SFMLabLink[] | undefined = undefined;
@@ -271,14 +261,10 @@ export default class SFMLabBaseIntegration extends Integration {
           store.commit('setDownloadLinks', links);
         } else {
           // Notify when downloaded
-          const notifierObject = {
-            appName: 'com.longsightedfilms.meshhouse',
+          ipcRenderer.invoke('show-notification', {
             title: i18n.t('notifications.update.title', { site: this.name }).toString(),
-            message: i18n.t('notifications.update.text', { title: item.name }).toString(),
-            icon: path.join(__static, '../build/icons', '512x512.png'),
-            wait: true
-          };
-          notifier.notify(notifierObject);
+            message: i18n.t('notifications.update.text', { title: item.name }).toString()
+          });
         }
       }
     } catch (e) {
@@ -314,9 +300,9 @@ export default class SFMLabBaseIntegration extends Integration {
       const link = downloadLink.link;
       const filename = downloadLink.filename;
 
-      const file: Blob = (await this.sfmlabInstance.get(link, {
+      const file: ArrayBuffer = (await this.sfmlabInstance.get(link, {
         cancelToken: cancelToken.token,
-        responseType: 'blob',
+        responseType: 'arraybuffer',
         timeout: 0,
         onDownloadProgress: (progressEvent) => {
           const loaded = Number(progressEvent.loaded);
@@ -334,7 +320,12 @@ export default class SFMLabBaseIntegration extends Integration {
 
       ipcRenderer.send('set-window-progress', 2);
       // Unpack archive in folder
-      await installFile(file, item, filename, this.slug);
+      await ipcRenderer.invoke('unpack-archive', {
+        blob: file,
+        item,
+        filename,
+        databaseURL: this.slug
+      });
 
       // Check if file exists in DB and update it
       const checkQuery = `SELECT * FROM 'models'
@@ -362,10 +353,10 @@ export default class SFMLabBaseIntegration extends Integration {
       }
 
       // Notify when downloaded
-      createOSNotification(
-        i18n.t('notifications.download.title', { site: this.name }).toString(),
-        i18n.t('notifications.download.text', { title: item.name }).toString()
-      );
+      ipcRenderer.invoke('show-notification', {
+        title: i18n.t('notifications.download.title', { site: this.name }).toString(),
+        message: i18n.t('notifications.download.text', { title: item.name }).toString()
+      });
       eventBus.emit('download-completed');
 
       // Update databases record

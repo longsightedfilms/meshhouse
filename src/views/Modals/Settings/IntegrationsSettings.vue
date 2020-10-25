@@ -55,7 +55,7 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { ToggleButton } from 'vue-js-toggle-button';
-import { remote } from 'electron';
+import { ipcRenderer } from 'electron';
 import { validate } from 'vee-validate';
 
 @Component({
@@ -81,9 +81,10 @@ export default class ProgramSettings extends Vue {
   }
 
   async handleDirectoryClick(integration: string): Promise<void> {
-    const dialog = await remote.dialog.showOpenDialog({
+    const dialog = await ipcRenderer.invoke('show-open-dialog', {
       properties: ['openDirectory']
     });
+
     const folderPath = dialog.filePaths.length !== 0 ? dialog.filePaths[0].toString() : '';
     const validation = await validate(folderPath, 'required', {
       name: 'catalogPath'

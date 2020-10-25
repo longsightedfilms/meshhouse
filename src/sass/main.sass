@@ -43,18 +43,27 @@ h1
     --buttonHover: #{lighten($themeDarkMain, 10%)}
     --textColor: #{$white}
     --scrollColor: #aaaaaa
-  &__content
-    background-color: var(--blockColorDark)
   &__main
     display: grid
     grid-template-columns: 1fr
     grid-template-rows: 1fr
     grid-area: Main
-    background-color: var(--blockColor)
+    //background-color: var(--blockColor)
+  &__inner
+    max-height: calc(100vh - 80px)
   &--linux, &--mac, &--fullscreen
     grid-template-rows: 4rem calc(100vh - 4rem)
-    .application__sidebar
-      height: calc(100vh - 4rem)
+    .application
+      &__main
+        background-color: var(--blockColor)
+      &__content
+        background-color: var(--blockColorDark)
+      &__sidebar
+        height: calc(100vh - 4rem)
+  &--fullscreen
+    .application__inner
+      padding-top: 4rem
+      max-height: 100vh
 // UI
 @import 'UI/badge'
 @import 'UI/button'

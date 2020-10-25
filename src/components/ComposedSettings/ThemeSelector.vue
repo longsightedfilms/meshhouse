@@ -28,7 +28,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { remote } from 'electron';
+import { ipcRenderer } from 'electron';
 
 @Component({})
 
@@ -36,14 +36,16 @@ export default class ThemeSelector extends Vue {
   currentTheme = ''
 
   mounted(): void {
-    this.currentTheme = this.$store.state.controls.applicationSettings.theme;
+    this.currentTheme = this.$store.state.settings.theme;
   }
 
   onChange(event: Event): void {
     const target = (event.target as HTMLInputElement);
     const theme = (target.value as Theme);
 
-    remote.nativeTheme.themeSource = theme;
+    ipcRenderer.invoke('set-theme-source', theme);
+    ipcRenderer.send('set-window-vibrance', theme);
+
     this.$store.commit('setTheme', theme);
     this.$settingsSet('theme', theme);
   }

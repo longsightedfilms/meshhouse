@@ -2,8 +2,7 @@ import _Vue from 'vue';
 import { i18n } from '@/locales/i18n';
 import fs from 'fs';
 import path from 'path';
-import { remote, shell } from 'electron';
-import { spawn } from 'child_process';
+import { ipcRenderer } from 'electron';
 import { transliterate as tr, slugify } from 'transliteration';
 import store from '@/store/main';
 import Integration from '@/plugins/models-db/integrations/main';
@@ -81,7 +80,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
 
   Vue.prototype.$addDatabase = async function(db: DatabaseItem): Promise<void> {
     const file = path.join(
-      remote.app.getPath('userData'),
+      ipcRenderer.sendSync('get-user-data-path'),
       `/databases/${db.url}.sqlite3`
     );
 
@@ -182,16 +181,19 @@ export function ModelsDB(Vue: typeof _Vue): void {
   Vue.prototype.$openItem = function(file: string): void {
     const extension = path.extname(file);
     if (getParameterByExtension(extension, 'useSystemAssociation')) {
-      shell.openItem(path.normalize(file));
+      ipcRenderer.invoke('open-item', file);
     } else {
-      spawn(getParameterByExtension(extension, 'customPath'), [
-        path.normalize(file),
-      ]);
+      ipcRenderer.invoke('shell-spawn', {
+        command: getParameterByExtension(extension, 'customPath'),
+        args:[
+          path.normalize(file),
+        ]
+      });
     }
   };
 
   Vue.prototype.$openFolder = function(folder: string): void {
-    shell.showItemInFolder(path.normalize(folder));
+    ipcRenderer.invoke('open-folder', folder);
   };
 
   Vue.prototype.$openPropertiesModal = async function(

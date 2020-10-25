@@ -16,7 +16,7 @@
       </div>
     </button>
     <div
-      v-show="$store.state.controls.applicationSettings.categoriesVisible"
+      v-show="$store.state.settings.categoriesVisible"
       ref="categoryGrid"
       class="categories-grid"
       @mousewheel="onScroll"
@@ -62,7 +62,7 @@ export default class CategoriesGrid extends Vue {
   }
 
   get flipIcon(): object {
-    const { categoriesVisible } = this.$store.state.controls.applicationSettings;
+    const { categoriesVisible } = this.$store.state.settings;
     return !categoriesVisible ? {
       transform: 'rotate(90deg) translateX(3px)'
     } : {
@@ -71,8 +71,8 @@ export default class CategoriesGrid extends Vue {
   }
 
   toggleVisibility(): void {
-    this.$store.commit('setCategoriesVisibility', !this.$store.state.controls.applicationSettings.categoriesVisible);
-    this.$settingsSet('categoriesVisible', this.$store.state.controls.applicationSettings.categoriesVisible);
+    this.$store.commit('setCategoriesVisibility', !this.$store.state.settings.categoriesVisible);
+    this.$settingsSet('categoriesVisible', this.$store.state.settings.categoriesVisible);
     this.$parent.$parent.$forceUpdate();
   }
 
