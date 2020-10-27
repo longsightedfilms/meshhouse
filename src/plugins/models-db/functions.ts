@@ -5,11 +5,7 @@ import path from 'path';
 import Integrations from './integrations/main';
 import recursive from 'recursive-readdir';
 import chokidar from 'chokidar';
-
-import {
-  dcc,
-  databases
-} from './init';
+import { ipcRenderer } from 'electron';
 
 import { modelsExtensions } from '@/functions/extension';
 
@@ -39,24 +35,24 @@ export function generateIncludePattern(path: string): string[] {
 export function getParameterByExtension(extension: string, param: string): string {
   switch (extension) {
   case '.3b':
-    return dcc.get('threedCoat.' + param);
+    return ipcRenderer.sendSync('get-dcc-setting', 'threedCoat.' + param);
   case '.max':
-    return dcc.get('adsk3dsmax.' + param);
+    return ipcRenderer.sendSync('get-dcc-setting', 'adsk3dsmax.' + param);
   case '.ma':
   case '.mb':
-    return dcc.get('adskMaya.' + param);
+    return ipcRenderer.sendSync('get-dcc-setting', 'adskMaya.' + param);
   case '.blend':
-    return dcc.get('blender.' + param);
+    return ipcRenderer.sendSync('get-dcc-setting', 'blender.' + param);
   case '.c4d':
-    return dcc.get('cinema4d.' + param);
+    return ipcRenderer.sendSync('get-dcc-setting', 'cinema4d.' + param);
   case '.hip':
   case '.hiplc':
   case '.hipnc':
-    return dcc.get('houdini.' + param);
+    return ipcRenderer.sendSync('get-dcc-setting', 'houdini.' + param);
   case '.lxo':
-    return dcc.get('modo.' + param);
+    return ipcRenderer.sendSync('get-dcc-setting', 'modo.' + param);
   case '.spp':
-    return dcc.get('substancePainter.' + param);
+    return ipcRenderer.sendSync('get-dcc-setting', 'substancePainter.' + param);
   default:
     return 'nondefault';
   }
@@ -97,7 +93,8 @@ export function colorContrast(hex: string): string {
 // Database handling
 
 export function findDatabaseIndex(url: string): number {
-  return databases.get('databases').local.findIndex((db: DatabaseItem) => db.url === url);
+  const db = ipcRenderer.sendSync('get-database', 'databases.local');
+  return db.findIndex((db: DatabaseItem) => db.url === url);
 }
 
 export function isDatabaseRemote(url: string): boolean {
@@ -109,9 +106,9 @@ export function handleDatabases(database: DatabaseItem | string): Integrations |
 
   if (typeof database === 'string') {
     if (integrationsList.findIndex((val: string) => val === database) === -1) {
-      searchableDB = databases.get('databases.local')[findDatabaseIndex(database)];
+      searchableDB = ipcRenderer.sendSync('get-database', 'databases.local')[findDatabaseIndex(database)];
     } else {
-      searchableDB = databases.get(`databases.integrations.${database}`);
+      searchableDB = ipcRenderer.sendSync('get-database', `databases.integrations.${database}`);
     }
   } else {
     searchableDB = database;
@@ -126,7 +123,7 @@ export function handleDatabases(database: DatabaseItem | string): Integrations |
 
 
 export async function updateDatabases(): Promise<boolean> {
-  const db = databases.get('databases');
+  const db = ipcRenderer.sendSync('get-database', 'databases');
 
   // Update model count and total size
   for await (const [index, database] of db.local.entries()) {
@@ -155,7 +152,7 @@ export async function updateDatabases(): Promise<boolean> {
       db.local[index].totalsize = totalSize;
     }
   }
-  databases.store = { databases: db };
+  ipcRenderer.invoke('set-all-databases', { databases: db });
   store.commit('setApplicationDatabases', db);
   return Promise.resolve(true);
 }
@@ -169,14 +166,14 @@ function handleUpdate(database: DatabaseItem, handleDB: Integrations, db: any, i
       db.local[index].count = items.count;
       db.local[index].totalsize = items.totalSize;
 
-      databases.store = { databases: db };
+      ipcRenderer.invoke('set-all-databases', { databases: db });
       store.commit('setApplicationDatabases', db);
       eventBus.emit('file-event', database);
     });
 }
 
 export async function watchDatabases(): Promise<boolean> {
-  const db = databases.get('databases');
+  const db = ipcRenderer.sendSync('get-database', 'databases');
 
   for await (const [index, database] of db.local.entries()) {
     const handleDB = handleDatabases(database);

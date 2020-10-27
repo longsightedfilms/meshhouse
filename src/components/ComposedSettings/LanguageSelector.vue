@@ -50,7 +50,10 @@ export default class LanguageSelector extends Vue {
     const target = (event.target as HTMLInputElement);
 
     this.$i18n.locale = target.value;
-    this.$settingsSet('language', target.value);
+    this.$ipcInvoke('set-application-setting', {
+      key: 'language',
+      value: target.value
+    });
   }
 }
 </script>

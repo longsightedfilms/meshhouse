@@ -63,29 +63,28 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { ipcRenderer } from 'electron';
 
 @Component({})
 export default class HeaderWindowButtons extends Vue {
   maximized = false
 
   minimize(): void {
-    ipcRenderer.invoke('minimize');
+    this.$ipcInvoke('minimize');
   }
 
   maximize(): void {
-    const isMaximized = ipcRenderer.sendSync('is-maximized');
+    const isMaximized = this.$ipcSendSync('is-maximized');
     if (isMaximized) {
-      ipcRenderer.invoke('unmaximize');
+      this.$ipcInvoke('unmaximize');
       this.maximized = false;
     } else {
-      ipcRenderer.invoke('maximize');
+      this.$ipcInvoke('maximize');
       this.maximized = true;
     }
   }
 
   close(): void {
-    ipcRenderer.invoke('close');
+    this.$ipcInvoke('close');
   }
 }
 </script>

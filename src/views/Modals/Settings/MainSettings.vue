@@ -61,14 +61,18 @@ import { ToggleButton } from 'vue-js-toggle-button';
 })
 
 export default class MainSettings extends Vue {
-  hideIntegrations = Boolean(this.$settingsGet('hideIntegrations'))
-  minimalisticHeaders = Boolean(this.$settingsGet('minimalisticHeaders'))
-  showInTray = Boolean(this.$settingsGet('showInTray'))
+  hideIntegrations = Boolean(this.$ipcSendSync('get-application-setting', 'hideIntegrations'))
+  minimalisticHeaders = Boolean(this.$ipcSendSync('get-application-setting', 'minimalisticHeaders'))
+  showInTray = Boolean(this.$ipcSendSync('get-application-setting', 'showInTray'))
 
   handleSliderChange(event: VueToggleChangeEvent, setting: string): void {
     (this as any)[setting] = event.value;
-    this.$settingsSet(setting, (this as any)[setting]);
-    const settings = this.$settingsGetAll();
+    this.$ipcInvoke('set-application-setting', {
+      key: setting,
+      value: (this as any)[setting]
+    });
+
+    const settings = this.$ipcSendSync('get-all-settings');
     this.$store.commit('setApplicationSettings', settings);
   }
 }

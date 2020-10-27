@@ -1,0 +1,53 @@
+$buttonBG: #ccc
+$buttonBGDarkTheme: #444
+
+$buttonPrimaryBG: #22a7f0
+$buttonPrimaryBGHover: #69caff
+
+.v-button
+  position: relative
+  background-color: $buttonBG
+  border: 1px solid $buttonBG
+  line-height: 2.2rem
+  padding: 0rem 2.2rem
+  color: #000100
+  font-size: 1rem
+  .loader
+    left: 85%
+    .circle
+      &:after
+        background-color: $buttonPrimaryBG
+  &:hover, &:active
+    border-color: #979797
+  &:disabled
+    color: #7a7a7a
+    cursor: not-allowed
+    &:hover
+      border-color: $buttonBG
+  &--primary
+    background-color: $buttonPrimaryBG
+    .loader
+      .circle
+        &:after
+          background-color: #ffffff
+    &:hover
+      background-color: $buttonPrimaryBG
+      border-color: $buttonPrimaryBGHover
+  &--busy
+    padding-inline-end: 3rem
+    color: #7a7a7a
+    cursor: not-allowed
+
+.application.theme--dark
+  .v-button
+    background-color: $buttonBGDarkTheme
+    border-color: $buttonBGDarkTheme
+    color: #ffffff
+    &:hover, &:active
+      border-color: #979797
+    &:disabled, &--busy
+      color: #cccccc
+    &--primary
+      background-color: $buttonPrimaryBG
+      &:hover
+        border-color: $buttonPrimaryBGHover

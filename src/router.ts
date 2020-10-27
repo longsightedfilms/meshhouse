@@ -53,7 +53,10 @@ router.beforeEach((to, from, next) => {
 router.afterEach((to, from) => {
   Vue.nextTick(() => {
     if (to.name !== 'Home' && to.name !== 'Updated') {
-      router.app.$root.$settingsSet('applicationWindow.lastOpened', to.path);
+      router.app.$root.$ipcInvoke('set-application-setting', {
+        key: 'applicationWindow.lastOpened',
+        value: to.path
+      });
     }
   });
 });

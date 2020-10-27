@@ -53,6 +53,7 @@ import ModelCard from '@/components/UI/Card/ModelCard.vue';
 import Integrations from '@/plugins/models-db/integrations/main';
 import { findDatabaseIndex } from '@/plugins/models-db/functions';
 import { Route } from 'vue-router';
+import { ipcRenderer } from 'electron';
 
 @Component({
   components: {
@@ -64,10 +65,16 @@ import { Route } from 'vue-router';
     ModelContext
   },
   async beforeRouteEnter(to: Route, from: Route, next: Function) {
-    const db = new Integrations.local(to.params.database);
-    const models = await db.fetchItemsFromDatabase(undefined, to.params.category);
+    const models = await ipcRenderer.invoke('get-integration-models', {
+      type: 'local',
+      title: to.params.database,
+      category: to.params.category
+    });
 
-    const categories = await db.fetchCategories();
+    const categories = await ipcRenderer.invoke('get-integration-categories', {
+      type: 'local',
+      title: to.params.database
+    });
 
     next((vm: Vue) => {
       vm.$store.commit('setCurrentDatabase', to.params.database);
@@ -88,10 +95,16 @@ export default class LocalDatabase extends Vue {
   }
 
   async databaseInitialize(): Promise<void> {
-    const db = new Integrations.local(this.$route.params.database);
-    const models = await db.fetchItemsFromDatabase(undefined, this.$route.params.category);
+    const models = await this.$ipcInvoke('get-integration-models', {
+      type: 'local',
+      title: this.$route.params.database,
+      category: this.$route.params.category
+    });
 
-    const categories = await db.fetchCategories();
+    const categories = await this.$ipcInvoke('get-integration-categories', {
+      type: 'local',
+      title: this.$route.params.database
+    });
 
     this.$store.commit('setCurrentDatabase', this.$route.params.database);
     this.$store.commit('setLoadedData', models);

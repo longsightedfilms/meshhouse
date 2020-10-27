@@ -58,8 +58,9 @@ export default class RemoteFilters extends Vue {
   licenseTypes: SFMLabLicense[] = []
 
   mounted(): void {
-    if(this.$settingsGet('thumbnailSize') !== undefined) {
-      this.$store.commit('setThumbnailSize', this.$settingsGet('thumbnailSize'));
+    const thumbnailSize = this.$ipcSendSync('get-application-setting', 'thumbnailSize');
+    if(thumbnailSize !== undefined) {
+      this.$store.commit('setThumbnailSize', thumbnailSize);
     }
     this.handleFiltersUpdate();
   }

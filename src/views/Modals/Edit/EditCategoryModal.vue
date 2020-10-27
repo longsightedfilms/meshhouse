@@ -1,7 +1,7 @@
 <template>
   <div class="modal modal--add-category">
     <header class="modal_header">
-      <h2>{{ $t('modals.editCategory.title') }}</h2>
+      <h1>{{ $t('modals.editCategory.title') }}</h1>
     </header>
     <div class="modal_content">
       <ValidationObserver ref="form">
@@ -26,18 +26,19 @@
       </ValidationObserver>
     </div>
     <div class="modal_actions">
-      <button
-        class="button button--primary"
+      <v-button
+        type="primary"
+        :busy="busy"
         @click="onSubmit"
       >
         {{ $t('common.buttons.save') }}
-      </button>
-      <button
-        class="button button--danger"
+      </v-button>
+      <v-button
+        :disabled="busy"
         @click="$emit('close')"
       >
-        {{ $t('common.buttons.close') }}
-      </button>
+        {{ $t('common.buttons.cancel') }}
+      </v-button>
     </div>
   </div>
 </template>
@@ -45,7 +46,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import Integrations from '@/plugins/models-db/integrations/main';
 import { ValidationObserver } from 'vee-validate';
 
 @Component({
@@ -54,6 +54,7 @@ import { ValidationObserver } from 'vee-validate';
   }
 })
 export default class EditCategoryModal extends Vue {
+  busy = false
   title = ''
 
   mounted(): void {
@@ -64,21 +65,25 @@ export default class EditCategoryModal extends Vue {
     (this.$refs.form as InstanceType<typeof ValidationObserver>).validate()
       .then(async(success: boolean) => {
         if (success) {
-          const db = new Integrations.local(this.$route.params.database);
-          const { category } = this.$route.params;
-          const slug = this.$stringToSlug(this.title);
-          const id = this.$store.state.controls.properties.id;
+          this.busy = true;
+          try {
+            const { category, database } = this.$route.params;
+            const slug = this.$stringToSlug(this.title);
+            const id = this.$store.state.controls.properties.id;
 
-          const query = `UPDATE categories
-          SET slug = '${slug}', name = '${this.title}'
-          WHERE id = ${id}`;
-
-          const result = await db.runQuery(query);
-
-          if (result) {
-            const categories = await db.fetchCategories();
+            const categories = await this.$ipcInvoke('update-category', {
+              type: 'local',
+              title: database,
+              slug,
+              categoryTitle: this.title,
+              id
+            });
             this.$store.commit('setCategories', categories);
             this.$emit('close');
+            this.busy = false;
+          } catch (err) {
+            this.$emit('close');
+            this.busy = false;
           }
         }
       });

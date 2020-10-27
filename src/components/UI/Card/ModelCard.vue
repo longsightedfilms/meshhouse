@@ -34,7 +34,6 @@ import ModelImage from '@/components/UI/Image/ModelImage.vue';
 import Integrations from '@/plugins/models-db/integrations/main';
 import RemoteModelInfoModal from '@/views/Modals/RemoteModelInfoModal.vue';
 import { formatBytes } from '@/plugins/models-db/functions';
-import { ipcRenderer } from 'electron';
 
 @Component({
   components: {
@@ -89,7 +88,7 @@ export default class ModelCard extends Vue {
     if (event.dataTransfer !== null) {
       event.dataTransfer.effectAllowed = 'copy';
       event.preventDefault();
-      ipcRenderer.send('dropOut', this.$props.item.path);
+      this.$ipcInvoke('dropOut', this.$props.item.path);
     }
   }
 

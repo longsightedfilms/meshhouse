@@ -3,12 +3,19 @@ import path from 'path';
 import sanitize from 'sanitize-filename';
 import sevenBin from '7zip-bin';
 import Seven from 'node-7z';
-import { databases } from '../background';
+import { databases } from '../electron-store';
 import unrar from '@zhangfuxing/unrar';
-import { sendVuexCommit } from '../background';
+import { sendVuexCommit } from '../ipc_handlers/eventbus';
 
 const sevenExtensions = ['.7z', '.xz', '.lzma', '.cab', '.zip', '.gzip', '.bzip2', '.tar', '.tar.gz'];
 
+/**
+ * Unpacks file or writes as is if is not an archive
+ * @param blob file
+ * @param item model
+ * @param filename file name
+ * @param databaseURL database URL or slug
+ */
 export async function installFile(
   blob: ArrayBuffer,
   item: Model,

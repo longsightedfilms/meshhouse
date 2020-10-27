@@ -46,7 +46,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { ipcRenderer } from 'electron';
 
 @Component({})
 export default class AboutProgramModal extends Vue {
@@ -69,7 +68,7 @@ export default class AboutProgramModal extends Vue {
 
   openLink(event: Event): void {
     const target = (event.target as HTMLAnchorElement);
-    ipcRenderer.invoke('open-external', target.href);
+    this.$ipcInvoke('open-external', target.href);
     event.preventDefault();
   }
 }

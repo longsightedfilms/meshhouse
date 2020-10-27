@@ -45,7 +45,6 @@ import { Vue, Component, Watch }from 'vue-property-decorator';
 import VueSlider from 'vue-slider-component';
 import { Fragment } from 'vue-fragment';
 import { isDatabaseRemote } from '@/plugins/models-db/functions';
-
 import LocalFilters from '@/components/UI/Filters/LocalFilters.vue';
 import RemoteFilters from '@/components/UI/Filters/RemoteFilters.vue';
 
@@ -60,7 +59,10 @@ export default class FiltersDropdown extends Vue {
 
   onSliderChange(val: number): void {
     this.$root.$children[0].$forceUpdate();
-    this.$settingsSet('thumbnailSize', val);
+    this.$ipcInvoke('set-application-setting', {
+      key: 'thumbnailSize',
+      value: val
+    });
     this.$store.commit('setThumbnailSize', val);
   }
 

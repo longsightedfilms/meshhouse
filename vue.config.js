@@ -3,6 +3,12 @@ const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPl
 
 module.exports = {
   configureWebpack: {
+    devServer: {
+      watchOptions: {
+        poll: true,
+        ignored: /node_modules/
+      }
+    },
     plugins: [
       ...(process.env.NODE_ENV === 'production' ? [] : [new BundleAnalyzerPlugin({
         openAnalyzer: false

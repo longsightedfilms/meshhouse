@@ -39,7 +39,10 @@ export default class LastPageSelector extends Vue {
     const target = (event.target as HTMLInputElement);
 
     this.$store.commit('setCurrentLastPage', target.value);
-    this.$settingsSet('lastPage', target.value);
+    this.$ipcInvoke('set-application-setting', {
+      key: 'lastPage',
+      value: target.value
+    });
   }
 }
 </script>

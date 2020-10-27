@@ -44,6 +44,10 @@ Legend:
 
 Starting from v0.2.5 you can find releases and pre-releases at [https://github.com/longsightedfilms/meshhouse/releases](https://github.com/longsightedfilms/meshhouse/releases)
 
+## Documentation (wiki)
+
+We moved our documentation to [GitBook service](https://docs.meshhouse.art)
+
 ## Build
 
 Build for Windows (x64)
@@ -58,6 +62,14 @@ Build for Linux
 ```
 npm run electron:build:linux
 ```
+
+## Our supporters
+
+<p align="center">
+    <a href="https://www.gitbook.com/">
+    <img alt="GitBook" src="https://uploads-ssl.webflow.com/5c349f90a3cd4515d0564552/5c640954cbc13e44416e0c77_Logo%2BTextGrey.svg" width="200">
+  </a>
+</p>
 
 ### License
 

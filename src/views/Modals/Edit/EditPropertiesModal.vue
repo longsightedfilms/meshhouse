@@ -88,32 +88,25 @@
       </ValidationObserver>
     </div>
     <div class="modal_actions">
-      <button
-        class="button button--primary"
+      <v-button
+        type="primary"
+        :busy="busy"
         @click="handleSubmit"
       >
         {{ $t('common.buttons.save') }}
-      </button>
-      <button
-        class="button button--danger"
+      </v-button>
+      <v-button
+        :disabled="busy"
         @click="$emit('close')"
       >
         {{ $t('common.buttons.cancel') }}
-      </button>
+      </v-button>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component';
-import { Watch } from 'vue-property-decorator';
-import fs from 'fs';
-import path from 'path';
-import sharp from 'sharp';
-import uniqid from 'uniqid';
-import { ipcRenderer } from 'electron';
-import Integrations from '@/plugins/models-db/integrations/main';
+import { Vue, Component, Watch } from 'vue-property-decorator';
 import ModelImage from '@/components/UI/Image/ModelImage.vue';
 import { ValidationObserver, ValidationProvider } from 'vee-validate';
 
@@ -125,6 +118,8 @@ import { ValidationObserver, ValidationProvider } from 'vee-validate';
   }
 })
 export default class EditPropertiesModal extends Vue {
+  busy = false
+
   error = ''
   categories: Category[] = []
   uploadImage = ''
@@ -146,8 +141,11 @@ export default class EditPropertiesModal extends Vue {
       this.properties.category = null;
     }
 
-    const db = new Integrations.local(this.$route.params.database);
-    const categories = await db.fetchCategories('SELECT * FROM \'categories\'');
+    const categories = await this.$ipcInvoke('get-integration-categories', {
+      type: 'local',
+      title: this.$route.params.database,
+      query: 'SELECT * FROM \'categories\''
+    });
 
     this.categories = categories;
   }
@@ -194,68 +192,67 @@ export default class EditPropertiesModal extends Vue {
   }
 
   async updateItem(): Promise<void> {
-    const db = new Integrations.local(this.$route.params.database);
-
+    this.busy = true;
     const query = `SELECT * FROM 'Models' WHERE path ='${this.properties.path}'`;
-    const models = await db.fetchItemsFromDatabase(query);
+    const models = await this.$ipcInvoke('get-integration-models', {
+      type: 'local',
+      title: this.$route.params.database,
+      query
+    });
 
-    const imageName = uniqid('image-') + '.webp';
-
-    let imagePath = '';
     this.error = '';
-    if (this.properties.imageChanged === true && this.properties.image !== '') {
-      const image = path.parse(this.properties.image);
-      image.ext = '.webp';
-      imagePath = path.join(image.dir, image.name) + image.ext;
-    } else {
-      imagePath = path.join(ipcRenderer.sendSync('get-user-data-path'), '\\imagecache\\', imageName);
-    }
 
     models[0].name = this.properties.name;
     models[0].category = this.properties.category;
-    models[0].image =
-      this.properties.imageChanged === true ? imagePath : this.properties.image;
 
-    // Create thumbnails and save in imagecache folder
     if (this.properties.imageChanged === true) {
-      fs.access(imagePath, fs.constants.F_OK, (err) => {
-        if(fs.existsSync(this.properties.image)) {
-          fs.unlinkSync(this.properties.image);
-        }
-        sharp(this.uploadImage)
-          .resize(1024, 1024)
-          .webp({
-            quality: 85,
-            smartSubsample: true,
-            reductionEffort: 6,
-            force: true
-          })
-          .toFile(imagePath)
-          .then(async() => {
-            this.$store.commit('incrementImageRandomizer');
-            this.$updateItemInDatabase(this.$route.params.database, models[0]);
-            const result = await db.fetchItemsFromDatabase();
-            this.$store.commit('setLoadedData', result);
-            this.$emit('close');
-          })
-          .catch(async(err: Error) => {
-            this.error = err.name + ': ' + err.message;
-            this.properties.image = '';
-            this.properties.imageChanged = false;
+      try {
+        const response = await this.$ipcInvoke('generate-thumbnail-image', {
+          item: this.properties,
+          image: this.uploadImage
+        });
 
-            models[0].image = '';
+        models[0].image = response.imgPath;
+        this.$store.commit('incrementImageRandomizer');
+        this.$updateItemInDatabase(this.$route.params.database, models[0]);
 
-            this.$updateItemInDatabase(this.$route.params.database, models[0]);
-            const result = await db.fetchItemsFromDatabase();
-            this.$store.commit('setLoadedData', result);
-          });
-      });
+        const result = await this.$ipcInvoke('get-integration-models', {
+          type: 'local',
+          title: this.$route.params.database
+        });
+
+        this.$store.commit('setLoadedData', result);
+        this.$emit('close');
+      } catch (err) {
+        this.error = err.name + ': ' + err.message;
+        this.properties.image = '';
+        this.properties.imageChanged = false;
+
+        models[0].image = '';
+
+        this.$updateItemInDatabase(this.$route.params.database, models[0]);
+
+        const result = await this.$ipcInvoke('get-integration-models', {
+          type: 'local',
+          title: this.$route.params.database
+        });
+
+        this.$store.commit('setLoadedData', result);
+      }
     } else {
+      models[0].image = this.properties.image;
+
       this.$updateItemInDatabase(this.$route.params.database, models[0]);
-      const result = await db.fetchItemsFromDatabase();
+
+      const result = await this.$ipcInvoke('get-integration-models', {
+        type: 'local',
+        title: this.$route.params.database
+      });
+
       this.$store.commit('setLoadedData', result);
       this.$emit('close');
     }
+    this.busy = false;
   }
 }
 </script>

@@ -26,8 +26,6 @@ import { Vue, Component, Watch } from 'vue-property-decorator';
 import ApplicationHeader from '@/components/UI/Header/ApplicationHeader.vue';
 import ApplicationSidebar from '@/components/UI/Sidebar/ApplicationSidebar.vue';
 
-import { ipcRenderer } from 'electron';
-
 @Component({
   components: {
     ApplicationHeader,
@@ -55,13 +53,13 @@ export default class App extends Vue {
     let bodyClass = 'application';
     let cssTheme = '';
 
-    const theme = this.$settingsGet('theme') || 'light';
+    const theme = this.$ipcSendSync('get-application-setting', 'theme') || 'light';
     const isFullScreen = this.$store.state.controls.fullscreen;
 
-    const systemThemeDark = ipcRenderer.sendSync('should-use-dark-theme');
-    const os = ipcRenderer.sendSync('get-os');
+    const systemThemeDark = this.$ipcSendSync('should-use-dark-theme');
+    const os = this.$ipcSendSync('get-os');
 
-    ipcRenderer.invoke('set-theme-source', this.$store.state.settings.theme);
+    this.$ipcInvoke('set-theme-source', this.$store.state.settings.theme);
 
     if (theme !== 'system') {
       cssTheme = this.$store.state.settings.theme === 'light' ? 'theme--light' : 'theme--dark';
@@ -95,12 +93,12 @@ export default class App extends Vue {
   }
 
   async loadStartupSettings(): Promise<void> {
-    this.$i18n.locale = this.$settingsGet('language');
-    const settings = this.$settingsGetAll();
+    this.$i18n.locale = this.$ipcSendSync('get-application-setting', 'language');
+    const settings = this.$ipcSendSync('get-all-settings');
 
     this.$store.commit('setApplicationSettings', settings);
 
-    await this.$watchDatabases();
+    await this.$ipcInvoke('watch-databases');
 
     if (settings.lastPage === 'lastCatalog') {
       if (this.$route.fullPath !== settings.applicationWindow.lastOpened) {

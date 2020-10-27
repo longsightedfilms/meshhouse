@@ -90,7 +90,10 @@ export default class ApplicationSidebar extends Vue {
 
   toggleVisibility(val: boolean): void {
     this.$store.commit('setDBVisibility', !this.$store.state.settings.databasesVisible);
-    this.$settingsSet('databasesVisible', this.$store.state.settings.databasesVisible);
+    this.$ipcInvoke('set-application-setting', {
+      key: 'databasesVisible',
+      value: this.$store.state.settings.databasesVisible
+    });
   }
 }
 </script>

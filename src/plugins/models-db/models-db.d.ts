@@ -6,16 +6,10 @@ declare module 'vue/types/vue' {
      * Returns if current locale are Right-to-Left writing
      */
     $isRTL(): boolean;
-    $settingsGet(setting: string): string;
-    $settingsGetAll(): ApplicationSettings;
-    $settingsSet(key: string, value: string | number | boolean): void;
-    $dccGetConfig(): object;
-    $dccSetConfig(config: object): void;
     $stringToSlug(str: string): string;
     $returnHumanLikeExtension(extension: string): string;
     $forceReloadImage(image: string): string;
     $addDatabase(db: DatabaseItem): Promise<void>;
-    $reindexCatalog(db: DatabaseItem): Promise<void>;
     $editDatabase(
       index: number,
       payload: DatabaseItem,
@@ -26,8 +20,6 @@ declare module 'vue/types/vue' {
     ): Promise<string | boolean>;
     $setIntegrationsDB(payload: any): void;
     $deleteDatabase(database: string): Promise<boolean>;
-    $watchDatabases(): Promise<void>;
-    $indexFolderRecursive(folder: string): Promise<string[]>;
     $openItem(file: string): void;
     $openFolder(folder: string): void;
     $openPropertiesModal(model: Model): Promise<boolean>;

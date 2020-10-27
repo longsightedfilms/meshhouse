@@ -37,8 +37,10 @@ export default class LocalFilters extends Vue {
   sceneTypes: ExtensionProperty[] = []
 
   mounted(): void {
-    if(this.$settingsGet('thumbnailSize') !== undefined) {
-      this.$store.commit('setThumbnailSize', this.$settingsGet('thumbnailSize'));
+    const thumbnailSize = this.$ipcSendSync('get-application-setting', 'thumbnailSize');
+
+    if(thumbnailSize !== undefined) {
+      this.$store.commit('setThumbnailSize', thumbnailSize);
     }
     this.scene = {
       title: this.$i18n.t('common.list.all').toString(),

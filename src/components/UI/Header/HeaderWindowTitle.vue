@@ -45,31 +45,22 @@
 </template>
 
 <script lang="ts">
-import { ipcRenderer } from 'electron';
 import { Vue, Component } from 'vue-property-decorator';
 
 @Component({})
 export default class HeaderWindowTitle extends Vue {
-  os = 'linux';
-
   get appIcon(): string {
+    const os = this.$ipcSendSync('get-os');
     let icon = 'icon.png';
 
-    if (this.os === 'win32') {
+    if (os === 'win32') {
       icon = 'icon-win.png';
     }
-    if (this.os === 'darwin') {
+    if (os === 'darwin') {
       icon = 'icon-mac.png';
     }
 
     return `/${icon}`;
-  }
-
-  mounted(): void {
-    ipcRenderer.send('get-os');
-    ipcRenderer.once('return-os', (event: any, arg) => {
-      this.os = arg;
-    });
   }
 
   back(): void {

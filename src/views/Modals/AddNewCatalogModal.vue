@@ -168,15 +168,10 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { ipcRenderer } from 'electron';
-import path from 'path';
-import fs from 'fs';
-import sharp from 'sharp';
 import ColorPicker from 'vue-color/src/components/Chrome.vue';
 import SidebarLink from '@/components/UI/Sidebar/SidebarLink.vue';
 import { ValidationObserver, validate } from 'vee-validate';
 import { colorContrast } from '@/plugins/models-db/functions';
-import { integrationsList } from '@/functions/databases';
 
 @Component({
   components: {
@@ -211,7 +206,7 @@ export default class AddNewCatalogModal extends Vue {
   preview = ''
 
   get folderPlaceholder(): string {
-    switch(ipcRenderer.sendSync('get-os')) {
+    switch(this.$ipcSendSync('get-os')) {
     case 'win32':
       return 'C:\\Models\\My fancy models';
     case 'linux':
@@ -238,7 +233,7 @@ export default class AddNewCatalogModal extends Vue {
   }
 
   async handleDirectoryInputClick(): Promise<void> {
-    const dialog = await ipcRenderer.invoke('show-open-dialog', {
+    const dialog = await this.$ipcInvoke('show-open-dialog', {
       properties: ['openDirectory']
     });
 
@@ -310,47 +305,22 @@ export default class AddNewCatalogModal extends Vue {
           };
           this.properties.url = catalog.url;
 
-          // Handle background generation
-          const imageFolder = path.join(ipcRenderer.sendSync('get-user-data-path'),
-            '\\imagecache\\',
-            '\\backgrounds\\'
-          );
-          const imagePath = path.join(imageFolder, `${this.properties.url}.webp`);
-          this.properties.background = this.imageChanged === true ? imagePath : this.properties.background;
-
-          // Create thumbnails and save in imagecache folder
           if (this.imageChanged === true) {
-            fs.access(imagePath, fs.constants.F_OK, (err) => {
-              if (err) {
-                this.properties.background = '';
-                this.imageChanged = false;
-                this.$emit('close');
-              }
-              if(fs.existsSync(imagePath)) {
-                fs.unlinkSync(imagePath);
-              } else {
-                fs.mkdirSync(imagePath, 0x777);
-              }
-              sharp(this.backgroundImage)
-                .resize(2560, 400)
-                .webp({
-                  quality: 99,
-                  smartSubsample: true,
-                  reductionEffort: 6,
-                  force: true
-                })
-                .toFile(imagePath)
-                .then(async() => {
-                  catalog.background = this.properties.background;
-                  await this.$addDatabase(catalog);
-                  this.$emit('close');
-                })
-                .catch((err: Error) => {
-                  this.properties.background = '';
-                  this.imageChanged = false;
-                  this.$emit('close');
-                });
-            });
+            try {
+              const response = await this.$ipcInvoke('generate-bg-image', {
+                item: this.properties,
+                image: this.backgroundImage
+              });
+
+              this.properties.background = response.imagePath;
+              catalog.background = response.imagePath;
+              await this.$addDatabase(catalog);
+              this.$emit('close');
+            } catch (err) {
+              this.properties.background = '';
+              this.imageChanged = false;
+              console.log(err);
+            }
           } else {
             await this.$addDatabase(catalog);
             this.$emit('close');

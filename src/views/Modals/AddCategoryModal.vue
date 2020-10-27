@@ -1,7 +1,7 @@
 <template>
   <div class="modal modal--add-category">
     <header class="modal_header">
-      <h2>{{ $t('modals.addCategory.title') }}</h2>
+      <h1>{{ $t('modals.addCategory.title') }}</h1>
     </header>
     <div class="modal_content">
       <ValidationObserver ref="form">
@@ -26,18 +26,19 @@
       </ValidationObserver>
     </div>
     <div class="modal_actions">
-      <button
-        class="button button--primary"
+      <v-button
+        type="primary"
+        :busy="busy"
         @click="onSubmit"
       >
         {{ $t('common.buttons.add') }}
-      </button>
-      <button
-        class="button button--danger"
+      </v-button>
+      <v-button
+        :disabled="busy"
         @click="$emit('close')"
       >
-        {{ $t('common.buttons.close') }}
-      </button>
+        {{ $t('common.buttons.cancel') }}
+      </v-button>
     </div>
   </div>
 </template>
@@ -45,7 +46,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import Integrations from '@/plugins/models-db/integrations/main';
 import { ValidationObserver } from 'vee-validate';
 
 @Component({
@@ -54,26 +54,33 @@ import { ValidationObserver } from 'vee-validate';
   }
 })
 export default class AddCategoryModal extends Vue {
+  busy = false
   title = ''
 
   onSubmit(): void {
     (this.$refs.form as InstanceType<typeof ValidationObserver>).validate()
       .then(async(success: boolean) => {
         if (success) {
-          const db = new Integrations.local(this.$route.params.database);
-          const { category } = this.$route.params;
-          const slug = this.$stringToSlug(this.title);
-          const parentId = category !== undefined ? parseInt(category, 10) : -1;
+          this.busy = true;
 
-          const query = `INSERT INTO categories
-          VALUES (null, ${parentId}, '${slug}', '${this.title}')`;
+          try {
+            const { category } = this.$route.params;
+            const slug = this.$stringToSlug(this.title);
+            const parentId = category !== undefined ? parseInt(category, 10) : -1;
 
-          const result = await db.runQuery(query);
+            const categories = await this.$ipcInvoke('add-category', {
+              type: 'local',
+              title: this.$route.params.database,
+              slug,
+              categoryTitle: this.title,
+              parentId
+            });
 
-          if (result) {
-            const categories = await db.fetchItemsFromDatabase('SELECT * FROM \'categories\'');
             this.$store.commit('setCategories', categories);
             this.$emit('close');
+          } catch (err) {
+            this.$emit('close');
+            this.busy = false;
           }
         }
       });

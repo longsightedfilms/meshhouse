@@ -72,7 +72,10 @@ export default class CategoriesGrid extends Vue {
 
   toggleVisibility(): void {
     this.$store.commit('setCategoriesVisibility', !this.$store.state.settings.categoriesVisible);
-    this.$settingsSet('categoriesVisible', this.$store.state.settings.categoriesVisible);
+    this.$ipcInvoke('set-application-setting', {
+      key: 'categoriesVisible',
+      value: this.$store.state.settings.categoriesVisible
+    });
     this.$parent.$parent.$forceUpdate();
   }
 

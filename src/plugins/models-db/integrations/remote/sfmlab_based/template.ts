@@ -11,7 +11,6 @@ import { i18n } from '@/locales/i18n';
 import sanitize from 'sanitize-filename';
 import { ipcRenderer } from 'electron';
 
-import { databases } from '@/plugins/models-db/init';
 import {
   isDBModel
 } from '@/functions/databases';
@@ -204,12 +203,16 @@ export default class SFMLabBaseIntegration extends Integration {
 
     await this.runQuery(dbQuery);
     // Update databases record
-    const db = databases.get(`databases.integrations.${this.slug}`);
+    const db = ipcRenderer.sendSync('get-database', `databases.integrations.${this.slug}`);
     db.totalsize -= item.size ?? 0;
     db.count--;
 
-    databases.set(`databases.integrations.${this.slug}`, db);
-    store.commit('setApplicationDatabases', databases.get('databases'));
+    ipcRenderer.invoke('set-database', {
+      key: `databases.integrations.${this.slug}`,
+      value: db
+    });
+
+    store.commit('setApplicationDatabases', ipcRenderer.sendSync('get-database', 'databases'));
     store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? this.slug);
     eventBus.emit('item-deleted');
 
@@ -275,7 +278,7 @@ export default class SFMLabBaseIntegration extends Integration {
 
   async downloadItem(item: Model, downloadLink: SFMLabLink): Promise<boolean | Error> {
     let isNewModel = true;
-    const isFolderSet = databases.get(`databases.integrations.${this.slug}`).path !== null;
+    const isFolderSet = ipcRenderer.sendSync('get-database', `databases.integrations.${this.slug}`).path !== null;
 
     if (!isFolderSet) {
       return Promise.reject(new Error('Path not set'));
@@ -286,7 +289,7 @@ export default class SFMLabBaseIntegration extends Integration {
     const download = {
       img: item.images !== undefined ? item.images[0] : '',
       title: item.name,
-      path: path.join(databases.get(`databases.integrations.${this.slug}`).path, sanitize(item.name)),
+      path: path.join(ipcRenderer.sendSync('get-database', `databases.integrations.${this.slug}`).path, sanitize(item.name)),
       totalSize: 0,
       downloadedSize: 0,
       startedAt: new Date(),
@@ -360,15 +363,19 @@ export default class SFMLabBaseIntegration extends Integration {
       eventBus.emit('download-completed');
 
       // Update databases record
-      const db = databases.get(`databases.integrations.${this.slug}`);
+      const db = ipcRenderer.sendSync('get-database', `databases.integrations.${this.slug}`);
       db.totalsize += download.totalSize;
 
       if (isNewModel) {
         db.count++;
       }
 
-      databases.set(`databases.integrations.${this.slug}`, db);
-      store.commit('setApplicationDatabases', databases.get('databases'));
+      ipcRenderer.invoke('set-database', {
+        key: `databases.integrations.${this.slug}`,
+        value: db
+      });
+
+      store.commit('setApplicationDatabases', ipcRenderer.sendSync('get-database', 'databases'));
       store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? this.slug);
 
       ipcRenderer.send('set-window-progress', -1);

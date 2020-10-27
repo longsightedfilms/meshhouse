@@ -9,7 +9,6 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Watch } from 'vue-property-decorator';
-import { ipcRenderer } from 'electron';
 
 @Component({
   props: {
@@ -26,12 +25,12 @@ import { ipcRenderer } from 'electron';
   }
 })
 export default class Icon extends Vue {
-  useInvertedIcon = ipcRenderer.sendSync('should-use-dark-theme') === true
+  useInvertedIcon = this.$ipcSendSync('should-use-dark-theme') === true
     || this.$store.state.settings.theme === 'dark'
 
   @Watch('$store.state.settings.theme')
   onThemeChanged(val: string): void {
-    this.useInvertedIcon = ipcRenderer.sendSync('should-use-dark-theme') === true
+    this.useInvertedIcon = this.$ipcSendSync('should-use-dark-theme') === true
     || val === 'dark';
   }
 

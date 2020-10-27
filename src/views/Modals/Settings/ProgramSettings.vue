@@ -259,16 +259,16 @@ export default class ProgramSettings extends Vue {
     [key: string]: HTMLInputElement;
   }
 
-  dccForm: DCCSettings = this.$dccGetConfig()
+  dccForm: DCCSettings = this.$ipcSendSync('get-all-dcc-settings')
 
   saveSettingToFile(): void {
-    this.$dccSetConfig(this.dccForm);
+    this.$ipcInvoke('set-all-dcc-settings', this.dccForm);
     this.$emit('close');
   }
 
   handleSliderChange(event: VueToggleChangeEvent, dcc: string): void {
     this.dccForm[dcc].useSystemAssociation = event.value;
-    this.$dccSetConfig(this.dccForm);
+    this.$ipcInvoke('set-all-dcc-settings', this.dccForm);
   }
 
   handleDirectoryChange(event: Event, dcc: string): void {

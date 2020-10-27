@@ -28,7 +28,6 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { ipcRenderer } from 'electron';
 
 @Component({})
 
@@ -43,11 +42,14 @@ export default class ThemeSelector extends Vue {
     const target = (event.target as HTMLInputElement);
     const theme = (target.value as Theme);
 
-    ipcRenderer.invoke('set-theme-source', theme);
-    ipcRenderer.send('set-window-vibrance', theme);
+    this.$ipcInvoke('set-theme-source', theme);
+    this.$ipcInvoke('set-window-vibrance', theme);
 
     this.$store.commit('setTheme', theme);
-    this.$settingsSet('theme', theme);
+    this.$ipcInvoke('set-application-setting', {
+      key: 'theme',
+      value: theme
+    });
   }
 }
 </script>

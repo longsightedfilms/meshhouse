@@ -1,45 +1,27 @@
-declare const __static: string;
 declare const __dirname: string;
 
 import path from 'path';
-import ElectronStore from 'electron-store';
-import { UAParser } from 'ua-parser-js';
 import {
   app,
   protocol,
   ipcMain,
-  Menu,
-  Tray,
-  nativeTheme,
-  shell,
-  dialog
 } from 'electron';
 import { BrowserWindow } from 'electron-acrylic-window';
 import type { VibrancyOptions } from 'electron-acrylic-window';
-import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import { autoUpdater } from 'electron-updater';
 
 import { getVibrancyOptions } from './functions/theme';
 import { isWindows10, getIconForOS } from './functions/os';
-import { spawn } from 'child_process';
-import { createOSNotification } from './functions/notifier';
-import { installFile } from './functions/archive';
+import * as ApplicationStore from './electron-store';
+import * as ipcHandlers from './ipc_handlers';
+import { createWindow, generateUserAgent } from './createwindow';
+import { handleTray } from './tray';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
-export const settings: ElectronStore<ApplicationSettings> = new ElectronStore({
-  name: 'settings'
-} as StoreSettings);
-export const databases: ElectronStore<DatabaseSettings> = new ElectronStore({
-  name: 'databases'
-} as StoreSettings);
-export const dcc: ElectronStore<DCCSettings> = new ElectronStore({
-  name: 'dcc-config'
-} as StoreSettings);
-
 const applicationOptions: any = {
-  width: settings.get('applicationWindow.width') || 1024,
-  height: settings.get('applicationWindow.height') || 768,
+  width: ApplicationStore.settings.get('applicationWindow.width') || 1024,
+  height: ApplicationStore.settings.get('applicationWindow.height') || 768,
   minWidth: 1024,
   minHeight: 700,
   icon: getIconForOS(),
@@ -47,6 +29,7 @@ const applicationOptions: any = {
   show: false,
   resizable: true,
   webPreferences: {
+    enableRemoteModule: true,
     contextIsolation: false,
     experimentalFeatures: true,
     nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
@@ -56,7 +39,7 @@ const applicationOptions: any = {
   },
 };
 
-const theme = settings.get('theme') || 'light';
+const theme = ApplicationStore.settings.get('theme') || 'light';
 
 const vibrancyOptions: VibrancyOptions = getVibrancyOptions(theme);
 
@@ -64,106 +47,12 @@ if (isWindows10()) {
   applicationOptions.vibrancy = vibrancyOptions;
 }
 
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let appWin: BrowserWindow | null = null;
-let createdAppProtocol = false;
-let tray: Tray | null = null;
+export let appWin: BrowserWindow | null = null;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
 ]);
-
-function generateUserAgent(originAgent: string): string {
-  const parser = new UAParser(originAgent);
-  const { browser } = parser.getResult();
-  const originAgentOS = originAgent.match(/\([a-zA-Z\s0-9_.;]+\)/gm) ?? [];
-
-  return `Mozilla/5.0 ${originAgentOS[0]} MeshHouseClient/${process.env.VUE_APP_VERSION} ${browser.name}/${browser.version}`;
-}
-
-function handleTray(): void {
-  tray = new Tray(getIconForOS());
-  tray.setToolTip(`Meshhouse ${process.env.VUE_APP_VERSION}`);
-
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'Show window',
-      type: 'normal',
-      click: ((): void => {
-        appWin?.show();
-        appWin?.focus();
-      })
-    },
-    {
-      type: 'separator'
-    },
-    {
-      role: 'quit'
-    }
-  ]);
-
-  tray.setContextMenu(contextMenu);
-  tray.addListener('double-click', (() => {
-    appWin?.show();
-    appWin?.focus();
-  }));
-}
-
-function createWindow(
-  devPath: string,
-  prodPath: string,
-  options: object
-): BrowserWindow {
-  // Create the browser window.
-  appWin = new BrowserWindow(options);
-  appWin.setMenu(null);
-
-  if (process.env.WEBPACK_DEV_SERVER_URL) {
-    // Load the url of the dev server if in development mode
-    appWin.loadURL(process.env.WEBPACK_DEV_SERVER_URL + devPath);
-    if (!process.env.IS_TEST) {
-      appWin.webContents.openDevTools();
-    }
-  } else {
-    if (!createdAppProtocol) {
-      createProtocol('app');
-      createdAppProtocol = true;
-    }
-    // Load the index.html when not in development
-    appWin.loadURL(`app://./${prodPath}`);
-  }
-
-  if (settings.get('showInTray')) {
-    appWin?.on('minimize', (event: Electron.Event) => {
-      event.preventDefault();
-      appWin?.hide();
-    });
-  }
-
-  appWin.on('close', () => {
-    settings.set('applicationWindow.width', appWin?.getBounds().width ?? 1024);
-    settings.set('applicationWindow.height', appWin?.getBounds().height ?? 768);
-
-    const session = appWin?.webContents.session;
-    // Debloat local cache on app exit
-    session?.clearCache().then(() => {
-      session?.clearStorageData({
-        storages: ['appcache', 'shadercache', 'cachestorage']
-      });
-    });
-  });
-
-  appWin.on('closed', () => {
-    appWin = null;
-  });
-
-  appWin.once('ready-to-show', () => {
-    appWin?.show();
-  });
-  return appWin;
-}
 
 app.whenReady().then(() => {
   protocol.registerFileProtocol('local', (request, callback) => {
@@ -175,42 +64,30 @@ app.whenReady().then(() => {
   appWin?.webContents.setUserAgent(agent);
   console.log(appWin?.webContents.getUserAgent());
 
-  if (settings.get('showInTray')) {
-    handleTray();
+  if (ApplicationStore.settings.get('showInTray')) {
+    handleTray(appWin);
   }
 });
 
-//app.disableHardwareAcceleration();
-//app.commandLine.appendSwitch('disable-software-rasterizer')
-//app.commandLine.appendSwitch('disable-gpu')
-// Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
 app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
   if (appWin === null) {
-    createWindow('app', 'index.html', applicationOptions);
+    appWin = createWindow('app', 'index.html', applicationOptions);
   }
 });
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
 app.on('ready', () => {
-  if(settings.get('checkForUpdatesOnStartup') === true) {
+  if(ApplicationStore.settings.get('checkForUpdatesOnStartup') === true) {
     autoUpdater.checkForUpdates();
   }
-  createWindow('app', 'index.html', applicationOptions);
+  appWin = createWindow('app', 'index.html', applicationOptions);
 });
 
-// Exit cleanly on request from parent process in development mode.
 if (isDevelopment) {
   if (process.platform === 'win32') {
     process.on('message', (data) => {
@@ -224,8 +101,6 @@ if (isDevelopment) {
     });
   }
 }
-
-app.allowRendererProcessReuse = false;
 
 // Handling auto updates
 if (isDevelopment) {
@@ -259,150 +134,13 @@ ipcMain.on('install-update', () => {
   autoUpdater.quitAndInstall();
 });
 
-// Handle drag model to OS or DCC
-ipcMain.on('dropOut', (event, filePath) => {
-  event.sender.startDrag({
-    file: filePath,
-    icon: path.join(__static, '../build/icons', '64x64.png')
-  });
-});
+ipcHandlers.imageHandler();
+ipcHandlers.integrationsHandler();
+ipcHandlers.fsHandler();
+ipcHandlers.themeHandler();
+ipcHandlers.shellHandler();
+ipcHandlers.storeHandler();
+ipcHandlers.systemInfoHandler();
 
-ipcMain.on('get-os', (event) => {
-  event.returnValue = process.platform;
-  appWin?.webContents.send('return-os', process.platform);
-});
-
-ipcMain.on('should-use-dark-theme', (event) => {
-  const darkTheme = nativeTheme.shouldUseDarkColors;
-  event.returnValue = darkTheme;
-});
-
-ipcMain.handle('set-theme-source', (event, theme) => {
-  nativeTheme.themeSource = theme;
-});
-
-ipcMain.handle('get-os', (event) => {
-  return process.platform;
-});
-
-/**
- * Window handlers
- */
-ipcMain.on('get-current-window', (event) => {
-  event.returnValue = appWin;
-});
-
-ipcMain.on('is-fullscreen', (event) => {
-  const isInFullscreen = appWin?.isFullScreen() || false;
-  event.returnValue = isInFullscreen;
-});
-
-ipcMain.handle('set-fullscreen', () => {
-  if (appWin !== null) {
-    const isInFullscreen = appWin.isFullScreen();
-    appWin.setFullScreen(!isInFullscreen);
-    return Promise.resolve();
-  }
-});
-
-ipcMain.on('is-maximized', (event) => {
-  event.returnValue = appWin?.isMaximized();
-});
-
-ipcMain.handle('minimize', () => {
-  appWin?.minimize();
-});
-
-ipcMain.handle('maximize', () => {
-  appWin?.maximize();
-});
-
-ipcMain.handle('unmaximize', () => {
-  appWin?.unmaximize();
-});
-
-ipcMain.handle('close', () => {
-  appWin?.close();
-});
-
-/**
- * Shell handlers
- */
-
-ipcMain.handle('open-external', (event, url) => {
-  shell.openExternal(url);
-});
-
-ipcMain.handle('open-item', (event, file) => {
-  const filePath = path.normalize(file);
-  shell.openItem(filePath);
-});
-
-ipcMain.handle('open-folder', (event, folder) => {
-  const folderPath = path.normalize(folder);
-  shell.showItemInFolder(folderPath);
-});
-
-ipcMain.handle('shell-spawn', (event, params) => {
-  const { command, args } = params;
-  spawn(command, args);
-});
-
-ipcMain.handle('show-notification', (event, params) => {
-  const { title, message } = params;
-  createOSNotification(title, message);
-});
-
-/**
- * FS Handlers
- */
-
-ipcMain.on('get-user-data-path', (event) => {
-  event.returnValue = app.getPath('userData');
-});
-
-ipcMain.handle('unpack-archive', async(event, params) => {
-  const { blob, item, filename, databaseURL } = params;
-  return await installFile(blob, item, filename, databaseURL);
-});
-
-/**
- * Dialog handlers
- */
-ipcMain.handle('show-open-dialog', async(event, args) => {
-  if (appWin !== null) {
-    return await dialog.showOpenDialog(appWin, args);
-  }
-});
-
-/**
- * Set progress status in taskbar
- */
-ipcMain.on('set-window-progress', (event, value) => {
-  appWin?.setProgressBar(value);
-});
-
-ipcMain.on('set-window-vibrance', (event, theme) => {
-  if (isWindows10()) {
-    if (appWin !== null) {
-      const vibrancy = getVibrancyOptions(theme);
-      appWin.setVibrancy((vibrancy as any));
-    }
-  }
-});
-
-/**
- * Vuex cross-process handlers
- */
-
-/**
- * Emit event to renderer vuex instance
- * @param commit commit name
- * @param params commit arguments
- */
-export function sendVuexCommit(commit: string, params: any): void {
-  appWin?.webContents.send('vuex-commit-reply', {
-    commit,
-    args: params
-  });
-}
+ApplicationStore.initAppSettings();
+ApplicationStore.initDCCSettings();
