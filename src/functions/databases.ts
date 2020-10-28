@@ -1,3 +1,5 @@
+import { ipcRenderer } from 'electron';
+
 export const integrationsList: string[] = [
   'meshhouse',
   'sfmlab',
@@ -19,4 +21,13 @@ export function isDownloadLink(link: SFMLabLink[] | Error): link is SFMLabLink[]
 
 export function isDBModel(model: Model[] | Error): model is Model[] {
   return (model as Model[]).length !== undefined;
+}
+
+export function findDatabaseIndex(url: string): number {
+  const db = ipcRenderer.sendSync('get-database', 'databases.local');
+  return db.findIndex((db: DatabaseItem) => db.url === url);
+}
+
+export function isDatabaseRemote(url: string): boolean {
+  return integrationsList.findIndex((value: string) => value === url) !== -1;
 }

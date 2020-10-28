@@ -17,9 +17,9 @@ ipcRenderer.answerMain('vuex-state-send', (path: string) => {
   return state;
 });
 
-ipcRenderer.answerMain('i18n-t', (path: string) => {
-  const str = i18n.t(path);
-  return str;
+ipcRenderer.answerMain('i18n-t', (args: any) => {
+  const { path, params } = args;
+  return args !== undefined ? i18n.t(path, params) : i18n.t(path);
 });
 
 ipcRenderer.on('event-bus-emit', (event, params) => {

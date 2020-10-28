@@ -64,8 +64,8 @@ type Download = {
   path: string;
   totalSize: number;
   downloadedSize: number;
-  startedAt: Date;
-  cancelToken: any;
+  startedAt: number;
+  id: string;
 }
 
 // Database

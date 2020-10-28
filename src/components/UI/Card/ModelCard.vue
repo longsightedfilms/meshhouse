@@ -26,14 +26,11 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue';
 import VueContext from 'vue-context';
 import Component from 'vue-class-component';
 import ModelImage from '@/components/UI/Image/ModelImage.vue';
-import Integrations from '@/plugins/models-db/integrations/main';
 import RemoteModelInfoModal from '@/views/Modals/RemoteModelInfoModal.vue';
-import { formatBytes } from '@/plugins/models-db/functions';
 
 @Component({
   components: {
@@ -46,7 +43,7 @@ import { formatBytes } from '@/plugins/models-db/functions';
 })
 export default class ModelCard extends Vue {
   modelSize(size: number): string {
-    return formatBytes(size);
+    return  this.$formatSize(size);
   }
 
   async handleDblClick(item: Model): Promise<void> {
@@ -55,8 +52,11 @@ export default class ModelCard extends Vue {
       if (item.installed === true) {
         this.$openItem(item.path);
       } else {
-        const db = new Integrations[this.$route.params.database]();
-        await db.fetchSingleModel(this.$props.item);
+        await this.$ipcInvoke('get-single-model-integration', {
+          type: 'remote',
+          title: this.$route.params.database,
+          item: this.$store.state.controls.properties
+        });
         this.$modal.show(RemoteModelInfoModal, {}, {
           adaptive: true,
           clickToClose: true,

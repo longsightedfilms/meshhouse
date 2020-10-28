@@ -26,9 +26,12 @@ export async function getVuexState(path: string): Promise<any> {
  * Fetch localized string from renderer process
  * @param path object notation path
  */
-export async function getLocalizedString(path: string): Promise<any> {
+export async function getLocalizedString(path: string, params?: object): Promise<any> {
   if (appWin !== null) {
-    const result = await ipcMain.callRenderer(appWin, 'i18n-t', path);
+    const result = await ipcMain.callRenderer(appWin, 'i18n-t', {
+      path,
+      params
+    });
     return result;
   }
 }

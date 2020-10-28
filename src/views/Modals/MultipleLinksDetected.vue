@@ -66,10 +66,8 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import Integrations from '@/plugins/models-db/integrations/main';
 
-@Component({
-})
+@Component({})
 export default class RemoteModelInfoModal extends Vue {
   back(): void {
     this.$modal.hideAll();
@@ -79,9 +77,12 @@ export default class RemoteModelInfoModal extends Vue {
   async installModel(linkItem: SFMLabLink): Promise<void> {
     this.back();
 
-    const item = this.$store.state.controls.properties;
-    const db = new Integrations[this.$route.params.database]();
-    await db.downloadItem(item, linkItem);
+    await this.$ipcInvoke('download-item-integration', {
+      type: 'remote',
+      title: this.$route.params.database,
+      item: this.$store.state.controls.properties,
+      link: linkItem
+    });
   }
 }
 </script>

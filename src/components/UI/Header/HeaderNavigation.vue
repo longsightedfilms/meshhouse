@@ -109,7 +109,7 @@ import AddNewCatalogModal from '@/views/Modals/AddNewCatalogModal.vue';
 import FiltersDropdown from '@/components/UI/Header/Dropdowns/Filters.vue';
 import DownloadsDropdown from '@/components/UI/Header/Dropdowns/Downloads.vue';
 import MainMenuDropdown from '@/components/UI/Header/Dropdowns/MainMenu.vue';
-import { handleDatabases, findDatabaseIndex } from '@/plugins/models-db/functions';
+import { findDatabaseIndex } from '@/functions/databases';
 
 @Component({
   components: {

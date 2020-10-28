@@ -1,19 +1,27 @@
 /* eslint-disable @typescript-eslint/require-await */
 /* eslint-disable @typescript-eslint/camelcase */
 
-import eventBus from '@/eventBus';
 import fs from 'fs';
 import path from 'path';
-import store from '@/store/main';
-import { Integration } from '../../template';
-import axios, { AxiosInstance } from 'axios';
-import { i18n } from '@/locales/i18n';
+import got from 'got';
+import type { Got } from 'got';
 import sanitize from 'sanitize-filename';
-import { ipcRenderer } from 'electron';
+import { appWin as windowInstance } from '../../../background';
+import { Integration } from '../../template';
+import * as ApplicationStore from '../../../electron-store';
+import {
+  sendVuexCommit,
+  getVuexState,
+  sendEventBusEmit,
+  getLocalizedString
+} from '../../../ipc_handlers/eventbus';
 
 import {
   isDBModel
-} from '@/functions/databases';
+} from '../../../functions/databases';
+import { installFile } from '../../../functions/archive';
+import { createOSNotification } from '../../../functions/notifier';
+import uniqid from 'uniqid';
 
 /**
  * SFMLab-based site integration class
@@ -37,17 +45,16 @@ export default class SFMLabBaseIntegration extends Integration {
   /**
    * Base axios instance
    */
-  sfmlabInstance: AxiosInstance
+  sfmlabInstance: Got
 
   constructor(slug: string, name: string) {
     super(slug);
     this.slug = slug;
     this.name = name;
 
-    this.sfmlabInstance = axios.create({
-      baseURL: 'https://proxy-api.meshhouse.art',
-      responseType: 'text',
-      timeout: 10000,
+    this.sfmlabInstance = got.extend({
+      prefixUrl: 'https://proxy-api.meshhouse.art',
+      responseType: 'json'
     });
 
     this.initializeLocalDatabase();
@@ -82,7 +89,7 @@ export default class SFMLabBaseIntegration extends Integration {
 
   async fetchItemsFromDatabase(page?: string): Promise<SFMLabFetch | Error> {
     try {
-      const filters = store.state.controls.filters;
+      const filters = await getVuexState('state.controls.filters');
       const params: SFMLabParams = {};
       if (filters.where.category !== -1) {
         params.category = String(filters.where.category);
@@ -103,12 +110,13 @@ export default class SFMLabBaseIntegration extends Integration {
       if (filters.where.name !== '') {
         params.search_text = filters.where.name;
       }
-      store.commit('setOfflineStatus', false);
-      store.commit('setLoadingStatus', false);
 
-      const fetch: SFMLabFetch = (await this.sfmlabInstance.get(`/integrations/${this.slug}/models`, {
-        params: params
-      })).data;
+      sendVuexCommit('setOfflineStatus', false);
+      sendVuexCommit('setLoadingStatus', false);
+
+      const fetch: SFMLabFetch = (await this.sfmlabInstance.get<SFMLabFetch>(`integrations/${this.slug}/models`, {
+        searchParams: params
+      })).body;
 
       const models: Model[] = [];
 
@@ -132,7 +140,7 @@ export default class SFMLabBaseIntegration extends Integration {
       };
     } catch (e) {
       if (e.code === 'ECONNABORTED') {
-        store.commit('setOfflineStatus', true);
+        sendVuexCommit('setOfflineStatus', true);
         const dbQuery = 'SELECT * FROM models';
         return new Promise((resolve, reject): void => {
           this.db.all(dbQuery as string, (err, rows) => {
@@ -158,32 +166,33 @@ export default class SFMLabBaseIntegration extends Integration {
         totalPages: 0
       };
     } finally {
-      store.commit('setLoadingStatus', true);
+      sendVuexCommit('setLoadingStatus', true);
     }
   }
 
   async fetchSingleModel(model: Model): Promise<void | Error> {
     try {
-      store.commit('setOfflineStatus', false);
-      store.commit('setLoadingStatus', false);
-      const fetch = await this.sfmlabInstance.get(`/integrations/${this.slug}/models/${model.id}`);
-      const item = fetch.data;
+      sendVuexCommit('setOfflineStatus', false);
+      sendVuexCommit('setLoadingStatus', false);
+      const item = (await this.sfmlabInstance.get<Model>(`integrations/${this.slug}/models/${model.id}`)).body;
       const installed = await this.checkIsInstalledModel(model.id);
 
-      item.installed = installed;
+      item.installed = (installed as boolean);
       item.remoteId = item.id;
 
-      store.commit('setProperties', item);
+      sendVuexCommit('setProperties', item);
     } catch (e) {
       if (e.code === 'ECONNABORTED') {
-        store.commit('setOfflineStatus', true);
+        sendVuexCommit('setOfflineStatus', true);
         return Promise.reject(e);
       }
     } finally {
-      store.commit('setLoadingStatus', true);
+      sendVuexCommit('setLoadingStatus', true);
     }
   }
-
+  fetchCategories(query?: string | undefined): Promise<Category[] | Error> {
+    throw new Error('Method not implemented.');
+  }
   dynamicQueryBuilder(params: QueryParameters): string {
     throw new Error('Method not implemented.');
   }
@@ -203,23 +212,21 @@ export default class SFMLabBaseIntegration extends Integration {
 
     await this.runQuery(dbQuery);
     // Update databases record
-    const db = ipcRenderer.sendSync('get-database', `databases.integrations.${this.slug}`);
+    const db = ApplicationStore.databases.get(`databases.integrations.${this.slug}`);
     db.totalsize -= item.size ?? 0;
     db.count--;
 
-    ipcRenderer.invoke('set-database', {
-      key: `databases.integrations.${this.slug}`,
-      value: db
-    });
+    ApplicationStore.databases.set(`databases.integrations.${this.slug}`, db);
 
-    store.commit('setApplicationDatabases', ipcRenderer.sendSync('get-database', 'databases'));
-    store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? this.slug);
-    eventBus.emit('item-deleted');
+    const currentDB = await getVuexState('state.db.currentDB.url');
 
-    ipcRenderer.invoke('show-notification', {
-      title: i18n.t('notifications.delete.title', { site: this.name }).toString(),
-      message: i18n.t('notifications.delete.text', { title: item.name }).toString()
-    });
+    sendVuexCommit('setApplicationDatabases', ApplicationStore.databases.get('databases'));
+    sendVuexCommit('setCurrentDatabase', currentDB ?? this.slug);
+    sendEventBusEmit('item-deleted', {});
+
+    const notificationTitle = await getLocalizedString('notifications.delete.title', { site: this.name });
+    const notificationMessage = await getLocalizedString('notifications.delete.text', { title: item.name });
+    createOSNotification(notificationTitle, notificationMessage);
 
     return Promise.resolve(true);
   }
@@ -229,15 +236,15 @@ export default class SFMLabBaseIntegration extends Integration {
       let links: SFMLabLink[] | undefined = undefined;
       if (!Object.hasOwnProperty.call(item, 'downloadLinks')) {
         await this.fetchSingleModel(item);
-        links = store.state.controls.properties.downloadLinks;
+        links = await getVuexState('state.controls.properties.downloadLinks');
       } else {
         links = item.downloadLinks;
       }
 
       if (links !== undefined) {
         if (links.length > 1) {
-          eventBus.emit('multiple-links');
-          store.commit('setDownloadLinks', links);
+          sendEventBusEmit('multiple-links', {});
+          sendVuexCommit('setDownloadLinks', links);
         } else {
           await this.downloadItem(item, links[0]);
         }
@@ -253,21 +260,20 @@ export default class SFMLabBaseIntegration extends Integration {
       let links: SFMLabLink[] | undefined = undefined;
       if (!Object.hasOwnProperty.call(item, 'downloadLinks')) {
         await this.fetchSingleModel(item);
-        links = store.state.controls.properties.downloadLinks;
+        links = await getVuexState('state.controls.properties.downloadLinks');
       } else {
         links = item.downloadLinks;
       }
 
       if (links !== undefined) {
         if (links.length > 1) {
-          eventBus.emit('multiple-links');
-          store.commit('setDownloadLinks', links);
+          sendEventBusEmit('multiple-links', {});
+          sendVuexCommit('setDownloadLinks', links);
         } else {
           // Notify when downloaded
-          ipcRenderer.invoke('show-notification', {
-            title: i18n.t('notifications.update.title', { site: this.name }).toString(),
-            message: i18n.t('notifications.update.text', { title: item.name }).toString()
-          });
+          const notificationTitle = await getLocalizedString('notifications.update.title', { site: this.name });
+          const notificationMessage = await getLocalizedString('notifications.update.text', { title: item.name });
+          createOSNotification(notificationTitle, notificationMessage);
         }
       }
     } catch (e) {
@@ -278,57 +284,47 @@ export default class SFMLabBaseIntegration extends Integration {
 
   async downloadItem(item: Model, downloadLink: SFMLabLink): Promise<boolean | Error> {
     let isNewModel = true;
-    const isFolderSet = ipcRenderer.sendSync('get-database', `databases.integrations.${this.slug}`).path !== null;
+    const isFolderSet = ApplicationStore.databases.get(`databases.integrations.${this.slug}`).path !== null;
 
     if (!isFolderSet) {
       return Promise.reject(new Error('Path not set'));
     }
 
-    const cancelToken = axios.CancelToken.source();
-
     const download = {
       img: item.images !== undefined ? item.images[0] : '',
       title: item.name,
-      path: path.join(ipcRenderer.sendSync('get-database', `databases.integrations.${this.slug}`).path, sanitize(item.name)),
+      path: path.join(ApplicationStore.databases.get(`databases.integrations.${this.slug}`).path, sanitize(item.name)),
       totalSize: 0,
       downloadedSize: 0,
-      startedAt: new Date(),
-      cancelToken: cancelToken
+      startedAt: new Date().getTime(),
+      id: uniqid()
     };
-    store.commit('addDownloadItem', download);
+
+    sendVuexCommit('addDownloadItem', download);
 
     try {
-      ipcRenderer.send('set-window-progress', 2);
+      windowInstance?.setProgressBar(2);
 
       const link = downloadLink.link;
       const filename = downloadLink.filename;
 
-      const file: ArrayBuffer = (await this.sfmlabInstance.get(link, {
-        cancelToken: cancelToken.token,
-        responseType: 'arraybuffer',
-        timeout: 0,
-        onDownloadProgress: (progressEvent) => {
-          const loaded = Number(progressEvent.loaded);
-          const total = Number(progressEvent.total);
+      const file = await got.get(link, {
+        responseType: 'buffer'
+      })
+        .on('downloadProgress', (progress) => {
+          const loaded = progress.transferred;
+          const total = progress.total;
           download.totalSize = Number(total);
           download.downloadedSize = Number(loaded);
 
-          store.commit('updateDownloadItem', download);
+          sendVuexCommit('updateDownloadItem', download);
 
-          const percents = Math.round((loaded / total) * 100) / 100;
+          windowInstance?.setProgressBar(progress.percent);
+        });
 
-          ipcRenderer.send('set-window-progress', percents);
-        }
-      })).data;
-
-      ipcRenderer.send('set-window-progress', 2);
+      windowInstance?.setProgressBar(2);
       // Unpack archive in folder
-      await ipcRenderer.invoke('unpack-archive', {
-        blob: file,
-        item,
-        filename,
-        databaseURL: this.slug
-      });
+      await installFile(file.body, item, filename, this.slug);
 
       // Check if file exists in DB and update it
       const checkQuery = `SELECT * FROM 'models'
@@ -356,41 +352,41 @@ export default class SFMLabBaseIntegration extends Integration {
       }
 
       // Notify when downloaded
-      ipcRenderer.invoke('show-notification', {
-        title: i18n.t('notifications.download.title', { site: this.name }).toString(),
-        message: i18n.t('notifications.download.text', { title: item.name }).toString()
-      });
-      eventBus.emit('download-completed');
+      const notificationTitle = await getLocalizedString('notifications.download.title', { site: this.name });
+      const notificationMessage = await getLocalizedString('notifications.download.text', { title: item.name });
+      createOSNotification(notificationTitle, notificationMessage);
+      sendEventBusEmit('download-completed', undefined);
 
       // Update databases record
-      const db = ipcRenderer.sendSync('get-database', `databases.integrations.${this.slug}`);
+      const db = ApplicationStore.databases.get(`databases.integrations.${this.slug}`);
       db.totalsize += download.totalSize;
 
       if (isNewModel) {
         db.count++;
       }
 
-      ipcRenderer.invoke('set-database', {
-        key: `databases.integrations.${this.slug}`,
-        value: db
+      ApplicationStore.databases.set(`databases.integrations.${this.slug}`, db);
+
+      const currentDB = await getVuexState('state.db.currentDB.url');
+
+      sendVuexCommit('setApplicationDatabases', ApplicationStore.databases.get('databases'));
+      sendVuexCommit('setCurrentDatabase', currentDB ?? this.slug);
+
+      windowInstance?.setProgressBar(-1, {
+        mode: 'none'
       });
-
-      store.commit('setApplicationDatabases', ipcRenderer.sendSync('get-database', 'databases'));
-      store.commit('setCurrentDatabase', store.state.db.currentDB?.url ?? this.slug);
-
-      ipcRenderer.send('set-window-progress', -1);
 
       return Promise.resolve(true);
     } catch (e) {
-      if (axios.isCancel(e)) {
-        return Promise.resolve(true);
-      } else {
-        console.log(e);
-        download.totalSize = -1;
-        download.downloadedSize = -1;
-        store.commit('updateDownloadItem', download);
-        return Promise.reject(new Error(e));
-      }
+      console.log(e);
+      download.totalSize = -1;
+      download.downloadedSize = -1;
+      windowInstance?.setProgressBar(-1, {
+        mode: 'error'
+      });
+
+      sendVuexCommit('updateDownloadItem', download);
+      return Promise.reject(new Error(e));
     }
   }
 }

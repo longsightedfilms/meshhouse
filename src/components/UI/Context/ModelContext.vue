@@ -78,7 +78,6 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import EditPropertiesModal from '@/views/Modals/Edit/EditPropertiesModal.vue';
 import RemoteModelInfoModal from '@/views/Modals/RemoteModelInfoModal.vue';
-import Integrations from '@/plugins/models-db/integrations/main';
 import { Fragment } from 'vue-fragment';
 
 @Component({
@@ -92,27 +91,35 @@ export default class ModelContext extends Vue {
   }
 
   async installModel(): Promise<void> {
-    const item = this.$store.state.controls.properties;
-    const db = new Integrations[this.$route.params.database]();
-    await db.downloadHandle(item);
+    await this.$ipcInvoke('download-handle-integration', {
+      type: 'remote',
+      title: this.$route.params.database,
+      item: this.$store.state.controls.properties
+    });
   }
 
   async installOtherFileModel(): Promise<void> {
-    const item = this.$store.state.controls.properties;
-    const db = new Integrations[this.$route.params.database]();
-    await db.updateHandle(item);
+    await this.$ipcInvoke('update-handle-integration', {
+      type: 'remote',
+      title: this.$route.params.database,
+      item: this.$store.state.controls.properties
+    });
   }
 
   async deleteModel(): Promise<void> {
-    const item = this.$store.state.controls.properties;
-    const db = new Integrations[this.$route.params.database]();
-    await db.deleteItem(item);
+    await this.$ipcInvoke('delete-item-integration', {
+      type: 'remote',
+      title: this.$route.params.database,
+      item: this.$store.state.controls.properties
+    });
   }
 
   async openRemoteInfo(): Promise<void> {
-    const item = this.$store.state.controls.properties;
-    const db = new Integrations[this.$route.params.database]();
-    await db.fetchSingleModel(item);
+    await this.$ipcInvoke('get-single-model-integration', {
+      type: 'remote',
+      title: this.$route.params.database,
+      item: this.$store.state.controls.properties
+    });
     this.$modal.show(RemoteModelInfoModal, {}, {
       adaptive: true,
       clickToClose: true,

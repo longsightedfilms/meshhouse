@@ -147,7 +147,6 @@
 
 <script lang="ts">
 import { Vue, Component } from 'vue-property-decorator';
-import Integrations from '@/plugins/models-db/integrations/main';
 import getAwesomeSwiper from 'vue-awesome-swiper/dist/exporter';
 import { Swiper as SwiperClass, Pagination, Navigation } from 'swiper/core';
 
@@ -180,25 +179,31 @@ export default class RemoteModelInfoModal extends Vue {
   async installModel(): Promise<void> {
     this.back();
 
-    const item = this.$store.state.controls.properties;
-    const db = new Integrations[this.$route.params.database]();
-    await db.downloadHandle(item);
+    await this.$ipcInvoke('download-handle-integration', {
+      type: 'remote',
+      title: this.$route.params.database,
+      item: this.$store.state.controls.properties
+    });
   }
 
   async installOtherFileModel(): Promise<void> {
     this.back();
 
-    const item = this.$store.state.controls.properties;
-    const db = new Integrations[this.$route.params.database]();
-    await db.updateHandle(item);
+    await this.$ipcInvoke('update-handle-integration', {
+      type: 'remote',
+      title: this.$route.params.database,
+      item: this.$store.state.controls.properties
+    });
   }
 
   async deleteModel(): Promise<void> {
     this.back();
 
-    const item = this.$store.state.controls.properties;
-    const db = new Integrations[this.$route.params.database]();
-    await db.deleteItem(item);
+    await this.$ipcInvoke('delete-item-integration', {
+      type: 'remote',
+      title: this.$route.params.database,
+      item: this.$store.state.controls.properties
+    });
   }
 
   handleClicks(event: any): void {

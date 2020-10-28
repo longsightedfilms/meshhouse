@@ -35,7 +35,7 @@ import EventBus from '@/eventBus';
 import { Vue, Component ,Watch } from 'vue-property-decorator';
 import Multiselect from 'vue-multiselect';
 import { Fragment } from 'vue-fragment';
-import { handleDatabases, findDatabaseIndex } from '@/plugins/models-db/functions';
+import { findDatabaseIndex } from '@/functions/databases';
 import * as Filters from '@/functions/filters';
 
 @Component({

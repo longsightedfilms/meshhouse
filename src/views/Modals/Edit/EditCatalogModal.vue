@@ -173,7 +173,8 @@ import Component from 'vue-class-component';
 import ColorPicker from 'vue-color/src/components/Chrome.vue';
 import SidebarLink from '@/components/UI/Sidebar/SidebarLink.vue';
 import { ValidationObserver, validate } from 'vee-validate';
-import { findDatabaseIndex, colorContrast } from '@/plugins/models-db/functions';
+import { colorContrast } from '@/functions/image';
+import { findDatabaseIndex } from '@/functions/databases';
 
 @Component({
   components: {

@@ -44,7 +44,7 @@
 import { Vue, Component, Watch }from 'vue-property-decorator';
 import VueSlider from 'vue-slider-component';
 import { Fragment } from 'vue-fragment';
-import { isDatabaseRemote } from '@/plugins/models-db/functions';
+import { isDatabaseRemote } from '@/functions/databases';
 import LocalFilters from '@/components/UI/Filters/LocalFilters.vue';
 import RemoteFilters from '@/components/UI/Filters/RemoteFilters.vue';
 

@@ -1,3 +1,5 @@
+import { ipcRenderer } from 'electron';
+
 const gameEnginesExtensions: Extension = {
   '.sfm': {
     title: 'Source Filmmaker Addon',
@@ -75,4 +77,30 @@ export function slugifyToExtension(format: string): string {
   }
 
   return '.sfm';
+}
+
+export function getParameterByExtension(extension: string, param: string): string {
+  switch (extension) {
+  case '.3b':
+    return ipcRenderer.sendSync('get-dcc-setting', 'threedCoat.' + param);
+  case '.max':
+    return ipcRenderer.sendSync('get-dcc-setting', 'adsk3dsmax.' + param);
+  case '.ma':
+  case '.mb':
+    return ipcRenderer.sendSync('get-dcc-setting', 'adskMaya.' + param);
+  case '.blend':
+    return ipcRenderer.sendSync('get-dcc-setting', 'blender.' + param);
+  case '.c4d':
+    return ipcRenderer.sendSync('get-dcc-setting', 'cinema4d.' + param);
+  case '.hip':
+  case '.hiplc':
+  case '.hipnc':
+    return ipcRenderer.sendSync('get-dcc-setting', 'houdini.' + param);
+  case '.lxo':
+    return ipcRenderer.sendSync('get-dcc-setting', 'modo.' + param);
+  case '.spp':
+    return ipcRenderer.sendSync('get-dcc-setting', 'substancePainter.' + param);
+  default:
+    return 'nondefault';
+  }
 }

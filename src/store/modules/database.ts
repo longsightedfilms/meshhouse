@@ -1,4 +1,4 @@
-import { integrationsList } from '@/plugins/models-db/functions';
+import { integrationsList } from '@/functions/databases';
 
 export default {
   state: {

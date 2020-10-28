@@ -78,8 +78,7 @@ export function handleDatabases(database: DatabaseItem | string): Integrations |
   if (dbType === 'meshhouse') {
     return null;
   }
-  //return dbType === 'local' ? new Integrations.local(searchableDB.url) : new Integrations[dbType]();
-  return dbType === 'local' ? new Integrations.local(searchableDB.url) : null;
+  return dbType === 'local' ? new Integrations.local(searchableDB.url) : new Integrations[dbType]();
 }
 
 /**

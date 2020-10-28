@@ -168,4 +168,100 @@ export default function(): void {
       return Promise.reject(err);
     }
   });
+
+  ipcMain.handle('get-single-model-integration', async(event, params) => {
+    const {
+      type,
+      title,
+      item
+    } = params;
+
+    if (type !== 'remote') {
+      return Promise.reject('database is not remote');
+    }
+
+    try {
+      const db = new Integrations[title];
+      await db.fetchSingleModel(item);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  });
+
+  ipcMain.handle('download-handle-integration', async(event, params) => {
+    const {
+      type,
+      title,
+      item
+    } = params;
+
+    if (type !== 'remote') {
+      return Promise.reject('database is not remote');
+    }
+
+    try {
+      const db = new Integrations[title];
+      await db.downloadHandle(item);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  });
+
+  ipcMain.handle('download-item-integration', async(event, params) => {
+    const {
+      type,
+      title,
+      item,
+      link
+    } = params;
+
+    if (type !== 'remote') {
+      return Promise.reject('database is not remote');
+    }
+
+    try {
+      const db = new Integrations[title];
+      await db.downloadItem(item, link);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  });
+
+  ipcMain.handle('update-handle-integration', async(event, params) => {
+    const {
+      type,
+      title,
+      item
+    } = params;
+
+    if (type !== 'remote') {
+      return Promise.reject('database is not remote');
+    }
+
+    try {
+      const db = new Integrations[title];
+      await db.updateHandle(item);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  });
+
+  ipcMain.handle('delete-item-integration', async(event, params) => {
+    const {
+      type,
+      title,
+      item
+    } = params;
+
+    if (type !== 'remote') {
+      return Promise.reject('database is not remote');
+    }
+
+    try {
+      const db = new Integrations[title];
+      await db.deleteItem(item);
+    } catch (err) {
+      return Promise.reject(err);
+    }
+  });
 }

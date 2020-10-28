@@ -17,7 +17,7 @@ const sevenExtensions = ['.7z', '.xz', '.lzma', '.cab', '.zip', '.gzip', '.bzip2
  * @param databaseURL database URL or slug
  */
 export async function installFile(
-  blob: ArrayBuffer,
+  blob: Buffer,
   item: Model,
   filename: string,
   databaseURL: string
@@ -34,7 +34,7 @@ export async function installFile(
 
   // Write archive to temp directory
   if(!fs.existsSync(tmpFile)) {
-    fs.writeFileSync(tmpFile, new Uint8Array(blob));
+    fs.writeFileSync(tmpFile, blob);
   }
 
   sendVuexCommit('setLoadingStatus', false);

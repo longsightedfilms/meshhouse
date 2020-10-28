@@ -1,15 +1,15 @@
-import url from 'url';
+export function formatBytes(bytes: number, decimals = 2): string {
+  if (bytes === 0) {
+    return '0 B';
+  }
 
-/**
- * Returns sanitized URL if image is local file
- * @param image path to image
- */
-export function getLocalLink(image: string): string {
-  const local = image.search(/^https?:\/\//gm) === -1;
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
 
-  const imageURL = url.pathToFileURL(image).pathname;
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
 
-  return local ? `local://${imageURL}` : image;
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
 export function hexToRgb(hex: string): ColorRGB | null {

@@ -50,8 +50,7 @@ import EditPropertiesModal from '@/views/Modals/EditPropertiesModal.vue';
 import CategoryContext from '@/components/UI/Context/CategoryContext.vue';
 import ModelContext from '@/components/UI/Context/ModelContext.vue';
 import ModelCard from '@/components/UI/Card/ModelCard.vue';
-import Integrations from '@/plugins/models-db/integrations/main';
-import { findDatabaseIndex } from '@/plugins/models-db/functions';
+import { findDatabaseIndex } from '@/functions/databases';
 import { Route } from 'vue-router';
 import { ipcRenderer } from 'electron';
 

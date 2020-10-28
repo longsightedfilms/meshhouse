@@ -20,7 +20,7 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import Multiselect from 'vue-multiselect';
 import { Fragment } from 'vue-fragment';
-import { handleDatabases, findDatabaseIndex } from '@/plugins/models-db/functions';
+import { findDatabaseIndex } from '@/functions/databases';
 import { modelsExtensions } from '@/functions/extension';
 
 @Component({
@@ -69,9 +69,10 @@ export default class LocalFilters extends Vue {
   }
 
   setFilters(): void {
-    const db = handleDatabases(this.$route.params.database);
-
-    db?.fetchItemsFromDatabase().then((result: Model[]): void => {
+    this.$ipcInvoke('get-integration-models', {
+      type: 'local',
+      title: this.$route.params.database
+    }).then((result: Model[]): void => {
       this.$store.commit('setLoadedData', result);
     });
   }

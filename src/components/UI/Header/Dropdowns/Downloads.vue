@@ -6,7 +6,7 @@
     <div v-if="$store.state.downloads.length > 0">
       <div
         v-for="(download, idx) in $store.state.downloads"
-        :key="idx"
+        :key="download.id"
         class="download__item"
       >
         <div class="image">
@@ -25,7 +25,7 @@
             v-if="download.downloadedSize !== -1"
             class="status"
           >
-            <span>{{ computeFileSize(download.downloadedSize) + ' / ' + computeFileSize(download.totalSize) }}</span>
+            <span>{{ computeFileSize(download) }}</span>
           </p>
           <p
             v-else
@@ -35,7 +35,7 @@
           </p>
         </div>
         <div class="buttons">
-          <button
+          <!--<button
             v-if="!isFinished(download)"
             class="button button--flat button--flat-danger button--icon-only"
             @click="$store.commit('cancelDownloadItem', download)"
@@ -44,7 +44,7 @@
               icon="stop"
               raster
             />
-          </button>
+          </button>-->
           <button
             v-if="isFinished(download) && !isCanceled(download)"
             class="button button--flat button--icon-only"
@@ -78,7 +78,6 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Fragment } from 'vue-fragment';
-import { formatBytes } from '@/plugins/models-db/functions';
 
 @Component({
   components: {
@@ -98,8 +97,8 @@ export default class DownloadsDropdown extends Vue {
     return item.downloadedSize / item.totalSize * 100;
   }
 
-  computeFileSize(bytes: number): string {
-    return formatBytes(bytes);
+  computeFileSize(item: Download): string {
+    return `${this.$formatSize(item.downloadedSize)} / ${this.$formatSize(item.totalSize)}`;
   }
 }
 </script>

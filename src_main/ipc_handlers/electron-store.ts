@@ -5,7 +5,7 @@ import * as ApplicationStore from '../electron-store';
 import { sendVuexCommit } from './eventbus';
 import Integrations from '../integrations';
 import { recursiveIndexFolder } from '../functions/fs';
-import { unwatchDatabases, watchDatabases } from '../integrations/functions';
+import { unwatchDatabases, watchDatabases, handleDatabases } from '../integrations/functions';
 
 export default function(): void {
   ipcMain.on('get-application-setting', (event, key) => {
@@ -105,5 +105,9 @@ export default function(): void {
 
   ipcMain.handle('init-databases', () => {
     ApplicationStore.initDatabases();
+  });
+
+  ipcMain.handle('handle-databases', (event, db) => {
+    return handleDatabases(db);
   });
 }

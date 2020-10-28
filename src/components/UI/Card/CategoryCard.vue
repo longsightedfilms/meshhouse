@@ -89,14 +89,11 @@
 </template>
 
 <script lang="ts">
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue';
 import VueContext from 'vue-context';
 import Component from 'vue-class-component';
 import ModelImage from '@/components/UI/Image/ModelImage.vue';
 import AddCategoryModal from '@/views/Modals/AddCategoryModal.vue';
-import { formatBytes } from '@/plugins/models-db/functions';
-import Integrations from '@/plugins/models-db/integrations/main';
 
 @Component({
   components: {
@@ -148,8 +145,11 @@ export default class CategoryCard extends Vue {
     const query = `SELECT * FROM 'categories'
     WHERE id = ${this.$route.params.category}`;
 
-    const db = new Integrations.local(this.$route.params.database);
-    const categories = await db.fetchCategories(query);
+    const categories = await this.$ipcInvoke('get-integration-categories', {
+      type: 'local',
+      title: this.$route.params.database,
+      query
+    });
 
     const parentId = categories[0].parentId;
 

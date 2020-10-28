@@ -20,8 +20,7 @@ export default {
       eventBus.emit('download-started');
     },
     cancelDownloadItem(state: Download[], payload: Download): void {
-      const idx = state.findIndex((download: Download) => download.cancelToken === payload.cancelToken);
-      state[idx].cancelToken.cancel();
+      const idx = state.findIndex((download: Download) => download.id === payload.id);
       state[idx].totalSize = -1;
       state[idx].downloadedSize = -1;
       ipcRenderer.send('set-window-progress', -1);
@@ -33,8 +32,8 @@ export default {
       state.splice(index, 1);
     },
     updateDownloadItem(state: Download[], payload: Download): void {
-      const idx = state.findIndex((download: Download) => download.cancelToken === payload.cancelToken);
-      state[idx] = payload;
+      const idx = state.findIndex((download: Download) => download.id === payload.id);
+      state.splice(idx, 1, payload);
     }
   }
 };

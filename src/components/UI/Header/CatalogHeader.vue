@@ -112,8 +112,7 @@
 import EventBus from '@/eventBus';
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { colorContrast } from '@/plugins/models-db/functions';
-import { getLocalLink } from '@/functions/image';
+import { getLocalLink, colorContrast } from '@/functions/image';
 import EditCatalogModal from '@/views/Modals/Edit/EditCatalogModal.vue';
 
 @Component({

@@ -5,12 +5,8 @@ import { transliterate as tr, slugify } from 'transliteration';
 import store from '@/store/main';
 import sanitizeHTML from 'sanitize-html';
 
-import {
-  getParameterByExtension,
-  formatBytes,
-} from './functions';
-
-import { modelsExtensions } from '@/functions/extension';
+import { formatBytes } from '@/functions/format';
+import { modelsExtensions, getParameterByExtension } from '@/functions/extension';
 import { formatDateRelative } from '@/functions/date';
 
 ipcRenderer.invoke('init-databases');

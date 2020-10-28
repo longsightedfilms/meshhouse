@@ -52,7 +52,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { colorContrast } from '@/plugins/models-db/functions';
+import { colorContrast } from '@/functions/image';
 
 @Component({
   props: {

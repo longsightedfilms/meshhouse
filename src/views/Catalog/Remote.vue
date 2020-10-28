@@ -44,10 +44,10 @@ import { Fragment } from 'vue-fragment';
 import VueContext from 'vue-context';
 import ModelContext from '@/components/UI/Context/ModelContext.vue';
 import ModelCard from '@/components/UI/Card/ModelCard.vue';
-import Integrations from '@/plugins/models-db/integrations/main';
 import CatalogPaginator from './CatalogPaginator.vue';
 import MultipleLinksModal from '@/views/Modals/MultipleLinksDetected.vue';
 import { Route } from 'vue-router';
+import { ipcRenderer } from 'electron';
 
 @Component({
   components: {
@@ -58,8 +58,11 @@ import { Route } from 'vue-router';
     ModelContext
   },
   async beforeRouteEnter(to: Route, from: Route, next: Function) {
-    const db = new Integrations[to.params.database]();
-    const data = await db.fetchItemsFromDatabase(to.params.page);
+    const data = await ipcRenderer.invoke('get-integration-models', {
+      type: 'remote',
+      title: to.params.database,
+      query: to.params.page
+    });
 
     next((vm: Vue) => {
       vm.$store.commit('setCurrentDatabase', to.params.database);
@@ -108,8 +111,11 @@ export default class RemoteDatabase extends Vue {
   }
 
   async databaseInitialize(): Promise<void> {
-    const db = new Integrations[this.$route.params.database]();
-    const data = await db.fetchItemsFromDatabase(this.$route.params.page);
+    const data = await this.$ipcInvoke('get-integration-models', {
+      type: 'remote',
+      title: this.$route.params.database,
+      query: this.$route.params.page
+    });
 
     this.$store.commit('setCurrentDatabase', this.$route.params.database);
     this.$store.commit('setLoadedData', data.models);
