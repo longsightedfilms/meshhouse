@@ -9,6 +9,7 @@ import sanitize from 'sanitize-filename';
 import { appWin as windowInstance } from '../../../background';
 import { Integration } from '../../template';
 import * as ApplicationStore from '../../../electron-store';
+import serverStore from '../../../store';
 import {
   sendVuexCommit,
   getVuexState,
@@ -22,6 +23,7 @@ import {
 import { installFile } from '../../../functions/archive';
 import { createOSNotification } from '../../../functions/notifier';
 import uniqid from 'uniqid';
+import logger from '../../../logger';
 
 /**
  * SFMLab-based site integration class
@@ -114,6 +116,7 @@ export default class SFMLabBaseIntegration extends Integration {
       sendVuexCommit('setOfflineStatus', false);
       sendVuexCommit('setLoadingStatus', false);
 
+      logger.verbose(`HTTP GET https://proxy-api.meshhouse.art/integrations/${this.slug}/models`);
       const fetch: SFMLabFetch = (await this.sfmlabInstance.get<SFMLabFetch>(`integrations/${this.slug}/models`, {
         searchParams: params
       })).body;
@@ -138,13 +141,15 @@ export default class SFMLabBaseIntegration extends Integration {
         licenses: fetch.licenses,
         totalPages: fetch.totalPages
       };
-    } catch (e) {
-      if (e.code === 'ECONNABORTED') {
+    } catch (err) {
+      if (err.code === 'ECONNABORTED') {
+        logger.warn('Internet connection or server is offline');
         sendVuexCommit('setOfflineStatus', true);
         const dbQuery = 'SELECT * FROM models';
         return new Promise((resolve, reject): void => {
           this.db.all(dbQuery as string, (err, rows) => {
             if (err) {
+              logger.error(err);
               reject(err);
             } else {
               const obj = {
@@ -158,7 +163,7 @@ export default class SFMLabBaseIntegration extends Integration {
           });
         });
       }
-      console.log(e);
+      logger.error(new Error(err));
       return {
         models: [],
         categories: [],
@@ -166,6 +171,7 @@ export default class SFMLabBaseIntegration extends Integration {
         totalPages: 0
       };
     } finally {
+      logger.verbose(`HTTP GET https://proxy-api.meshhouse.art/integrations/${this.slug}/models completed`);
       sendVuexCommit('setLoadingStatus', true);
     }
   }
@@ -174,6 +180,7 @@ export default class SFMLabBaseIntegration extends Integration {
     try {
       sendVuexCommit('setOfflineStatus', false);
       sendVuexCommit('setLoadingStatus', false);
+      logger.verbose(`HTTP GET https://proxy-api.meshhouse.art/integrations/${this.slug}/models/${model.id}`);
       const item = (await this.sfmlabInstance.get<Model>(`integrations/${this.slug}/models/${model.id}`)).body;
       const installed = await this.checkIsInstalledModel(model.id);
 
@@ -183,10 +190,12 @@ export default class SFMLabBaseIntegration extends Integration {
       sendVuexCommit('setProperties', item);
     } catch (e) {
       if (e.code === 'ECONNABORTED') {
+        logger.warn('Internet connection or server is offline');
         sendVuexCommit('setOfflineStatus', true);
         return Promise.reject(e);
       }
     } finally {
+      logger.verbose(`HTTP GET https://proxy-api.meshhouse.art/integrations/${this.slug}/models/${model.id} completed`);
       sendVuexCommit('setLoadingStatus', true);
     }
   }
@@ -204,14 +213,16 @@ export default class SFMLabBaseIntegration extends Integration {
   }
 
   async deleteItem(item: Model): Promise<boolean | Error> {
+    logger.info(`Deleting item ${item.name}`);
     // Check if temp folder exists
     if (fs.existsSync(item.path)) {
       fs.rmdirSync(item.path, { recursive: true });
     }
     const dbQuery = `DELETE FROM 'models' WHERE remoteId=${item.remoteId}`;
-
+    logger.verbose('Deleting item from local database');
     await this.runQuery(dbQuery);
     // Update databases record
+    logger.verbose('Updating database settings');
     const db = ApplicationStore.databases.get(`databases.integrations.${this.slug}`);
     db.totalsize -= item.size ?? 0;
     db.count--;
@@ -227,7 +238,7 @@ export default class SFMLabBaseIntegration extends Integration {
     const notificationTitle = await getLocalizedString('notifications.delete.title', { site: this.name });
     const notificationMessage = await getLocalizedString('notifications.delete.text', { title: item.name });
     createOSNotification(notificationTitle, notificationMessage);
-
+    logger.info(`Item ${item.name} has been deleted`);
     return Promise.resolve(true);
   }
 
@@ -249,9 +260,9 @@ export default class SFMLabBaseIntegration extends Integration {
           await this.downloadItem(item, links[0]);
         }
       }
-    } catch (e) {
-      console.log(e);
-      return Promise.reject(new Error(e));
+    } catch (err) {
+      logger.error(new Error(err));
+      return Promise.reject(new Error(err));
     }
   }
 
@@ -276,19 +287,22 @@ export default class SFMLabBaseIntegration extends Integration {
           createOSNotification(notificationTitle, notificationMessage);
         }
       }
-    } catch (e) {
-      console.log(e);
-      return Promise.reject(new Error(e));
+    } catch (err) {
+      logger.error(new Error(err));
+      return Promise.reject(new Error(err));
     }
   }
 
   async downloadItem(item: Model, downloadLink: SFMLabLink): Promise<boolean | Error> {
+    logger.info(`Added item ${item.name} to download query`);
     let isNewModel = true;
     const isFolderSet = ApplicationStore.databases.get(`databases.integrations.${this.slug}`).path !== null;
 
     if (!isFolderSet) {
       return Promise.reject(new Error('Path not set'));
     }
+
+    const id = uniqid();
 
     const download = {
       img: item.images !== undefined ? item.images[0] : '',
@@ -297,36 +311,43 @@ export default class SFMLabBaseIntegration extends Integration {
       totalSize: 0,
       downloadedSize: 0,
       startedAt: new Date().getTime(),
-      id: uniqid()
+      id
     };
 
     sendVuexCommit('addDownloadItem', download);
 
+    const link = downloadLink.link;
+    const filename = downloadLink.filename;
+
+    const request = got.get(link, {
+      responseType: 'buffer'
+    })
+      .on('downloadProgress', (progress) => {
+        const loaded = progress.transferred;
+        const total = progress.total;
+        download.totalSize = Number(total);
+        download.downloadedSize = Number(loaded);
+
+        sendVuexCommit('updateDownloadItem', download);
+
+        windowInstance?.setProgressBar(progress.percent);
+      });
+
+    const serverDownload = {
+      id,
+      request
+    };
+
+    serverStore.commit('addDownloadItem', serverDownload);
     try {
       windowInstance?.setProgressBar(2);
-
-      const link = downloadLink.link;
-      const filename = downloadLink.filename;
-
-      const file = await got.get(link, {
-        responseType: 'buffer'
-      })
-        .on('downloadProgress', (progress) => {
-          const loaded = progress.transferred;
-          const total = progress.total;
-          download.totalSize = Number(total);
-          download.downloadedSize = Number(loaded);
-
-          sendVuexCommit('updateDownloadItem', download);
-
-          windowInstance?.setProgressBar(progress.percent);
-        });
+      logger.info(`Downloading item ${item.name}`);
+      const file = await request;
 
       windowInstance?.setProgressBar(2);
-      // Unpack archive in folder
       await installFile(file.body, item, filename, this.slug);
 
-      // Check if file exists in DB and update it
+      logger.verbose(`Check if item ${item.name} is installed`);
       const checkQuery = `SELECT * FROM 'models'
         WHERE remoteId=${item.id}
       `;
@@ -335,12 +356,14 @@ export default class SFMLabBaseIntegration extends Integration {
 
       if (isDBModel(result)) {
         if (result.length === 0) {
+          logger.verbose(`Add item ${item.name} to local database`);
           const dbQuery = `INSERT INTO 'models' VALUES
           (null, ${item.id}, '${item.name}', '${item.extension}', '${download.path}',
           '${download.path}', '${item.category}', ${download.totalSize}, '${item.image}', 1)`;
 
           await this.runQuery(dbQuery);
         } else {
+          logger.verbose(`Updating item ${item.name} in local database`);
           const totalSize = (result[0].size || 0) + download.totalSize;
           const updateQuery = `UPDATE 'models'
             SET size=${totalSize}
@@ -351,13 +374,13 @@ export default class SFMLabBaseIntegration extends Integration {
         }
       }
 
-      // Notify when downloaded
       const notificationTitle = await getLocalizedString('notifications.download.title', { site: this.name });
       const notificationMessage = await getLocalizedString('notifications.download.text', { title: item.name });
       createOSNotification(notificationTitle, notificationMessage);
       sendEventBusEmit('download-completed', undefined);
+      serverStore.commit('removeDownloadItem', serverDownload.id);
 
-      // Update databases record
+      logger.verbose('Updating database settings');
       const db = ApplicationStore.databases.get(`databases.integrations.${this.slug}`);
       db.totalsize += download.totalSize;
 
@@ -375,18 +398,25 @@ export default class SFMLabBaseIntegration extends Integration {
       windowInstance?.setProgressBar(-1, {
         mode: 'none'
       });
-
+      logger.info(`Item ${item.name} has been downloaded`);
       return Promise.resolve(true);
-    } catch (e) {
-      console.log(e);
-      download.totalSize = -1;
-      download.downloadedSize = -1;
-      windowInstance?.setProgressBar(-1, {
-        mode: 'error'
-      });
+    } catch (err) {
+      if (request.isCanceled) {
+        logger.warn(`Downloading item ${item.name} has been canceled`);
+        serverStore.commit('removeDownloadItem', serverDownload.id);
+        return Promise.resolve(true);
+      } else {
+        logger.error(new Error(err));
+        download.totalSize = -1;
+        download.downloadedSize = -1;
+        windowInstance?.setProgressBar(-1, {
+          mode: 'error'
+        });
 
-      sendVuexCommit('updateDownloadItem', download);
-      return Promise.reject(new Error(e));
+        serverStore.commit('removeDownloadItem', serverDownload.id);
+        sendVuexCommit('updateDownloadItem', download);
+        return Promise.reject(new Error(err));
+      }
     }
   }
 }

@@ -35,7 +35,7 @@
           </p>
         </div>
         <div class="buttons">
-          <!--<button
+          <button
             v-if="!isFinished(download)"
             class="button button--flat button--flat-danger button--icon-only"
             @click="$store.commit('cancelDownloadItem', download)"
@@ -44,7 +44,7 @@
               icon="stop"
               raster
             />
-          </button>-->
+          </button>
           <button
             v-if="isFinished(download) && !isCanceled(download)"
             class="button button--flat button--icon-only"

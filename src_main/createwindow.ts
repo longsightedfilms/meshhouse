@@ -5,7 +5,6 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import * as ApplicationStore from './electron-store';
 import * as ipcHandlers from './ipc_handlers';
 
-
 export function createWindow(
   devPath: string,
   prodPath: string,

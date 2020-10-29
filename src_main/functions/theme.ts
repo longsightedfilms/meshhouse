@@ -14,7 +14,7 @@ export function getVibrancyOptions(theme: string): VibrancyOptions {
     effect: 'acrylic',
     useCustomWindowRefreshMethod: true,
     maximumRefreshRate: 60,
-    disableOnBlur: true
+    disableOnBlur: false
   };
 
   return vibrancyOptions;

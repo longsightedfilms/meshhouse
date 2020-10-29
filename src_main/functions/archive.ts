@@ -6,6 +6,7 @@ import Seven from 'node-7z';
 import { databases } from '../electron-store';
 import unrar from '@zhangfuxing/unrar';
 import { sendVuexCommit } from '../ipc_handlers/eventbus';
+import logger from '../logger';
 
 const sevenExtensions = ['.7z', '.xz', '.lzma', '.cab', '.zip', '.gzip', '.bzip2', '.tar', '.tar.gz'];
 
@@ -22,6 +23,7 @@ export async function installFile(
   filename: string,
   databaseURL: string
 ): Promise<boolean | Error> {
+  logger.info(`File ${filename} waiting for install`);
   const tmpPath = path.join(databases.get(`databases.integrations.${databaseURL}`).path, '.meshhouse_temp');
   const tmpFile = path.join(tmpPath, sanitize(filename));
 
@@ -48,6 +50,7 @@ export async function installFile(
 
   if (extension === '.rar') {
     try {
+      logger.info(`Unpacking file ${filename}`);
       await unrar.uncompress({
         src: tmpFile,
         dest: outputPath,
@@ -59,6 +62,7 @@ export async function installFile(
       sendVuexCommit('setLoadingStatus', false);
 
       fs.rmdirSync(tmpPath, { recursive: true });
+      logger.info(`File ${filename} has been installed`);
       return Promise.resolve(true);
     } catch(e) {
       sendVuexCommit('setLoadingStatus', false);
@@ -68,15 +72,18 @@ export async function installFile(
   }
 
   if (sevenExtensions.findIndex((ext: string) => ext === extension) !== -1) {
+    logger.info(`Unpacking file ${filename}`);
     return (Seven as any).extractFull(tmpFile, outputPath, {
       recursive: true,
       $bin: pathTo7zip,
     }).on('end', () => {
+      logger.info(`File ${filename} has been installed`);
       sendVuexCommit('setLoadingStatus', false);
 
       fs.rmdirSync(tmpPath, { recursive: true });
       return Promise.resolve(true);
     }).on('error', (err: string) => {
+      logger.error(new Error(err));
       sendVuexCommit('setLoadingStatus', false);
 
       return Promise.reject(new Error(err));
@@ -86,7 +93,7 @@ export async function installFile(
     fs.writeFileSync(output, new Uint8Array(blob));
 
     sendVuexCommit('setLoadingStatus', false);
-
+    logger.info(`File ${filename} has been installed`);
     fs.rmdirSync(tmpPath, { recursive: true });
     return Promise.resolve(true);
   }

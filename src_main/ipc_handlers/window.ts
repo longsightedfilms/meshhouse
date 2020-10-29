@@ -8,6 +8,10 @@ export default function(windowInstance: BrowserWindow | null): void {
     event.returnValue = isInFullscreen;
   });
 
+  ipcMain.handle('is-fullscreen', (event) => {
+    return windowInstance?.isFullScreen() || false;
+  });
+
   ipcMain.handle('set-fullscreen', () => {
     if (windowInstance !== null) {
       const isInFullscreen = windowInstance.isFullScreen();

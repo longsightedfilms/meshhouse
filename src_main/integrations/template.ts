@@ -2,15 +2,18 @@ import { app } from 'electron';
 import fs from 'fs';
 import path from 'path';
 import sqlite3 from 'sqlite3';
+import logger from '../logger';
 
 export abstract class Integration {
   directory = path.join(app.getPath('userData'), '/databases/')
   db: sqlite3.Database
+  name = ''
 
   constructor(name: string) {
     if (!fs.existsSync(this.directory)) {
       fs.mkdirSync(this.directory);
     }
+    this.name = name;
     this.db = sqlite3.cached.Database(path.resolve(`${this.directory}`, `${name}.sqlite3`));
   }
 
@@ -26,6 +29,7 @@ export abstract class Integration {
     return new Promise((resolve, reject): void => {
       this.db.run(query, (err: Error) => {
         if (err) {
+          logger.error(err);
           reject(err);
         } else {
           resolve(true);
@@ -41,6 +45,7 @@ export abstract class Integration {
     return new Promise((resolve, reject): void => {
       this.db.all(query, (err, rows) => {
         if (err) {
+          logger.error(err);
           reject(err);
         } else {
           resolve(rows);

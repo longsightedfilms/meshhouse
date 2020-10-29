@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import { sendVuexCommit, sendRouterPush, getVuexState } from '../ipc_handlers/eventbus';
 import { Integration } from './template';
+import logger from '../logger';
 
 export default class Local extends Integration {
   constructor(name: string) {
@@ -111,6 +112,7 @@ export default class Local extends Integration {
   }
 
   async fetchItemsFromDatabase(query?: string, category?: number): Promise<Model[] | Error> {
+    logger.info(`Fetching items from local database "${this.name}"`);
     sendVuexCommit('setLoadingStatus', false);
 
     const params = await getVuexState('state.controls.filters');
@@ -140,6 +142,7 @@ export default class Local extends Integration {
   }
 
   async fetchCategories(query?: string): Promise<Category[] | Error> {
+    logger.info(`Fetching categories from local database "${this.name}"`);
     let dbQuery = '';
     const category = await getVuexState('state.controls.filters.where.category');
 
@@ -209,6 +212,7 @@ export default class Local extends Integration {
   }
 
   async reindexCatalog(files: string[]): Promise<DatabaseUpdateInformation> {
+    logger.info(`Reindexing catalog "${this.name}"`);
     let query = 'SELECT path FROM \'models\'';
     const result = await this.fetchItemsFromDatabase(query);
 

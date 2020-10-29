@@ -3,6 +3,7 @@ import fs from 'fs';
 import sharp from 'sharp';
 import uniqid from 'uniqid';
 import { app } from 'electron';
+import logger from '../logger';
 
 /**
  * Creates background image 2560x400px and saves to userData folder
@@ -24,7 +25,7 @@ export async function generateBackgroundImage(item: DatabaseItem, image: string)
     if(fs.existsSync(imagePath)) {
       fs.unlinkSync(imagePath);
     }
-
+    logger.info(`Creating thumbnail image 2560x400 from file ${image}`);
     await sharp(image)
       .resize(2560, 400)
       .webp({
@@ -34,11 +35,13 @@ export async function generateBackgroundImage(item: DatabaseItem, image: string)
         force: true
       })
       .toFile(imagePath);
+    logger.info('Thumbnail image has been created');
     return Promise.resolve({
       status: 'completed',
       imgPath: imagePath
     });
   } catch (err) {
+    logger.error(new Error(err));
     return Promise.reject(err);
   }
 }
@@ -72,6 +75,7 @@ export async function generateThumbnailImage(item: ImageProperties, image: strin
       fs.unlinkSync(item.image);
     }
 
+    logger.info(`Creating thumbnail image 1024x1024 from file ${image}`);
     await sharp(image)
       .resize(1024, 1024)
       .webp({
@@ -81,11 +85,13 @@ export async function generateThumbnailImage(item: ImageProperties, image: strin
         force: true
       })
       .toFile(imagePath);
+    logger.info('Thumbnail image has been created');
     return Promise.resolve({
       status: 'completed',
       imgPath: imagePath
     });
   } catch (err) {
+    logger.error(new Error(err));
     return Promise.reject(err);
   }
 }

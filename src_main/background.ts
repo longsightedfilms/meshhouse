@@ -1,5 +1,6 @@
 declare const __dirname: string;
 
+import logger from './logger';
 import path from 'path';
 import {
   app,
@@ -55,6 +56,7 @@ protocol.registerSchemesAsPrivileged([
 ]);
 
 app.whenReady().then(() => {
+  logger.info(`Application started (version ${process.env.VUE_APP_VERSION})`);
   protocol.registerFileProtocol('local', (request, callback) => {
     const pathname = decodeURI(request.url.replace(/local:\/\/\/|\?.+/gm, ''));
     callback(pathname);
@@ -62,7 +64,6 @@ app.whenReady().then(() => {
 
   const agent = generateUserAgent(appWin?.webContents.getUserAgent() ?? '');
   appWin?.webContents.setUserAgent(agent);
-  console.log(appWin?.webContents.getUserAgent());
 
   if (ApplicationStore.settings.get('showInTray')) {
     handleTray(appWin);
@@ -71,6 +72,7 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
+    logger.info('Application closed');
     app.quit();
   }
 });
@@ -97,6 +99,7 @@ if (isDevelopment) {
     });
   } else {
     process.on('SIGTERM', () => {
+      logger.info('Application closed');
       app.quit();
     });
   }

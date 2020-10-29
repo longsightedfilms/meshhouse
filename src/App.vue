@@ -25,6 +25,7 @@
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import ApplicationHeader from '@/components/UI/Header/ApplicationHeader.vue';
 import ApplicationSidebar from '@/components/UI/Sidebar/ApplicationSidebar.vue';
+import { ipcRenderer } from 'electron';
 
 @Component({
   components: {
@@ -38,7 +39,7 @@ import ApplicationSidebar from '@/components/UI/Sidebar/ApplicationSidebar.vue';
         lang: this.$i18n.locale
       },
       bodyAttrs: {
-        class: ((this as App).applicationClass())
+        class: ((this as App).bodyClass)
       },
       titleTemplate: ((chunk): string => (chunk !== '' ? `${chunk} - Meshhouse` : 'Meshhouse')),
       changed: (newInfo): void => {
@@ -48,18 +49,26 @@ import ApplicationSidebar from '@/components/UI/Sidebar/ApplicationSidebar.vue';
   }
 })
 export default class App extends Vue {
+  bodyClass = 'application';
+
   @Watch('$store.state.controls.fullscreen')
-  applicationClass(): string {
+  @Watch('$store.state.settings.theme')
+  async updateApplicationClass(): Promise<void> {
+    await this.handleApplicationClass();
+  }
+
+  async handleApplicationClass(): Promise<void> {
     let bodyClass = 'application';
     let cssTheme = '';
 
-    const theme = this.$ipcSendSync('get-application-setting', 'theme') || 'light';
-    const isFullScreen = this.$store.state.controls.fullscreen;
+    const theme = await this.$ipcInvoke('get-application-setting', 'theme');
+    const isFullScreen = await this.$ipcInvoke('is-fullscreen');
 
-    const systemThemeDark = this.$ipcSendSync('should-use-dark-theme');
-    const os = this.$ipcSendSync('get-os');
+    const systemThemeDark = await this.$ipcInvoke('should-use-dark-theme');
+    const os = await this.$ipcInvoke('get-os');
 
-    this.$ipcInvoke('set-theme-source', this.$store.state.settings.theme);
+    this.$ipcInvoke('set-theme-source', theme);
+    this.$ipcInvoke('set-window-vibrance', theme);
 
     if (theme !== 'system') {
       cssTheme = this.$store.state.settings.theme === 'light' ? 'theme--light' : 'theme--dark';
@@ -85,27 +94,34 @@ export default class App extends Vue {
       bodyClass = String(bodyClass);
       break;
     }
-    return `${bodyClass} ${cssTheme}`;
+    this.bodyClass = `${bodyClass} ${cssTheme}`;
   }
 
-  mounted(): void {
-    this.loadStartupSettings();
+  async mounted(): Promise<void> {
+    await this.loadStartupSettings();
+
+    ipcRenderer.on('theme-updated', () => {
+      this.handleApplicationClass();
+    });
+  }
+
+  beforeDestroy(): void {
+    ipcRenderer.removeAllListeners('theme-updated');
   }
 
   async loadStartupSettings(): Promise<void> {
-    this.$i18n.locale = this.$ipcSendSync('get-application-setting', 'language');
-    const settings = this.$ipcSendSync('get-all-settings');
+    this.$i18n.locale = await this.$ipcInvoke('get-application-setting', 'language');
+    const settings = await this.$ipcInvoke('get-all-settings');
 
     this.$store.commit('setApplicationSettings', settings);
-
+    await this.handleApplicationClass();
     await this.$ipcInvoke('watch-databases');
-
     if (settings.lastPage === 'lastCatalog') {
       if (this.$route.fullPath !== settings.applicationWindow.lastOpened) {
-        this.$router.push(settings.applicationWindow.lastOpened);
+        await this.$router.push(settings.applicationWindow.lastOpened);
       }
     } else {
-      this.$router.push('/');
+      await this.$router.push('/');
     }
   }
 }

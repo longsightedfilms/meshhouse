@@ -13,9 +13,17 @@ export default function(): void {
     event.returnValue = setting;
   });
 
+  ipcMain.handle('get-application-setting', (event, key) => {
+    return ApplicationStore.settings.get(key);
+  });
+
   ipcMain.on('get-all-settings', (event) => {
     const settings = ApplicationStore.settings.store;
     event.returnValue = settings;
+  });
+
+  ipcMain.handle('get-all-settings', () => {
+    return ApplicationStore.settings.store;
   });
 
   ipcMain.handle('set-application-setting', (event, params) => {

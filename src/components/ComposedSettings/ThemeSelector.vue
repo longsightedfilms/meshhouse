@@ -42,9 +42,6 @@ export default class ThemeSelector extends Vue {
     const target = (event.target as HTMLInputElement);
     const theme = (target.value as Theme);
 
-    this.$ipcInvoke('set-theme-source', theme);
-    this.$ipcInvoke('set-window-vibrance', theme);
-
     this.$store.commit('setTheme', theme);
     this.$ipcInvoke('set-application-setting', {
       key: 'theme',

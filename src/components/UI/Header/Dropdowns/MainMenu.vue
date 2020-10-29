@@ -143,8 +143,8 @@ export default class MainMenuDropdown extends Vue {
   }
 
   async toggleFullscreen(): Promise<void> {
-    await ipcRenderer.invoke('set-fullscreen');
-    this.$store.commit('setFullscreen', ipcRenderer.sendSync('is-fullscreen'));
+    await this.$ipcInvoke('set-fullscreen');
+    this.$store.commit('setFullscreen', await this.$ipcInvoke('is-fullscreen'));
   }
 
   get currentOS(): string {

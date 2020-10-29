@@ -2,6 +2,7 @@ import Integrations from '../integrations';
 import { Integration } from '../integrations/template';
 import { ipcMain } from 'electron';
 import { watchDatabases } from '../integrations/functions';
+import serverStore from '../store';
 
 export default function(): void {
   ipcMain.handle('get-integration-categories', async(event, params) => {
@@ -263,5 +264,10 @@ export default function(): void {
     } catch (err) {
       return Promise.reject(err);
     }
+  });
+
+  ipcMain.handle('cancel-download-item', (event, id) => {
+    serverStore.commit('cancelDownloadItem', id);
+    return true;
   });
 }

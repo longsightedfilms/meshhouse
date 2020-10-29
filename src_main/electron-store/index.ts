@@ -3,6 +3,7 @@ import path from 'path';
 import ElectronStore from 'electron-store';
 import { app } from 'electron';
 import { sendVuexCommit } from '../ipc_handlers/eventbus';
+import logger from '../logger';
 
 // Import defaults
 import databaseDefault from './defaults/database';
@@ -36,18 +37,23 @@ const userDataPath = app.getPath('userData');
  * Initializes default databases persisted storage if not exists
  */
 export function initDatabases(): void {
+  logger.info('Initializing databases');
   if (!fs.existsSync(path.join(userDataPath, 'databases.json'))) {
     databases.set({ databases: databaseDefault });
+    logger.warn('Creating default database file');
   }
   sendVuexCommit('setApplicationDatabases', databases.get('databases'));
+  logger.verbose('Initializing databases completed');
 }
 
 /**
  * Initializes default application settings if not exists
  */
 export function initAppSettings(): void {
+  logger.info('Initializing application settings');
   if (!fs.existsSync(path.join(userDataPath, 'settings.json'))) {
     settings.set(settingsDefault);
+    logger.warn('Creating default settings file');
   }
 }
 
@@ -55,7 +61,9 @@ export function initAppSettings(): void {
  * Initializes default DCC settings if not exists
  */
 export function initDCCSettings(): void {
+  logger.info('Initializing DCC settings');
   if (!fs.existsSync(path.join(userDataPath, 'dcc-config.json'))) {
     dcc.set(dccDefault);
+    logger.warn('Creating default DCC settings file');
   }
 }

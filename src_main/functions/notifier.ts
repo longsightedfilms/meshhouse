@@ -1,5 +1,6 @@
 import notifier from 'node-notifier';
 import { getIconForOS } from './os';
+import logger from '../logger';
 
 /**
  * Creates a notification in OS
@@ -15,4 +16,5 @@ export function createOSNotification(title: string, message: string): void {
     wait: true
   };
   notifier.notify(notifierObject);
+  logger.verbose('Notification has been created');
 }

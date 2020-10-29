@@ -21,6 +21,7 @@ export default {
     },
     cancelDownloadItem(state: Download[], payload: Download): void {
       const idx = state.findIndex((download: Download) => download.id === payload.id);
+      ipcRenderer.invoke('cancel-download-item', payload.id);
       state[idx].totalSize = -1;
       state[idx].downloadedSize = -1;
       ipcRenderer.send('set-window-progress', -1);
