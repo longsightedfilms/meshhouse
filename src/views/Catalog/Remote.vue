@@ -47,7 +47,6 @@ import ModelCard from '@/components/UI/Card/ModelCard.vue';
 import CatalogPaginator from './CatalogPaginator.vue';
 import MultipleLinksModal from '@/views/Modals/MultipleLinksDetected.vue';
 import { Route } from 'vue-router';
-import { ipcRenderer } from 'electron';
 
 @Component({
   components: {
@@ -58,7 +57,7 @@ import { ipcRenderer } from 'electron';
     ModelContext
   },
   async beforeRouteEnter(to: Route, from: Route, next: Function) {
-    const data = await ipcRenderer.invoke('get-integration-models', {
+    const data = await window.ipc.invoke('get-integration-models', {
       type: 'remote',
       title: to.params.database,
       query: to.params.page

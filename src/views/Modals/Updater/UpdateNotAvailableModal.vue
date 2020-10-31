@@ -7,12 +7,9 @@
       <p>{{ $t('modals.updater.notAvailable') }}</p>
     </div>
     <div class="modal_actions">
-      <button
-        class="button button--primary"
-        @click="$emit('close')"
-      >
+      <v-button @click="$emit('close')">
         {{ $t('common.buttons.close') }}
-      </button>
+      </v-button>
     </div>
   </div>
 </template>

@@ -34,9 +34,7 @@ const applicationOptions: any = {
     contextIsolation: false,
     experimentalFeatures: true,
     nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
-    webSecurity: false,
-    webviewTag: true,
-    //preload: path.join(__dirname, 'preload.js')
+    preload: path.join(__dirname, 'preload.js')
   },
 };
 

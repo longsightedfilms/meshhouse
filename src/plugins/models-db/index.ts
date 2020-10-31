@@ -1,6 +1,5 @@
 import _Vue from 'vue';
 import { i18n } from '@/locales/i18n';
-import { ipcRenderer } from 'electron';
 import { transliterate as tr, slugify } from 'transliteration';
 import store from '@/store/main';
 import sanitizeHTML from 'sanitize-html';
@@ -9,7 +8,7 @@ import { formatBytes } from '@/functions/format';
 import { modelsExtensions, getParameterByExtension } from '@/functions/extension';
 import { formatDateRelative } from '@/functions/date';
 
-ipcRenderer.invoke('init-databases');
+window.ipc.invoke('init-databases');
 
 export function ModelsDB(Vue: typeof _Vue): void {
   Vue.prototype.$isRTL = function(): boolean {
@@ -31,14 +30,14 @@ export function ModelsDB(Vue: typeof _Vue): void {
   };
 
   Vue.prototype.$addDatabase = async function(db: DatabaseItem): Promise<void> {
-    return await ipcRenderer.invoke('add-database', db);
+    return await window.ipc.invoke('add-database', db);
   };
 
   Vue.prototype.$updateItemInDatabase = async function(
     dbName: string,
     model: Model
   ): Promise<void> {
-    return await ipcRenderer.invoke('update-item-in-integration', {
+    return await window.ipc.invoke('update-item-in-integration', {
       type: 'local',
       title: dbName,
       model
@@ -49,17 +48,17 @@ export function ModelsDB(Vue: typeof _Vue): void {
     index: number,
     payload: DatabaseItem
   ): Promise<boolean> {
-    ipcRenderer.invoke('set-database', {
+    window.ipc.invoke('set-database', {
       key: `databases.local.${index}`,
       value: payload
     });
-    store.commit('setApplicationDatabases', ipcRenderer.sendSync('get-database', 'databases'));
+    store.commit('setApplicationDatabases', window.ipc.sendSync('get-database', 'databases'));
     store.commit('setCurrentDatabase', payload.url);
     return Promise.resolve(true);
   };
 
   Vue.prototype.$setIntegrationsDB = function(payload: any): void {
-    ipcRenderer.invoke('set-database', {
+    window.ipc.invoke('set-database', {
       key: 'databases.integrations',
       value: payload
     });
@@ -70,11 +69,11 @@ export function ModelsDB(Vue: typeof _Vue): void {
   };
 
   Vue.prototype.$openItem = function(file: string): void {
-    const extension = ipcRenderer.sendSync('get-extension', file);
+    const extension = window.ipc.sendSync('get-extension', file);
     if (getParameterByExtension(extension, 'useSystemAssociation')) {
-      ipcRenderer.invoke('open-item', file);
+      window.ipc.invoke('open-item', file);
     } else {
-      ipcRenderer.invoke('shell-spawn', {
+      window.ipc.invoke('shell-spawn', {
         command: getParameterByExtension(extension, 'customPath'),
         args:[file]
       });
@@ -82,7 +81,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
   };
 
   Vue.prototype.$openFolder = function(folder: string): void {
-    ipcRenderer.invoke('open-folder', folder);
+    window.ipc.invoke('open-folder', folder);
   };
 
   Vue.prototype.$openPropertiesModal = async function(

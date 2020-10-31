@@ -1,5 +1,3 @@
-import { ipcRenderer } from 'electron';
-
 export const integrationsList: string[] = [
   'meshhouse',
   'sfmlab',
@@ -24,7 +22,7 @@ export function isDBModel(model: Model[] | Error): model is Model[] {
 }
 
 export function findDatabaseIndex(url: string): number {
-  const db = ipcRenderer.sendSync('get-database', 'databases.local');
+  const db = window.ipc.sendSync('get-database', 'databases.local');
   return db.findIndex((db: DatabaseItem) => db.url === url);
 }
 

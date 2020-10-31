@@ -52,7 +52,6 @@ import ModelContext from '@/components/UI/Context/ModelContext.vue';
 import ModelCard from '@/components/UI/Card/ModelCard.vue';
 import { findDatabaseIndex } from '@/functions/databases';
 import { Route } from 'vue-router';
-import { ipcRenderer } from 'electron';
 
 @Component({
   components: {
@@ -64,13 +63,13 @@ import { ipcRenderer } from 'electron';
     ModelContext
   },
   async beforeRouteEnter(to: Route, from: Route, next: Function) {
-    const models = await ipcRenderer.invoke('get-integration-models', {
+    const models = await window.ipc.invoke('get-integration-models', {
       type: 'local',
       title: to.params.database,
       category: to.params.category
     });
 
-    const categories = await ipcRenderer.invoke('get-integration-categories', {
+    const categories = await window.ipc.invoke('get-integration-categories', {
       type: 'local',
       title: to.params.database
     });

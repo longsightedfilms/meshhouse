@@ -54,8 +54,6 @@ import AboutProgramModal from '@/views/Modals/AboutProgramModal.vue';
 import UpdateAvailableModal from '@/views/Modals/Updater/UpdateAvailableModal.vue';
 import UpdateNotAvailableModal from '@/views/Modals/Updater/UpdateNotAvailableModal.vue';
 
-import { ipcRenderer } from 'electron';
-
 @Component({
   components: {
     Fragment
@@ -64,7 +62,7 @@ import { ipcRenderer } from 'electron';
 export default class MainMenuDropdown extends Vue {
 
   mounted(): void {
-    ipcRenderer.on('update-available', () => {
+    window.ipc.on('update-available', () => {
       this.$modal.show(UpdateAvailableModal, {}, {
         clickToClose: true,
         height: 'auto'
@@ -78,7 +76,7 @@ export default class MainMenuDropdown extends Vue {
       });
     });
 
-    ipcRenderer.on('update-not-available', () => {
+    window.ipc.on('update-not-available', () => {
       this.$modal.show(UpdateNotAvailableModal, {}, {
         clickToClose: true,
         height: 'auto'
@@ -94,8 +92,8 @@ export default class MainMenuDropdown extends Vue {
   }
 
   destroyed(): void {
-    ipcRenderer.removeAllListeners('update-available');
-    ipcRenderer.removeAllListeners('update-not-available');
+    window.ipc.removeAllListeners('update-available');
+    window.ipc.removeAllListeners('update-not-available');
   }
 
   showSettings(): void {
@@ -129,17 +127,17 @@ export default class MainMenuDropdown extends Vue {
   }
 
   openHelp(): void {
-    ipcRenderer.invoke('open-external', 'https://docs.meshhouse.art/');
+    window.ipc.invoke('open-external', 'https://docs.meshhouse.art/');
   }
 
   openReleaseNotes(): void {
     let version = process.env.VUE_APP_VERSION !== undefined ? process.env.VUE_APP_VERSION : '0.0.0';
     version = version.replace(/\./gm, '-');
-    ipcRenderer.invoke('open-external', `https://docs.meshhouse.art/changelog#v-${version}`);
+    window.ipc.invoke('open-external', `https://docs.meshhouse.art/changelog#v-${version}`);
   }
 
   checkUpdates(): void {
-    ipcRenderer.send('check-update');
+    window.ipc.send('check-update');
   }
 
   async toggleFullscreen(): Promise<void> {
@@ -148,7 +146,7 @@ export default class MainMenuDropdown extends Vue {
   }
 
   get currentOS(): string {
-    return ipcRenderer.sendSync('get-os');
+    return window.ipc.sendSync('get-os');
   }
 }
 </script>

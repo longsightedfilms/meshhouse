@@ -38,10 +38,10 @@ module.exports = {
         'node-7z',
         '@zhangfuxing/unrar'
       ],
-      //preload: 'src_main/preload.ts',
+      preload: 'src_main/preload.ts',
       mainProcessFile: 'src_main/background.ts',
       nodeModulesPath: ['../../node_modules', './node_modules'],
-      nodeIntegration: true,
+      nodeIntegration: false,
       builderOptions: {
         appId: 'com.longsightedfilms.meshhouse',
         productName: 'MeshHouse',

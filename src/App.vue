@@ -25,7 +25,6 @@
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import ApplicationHeader from '@/components/UI/Header/ApplicationHeader.vue';
 import ApplicationSidebar from '@/components/UI/Sidebar/ApplicationSidebar.vue';
-import { ipcRenderer } from 'electron';
 
 @Component({
   components: {
@@ -100,13 +99,13 @@ export default class App extends Vue {
   async mounted(): Promise<void> {
     await this.loadStartupSettings();
 
-    ipcRenderer.on('theme-updated', () => {
+    window.ipc.on('theme-updated', () => {
       this.handleApplicationClass();
     });
   }
 
   beforeDestroy(): void {
-    ipcRenderer.removeAllListeners('theme-updated');
+    window.ipc.removeAllListeners('theme-updated');
   }
 
   async loadStartupSettings(): Promise<void> {

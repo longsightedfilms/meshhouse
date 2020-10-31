@@ -1,5 +1,4 @@
 import eventBus from '@/eventBus';
-import { ipcRenderer } from 'electron';
 
 export default {
   state: [
@@ -21,10 +20,10 @@ export default {
     },
     cancelDownloadItem(state: Download[], payload: Download): void {
       const idx = state.findIndex((download: Download) => download.id === payload.id);
-      ipcRenderer.invoke('cancel-download-item', payload.id);
+      window.ipc.invoke('cancel-download-item', payload.id);
       state[idx].totalSize = -1;
       state[idx].downloadedSize = -1;
-      ipcRenderer.send('set-window-progress', -1);
+      window.ipc.send('set-window-progress', -1);
     },
     clearDownloadsList(state: Download[]): void {
       state = [];

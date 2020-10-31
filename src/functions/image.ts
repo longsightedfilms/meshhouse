@@ -1,5 +1,3 @@
-import url from 'url';
-
 /**
  * Returns sanitized URL if image is local file
  * @param image path to image
@@ -7,7 +5,7 @@ import url from 'url';
 export function getLocalLink(image: string): string {
   const local = image.search(/^https?:\/\//gm) === -1;
 
-  const imageURL = url.pathToFileURL(image).pathname;
+  const imageURL = window.functions.convertToFileUrl(image).pathname;
 
   return local ? `local://${imageURL}` : image;
 }

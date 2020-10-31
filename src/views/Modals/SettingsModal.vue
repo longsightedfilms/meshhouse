@@ -46,8 +46,6 @@ import Component from 'vue-class-component';
 import MainSettings from './Settings/MainSettings.vue';
 import ProgramSettings from './Settings/ProgramSettings.vue';
 import IntegrationsSettings from './Settings/IntegrationsSettings.vue';
-// Integrations tabs
-import SFMLab from './Settings/Integrations/SFMLab.vue';
 
 import type { TranslateResult } from 'vue-i18n';
 
@@ -60,8 +58,7 @@ type integrationComponent = {
   components: {
     MainSettings,
     ProgramSettings,
-    IntegrationsSettings,
-    SFMLab
+    IntegrationsSettings
   },
 })
 export default class ModalSettings extends Vue {

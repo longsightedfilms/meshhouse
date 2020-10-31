@@ -149,18 +149,19 @@
       </div>
     </div>
     <div class="modal_actions">
-      <button
-        class="button button--primary"
+      <v-button
+        type="primary"
+        :busy="busy"
         @click="submitNewCatalog"
       >
         {{ $t('common.buttons.add') }}
-      </button>
-      <button
-        class="button button--danger"
+      </v-button>
+      <v-button
+        :disabled="busy"
         @click="$emit('close')"
       >
-        {{ $t('common.buttons.close') }}
-      </button>
+        {{ $t('common.buttons.cancel') }}
+      </v-button>
     </div>
   </div>
 </template>
@@ -188,6 +189,7 @@ export default class AddNewCatalogModal extends Vue {
     imageProvider: InstanceType<typeof ValidationObserver>;
   }
 
+  busy = false
   imageChanged = false
   backgroundImage = ''
 
@@ -293,6 +295,7 @@ export default class AddNewCatalogModal extends Vue {
     this.$refs.form.validate()
       .then(async(success: boolean) => {
         if (success) {
+          this.busy = true;
           const catalog = {
             title: this.properties.title.trim(),
             color: this.properties.color,
@@ -320,10 +323,13 @@ export default class AddNewCatalogModal extends Vue {
               this.properties.background = '';
               this.imageChanged = false;
               console.log(err);
+            } finally {
+              this.busy = false;
             }
           } else {
             await this.$addDatabase(catalog);
             this.$emit('close');
+            this.busy = false;
           }
         }
       });

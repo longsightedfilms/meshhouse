@@ -18,27 +18,27 @@
       </div>
     </div>
     <div class="modal_actions">
-      <button
+      <v-button
         v-if="$store.state.controls.updates.downloaded"
-        class="button button--primary"
+        type="primary"
         @click="installUpdate"
       >
         {{ $t('common.buttons.install') }}
-      </button>
-      <button
+      </v-button>
+      <v-button
         v-if="!$store.state.controls.updates.downloaded"
-        class="button button--primary"
-        :disabled="$store.state.controls.updates.downloading"
+        type="primary"
+        :busy="$store.state.controls.updates.downloading"
         @click="downloadUpdate"
       >
         {{ $t('common.buttons.download') }}
-      </button>
-      <button
-        class="button button--danger"
+      </v-button>
+      <v-button
+        :disabled="$store.state.controls.updates.downloading"
         @click="$emit('close')"
       >
         {{ $t('common.buttons.close') }}
-      </button>
+      </v-button>
     </div>
   </div>
 </template>
@@ -46,7 +46,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import { ipcRenderer, IpcRendererEvent } from 'electron';
+import type { IpcRendererEvent } from 'electron';
 
 @Component({})
 export default class UpdateAvailableModal extends Vue {
@@ -58,24 +58,24 @@ export default class UpdateAvailableModal extends Vue {
   }
 
   mounted(): void {
-    ipcRenderer.on('download-progress', (event: IpcRendererEvent, progress: ProgressInfo): void => {
+    window.ipc.on('download-progress', (event: IpcRendererEvent, progress: ProgressInfo): void => {
       this.$store.commit('setUpdateDownload', true);
       this.progress = progress;
     });
 
-    ipcRenderer.on('update-downloaded', () => {
+    window.ipc.on('update-downloaded', () => {
       this.$store.commit('setUpdateDownload', false);
       this.$store.commit('setUpdateDownloadComplete', true);
     });
   }
 
   downloadUpdate(): void {
-    ipcRenderer.send('download-update');
+    window.ipc.send('download-update');
     this.$store.commit('setUpdateDownload', true);
   }
 
   installUpdate(): void {
-    ipcRenderer.send('install-update');
+    window.ipc.send('install-update');
   }
 }
 </script>
