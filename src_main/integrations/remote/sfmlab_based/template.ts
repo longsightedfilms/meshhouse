@@ -176,13 +176,13 @@ export default class SFMLabBaseIntegration extends Integration {
     }
   }
 
-  async fetchSingleModel(model: Model): Promise<void | Error> {
+  async fetchSingleModel(id: number): Promise<void | Error> {
     try {
       sendVuexCommit('setOfflineStatus', false);
       sendVuexCommit('setLoadingStatus', false);
-      logger.verbose(`HTTP GET https://proxy-api.meshhouse.art/integrations/${this.slug}/models/${model.id}`);
-      const item = (await this.sfmlabInstance.get<Model>(`integrations/${this.slug}/models/${model.id}`)).body;
-      const installed = await this.checkIsInstalledModel(model.id);
+      logger.verbose(`HTTP GET https://proxy-api.meshhouse.art/integrations/${this.slug}/models/${id}`);
+      const item = (await this.sfmlabInstance.get<Model>(`integrations/${this.slug}/models/${id}`)).body;
+      const installed = await this.checkIsInstalledModel(id);
 
       item.installed = (installed as boolean);
       item.remoteId = item.id;
@@ -195,7 +195,7 @@ export default class SFMLabBaseIntegration extends Integration {
         return Promise.reject(e);
       }
     } finally {
-      logger.verbose(`HTTP GET https://proxy-api.meshhouse.art/integrations/${this.slug}/models/${model.id} completed`);
+      logger.verbose(`HTTP GET https://proxy-api.meshhouse.art/integrations/${this.slug}/models/${id} completed`);
       sendVuexCommit('setLoadingStatus', true);
     }
   }
@@ -242,15 +242,12 @@ export default class SFMLabBaseIntegration extends Integration {
     return Promise.resolve(true);
   }
 
-  async downloadHandle(item: Model): Promise<void | Error> {
+  async downloadHandle(id: number): Promise<void | Error> {
     try {
       let links: SFMLabLink[] | undefined = undefined;
-      if (!Object.hasOwnProperty.call(item, 'downloadLinks')) {
-        await this.fetchSingleModel(item);
-        links = await getVuexState('state.controls.properties.downloadLinks');
-      } else {
-        links = item.downloadLinks;
-      }
+      await this.fetchSingleModel(id);
+      const item = await getVuexState('state.controls.properties');
+      links = item.downloadLinks;
 
       if (links !== undefined) {
         if (links.length > 1) {
@@ -270,7 +267,7 @@ export default class SFMLabBaseIntegration extends Integration {
     try {
       let links: SFMLabLink[] | undefined = undefined;
       if (!Object.hasOwnProperty.call(item, 'downloadLinks')) {
-        await this.fetchSingleModel(item);
+        await this.fetchSingleModel(item.id);
         links = await getVuexState('state.controls.properties.downloadLinks');
       } else {
         links = item.downloadLinks;

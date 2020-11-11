@@ -62,6 +62,7 @@ module.exports = {
           oneClick: false,
           installerIcon: './build/icons/icon.ico',
           license: './build/license.txt',
+          perMachine: true,
           allowToChangeInstallationDirectory: true
         },
         win: {
@@ -71,7 +72,14 @@ module.exports = {
           provider: 'github',
           owner: 'longsightedfilms',
           repo: 'meshhouse'
-        }
+        },
+        protocols: [
+          {
+            name: "MeshHouse Application",
+            role: "Viewer",
+            schemes: ["meshhouse"]
+          }
+        ]
       },
     }
   },

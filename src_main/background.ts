@@ -17,6 +17,7 @@ import * as ApplicationStore from './electron-store';
 import * as ipcHandlers from './ipc_handlers';
 import { createWindow, generateUserAgent } from './createwindow';
 import { handleTray } from './tray';
+import { protocolDownloadHandle } from './ipc_handlers/integrations';
 
 const isDevelopment = process.env.NODE_ENV !== 'production';
 
@@ -39,7 +40,7 @@ const applicationOptions: any = {
 };
 
 const theme = ApplicationStore.settings.get('theme') || 'light';
-
+const lock = app.requestSingleInstanceLock();
 const vibrancyOptions: VibrancyOptions = getVibrancyOptions(theme);
 
 if (isWindows10()) {
@@ -53,20 +54,53 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: true, standard: true } },
 ]);
 
-app.whenReady().then(() => {
-  logger.info(`Application started (version ${process.env.VUE_APP_VERSION})`);
-  protocol.registerFileProtocol('local', (request, callback) => {
-    const pathname = decodeURI(request.url.replace(/local:\/\/\/|\?.+/gm, ''));
-    callback(pathname);
+app.setAsDefaultProtocolClient('meshhouse');
+
+function handleProtocolURL(url: string): void {
+  const strippedURL = url.substr(20);
+  const urlArgs = strippedURL.split('/');
+
+  const integration = urlArgs[0];
+  const modelId = urlArgs[1];
+
+  protocolDownloadHandle(modelId, integration);
+}
+
+if (!lock) {
+  app.quit();
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    if (appWin) {
+      appWin.show();
+      if (appWin.isMinimized()) {
+        appWin.restore();
+      }
+      appWin.focus();
+
+      const url = commandLine.filter((val: string) => val.includes('meshhouse://'))[0];
+      handleProtocolURL(url);
+    }
   });
 
-  const agent = generateUserAgent(appWin?.webContents.getUserAgent() ?? '');
-  appWin?.webContents.setUserAgent(agent);
+  app.whenReady().then(() => {
+    logger.info(`Application started (version ${process.env.VUE_APP_VERSION})`);
+    protocol.registerFileProtocol('local', (request, callback) => {
+      const pathname = decodeURI(request.url.replace(/local:\/\/\/|\?.+/gm, ''));
+      callback(pathname);
+    });
 
-  if (ApplicationStore.settings.get('showInTray')) {
-    handleTray(appWin);
-  }
-});
+    protocol.registerHttpProtocol('meshhouse', (req, cb) => {
+      handleProtocolURL(req.url);
+    });
+
+    const agent = generateUserAgent(appWin?.webContents.getUserAgent() ?? '');
+    appWin?.webContents.setUserAgent(agent);
+
+    if (ApplicationStore.settings.get('showInTray')) {
+      handleTray(appWin);
+    }
+  });
+}
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {

@@ -3,6 +3,14 @@ import { Integration } from '../integrations/template';
 import { ipcMain } from 'electron';
 import { watchDatabases } from '../integrations/functions';
 import serverStore from '../store';
+import logger from '../logger';
+
+export async function protocolDownloadHandle(id: number | string, integration: string): Promise<void> {
+  const db = new Integrations[integration];
+  logger.info(`Handling external URL request: Integration name - ${integration}, model id/slug - ${id}`);
+  const item = await db.fetchSingleModel(id);
+  await db.downloadHandle(item);
+}
 
 export default function(): void {
   ipcMain.handle('get-integration-categories', async(event, params) => {
@@ -202,7 +210,7 @@ export default function(): void {
 
     try {
       const db = new Integrations[title];
-      await db.downloadHandle(item);
+      await db.downloadHandle(item.id);
     } catch (err) {
       return Promise.reject(err);
     }

@@ -57,6 +57,7 @@ export function createWindow(
     window?.show();
     ipcHandlers.windowHandler(window);
   });
+
   return window;
 }
 
