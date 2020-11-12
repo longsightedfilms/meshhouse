@@ -44,6 +44,7 @@ const loaderOptions: any = {
   movable: false,
   width: 640,
   height: 640,
+  show: false,
   resizable: false,
   icon: getIconForOS(),
   webPreferences: {

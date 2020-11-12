@@ -21,7 +21,6 @@ export function createWindow(
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
-    console.log(process.env.WEBPACK_DEV_SERVER_URL + devPath);
     loadingWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + 'loading.html');
     window.loadURL(process.env.WEBPACK_DEV_SERVER_URL + devPath);
     if (!process.env.IS_TEST) {
@@ -59,6 +58,11 @@ export function createWindow(
 
   window.on('closed', () => {
     window = null;
+  });
+
+  loadingWindow.once('ready-to-show', () => {
+    loadingWindow.show();
+    loadingWindow.focus();
   });
 
   ipcMain.handleOnce('app-loaded', () => {
