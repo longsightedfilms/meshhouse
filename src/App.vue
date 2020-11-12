@@ -122,6 +122,8 @@ export default class App extends Vue {
     } else {
       await this.$router.push('/');
     }
+
+    await this.$ipcInvoke('app-loaded');
   }
 }
 </script>

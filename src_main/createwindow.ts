@@ -5,17 +5,24 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import * as ApplicationStore from './electron-store';
 import * as ipcHandlers from './ipc_handlers';
 
+import { ipcMain } from 'electron';
+
 export function createWindow(
   devPath: string,
   prodPath: string,
-  options: object
+  options: object,
+  loaderOptions: object
 ): BrowserWindow | null {
   let createdAppProtocol = false;
   let window: BrowserWindow | null = new BrowserWindow(options);
+  const loadingWindow: BrowserWindow = new BrowserWindow(loaderOptions);
+
   window.setMenu(null);
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
+    console.log(process.env.WEBPACK_DEV_SERVER_URL + devPath);
+    loadingWindow.loadURL(process.env.WEBPACK_DEV_SERVER_URL + 'loading.html');
     window.loadURL(process.env.WEBPACK_DEV_SERVER_URL + devPath);
     if (!process.env.IS_TEST) {
       window.webContents.openDevTools();
@@ -26,6 +33,7 @@ export function createWindow(
       createdAppProtocol = true;
     }
     // Load the index.html when not in development
+    loadingWindow.loadURL('app://./loading.html');
     window.loadURL(`app://./${prodPath}`);
   }
 
@@ -53,8 +61,13 @@ export function createWindow(
     window = null;
   });
 
-  window.once('ready-to-show', () => {
+  ipcMain.handleOnce('app-loaded', () => {
+    loadingWindow.hide();
+    loadingWindow.close();
     window?.show();
+  });
+
+  window.once('ready-to-show', () => {
     ipcHandlers.windowHandler(window);
   });
 

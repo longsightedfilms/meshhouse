@@ -39,6 +39,20 @@ const applicationOptions: any = {
   },
 };
 
+const loaderOptions: any = {
+  frame: false,
+  movable: false,
+  width: 640,
+  height: 640,
+  resizable: false,
+  icon: getIconForOS(),
+  webPreferences: {
+    enableRemoteModule: false,
+    contextIsolation: false,
+    nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
+  },
+};
+
 const theme = ApplicationStore.settings.get('theme') || 'light';
 const lock = app.requestSingleInstanceLock();
 const vibrancyOptions: VibrancyOptions = getVibrancyOptions(theme);
@@ -111,7 +125,7 @@ app.on('window-all-closed', () => {
 
 app.on('activate', () => {
   if (appWin === null) {
-    appWin = createWindow('app', 'index.html', applicationOptions);
+    appWin = createWindow('app', 'index.html', applicationOptions, loaderOptions);
   }
 });
 
@@ -119,7 +133,7 @@ app.on('ready', () => {
   if(ApplicationStore.settings.get('checkForUpdatesOnStartup') === true) {
     autoUpdater.checkForUpdates();
   }
-  appWin = createWindow('app', 'index.html', applicationOptions);
+  appWin = createWindow('app', 'index.html', applicationOptions, loaderOptions);
 });
 
 if (isDevelopment) {
