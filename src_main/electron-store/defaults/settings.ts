@@ -12,5 +12,11 @@ export default {
   categoriesVisible: true,
   hideIntegrations: false,
   minimalisticHeaders: false,
-  showInTray: false
+  showInTray: false,
+  integrations: {
+    proxy: {
+      customProxy: false,
+      url: ''
+    }
+  }
 };

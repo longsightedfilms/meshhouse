@@ -55,7 +55,7 @@ export default class ModelCard extends Vue {
         await this.$ipcInvoke('get-single-model-integration', {
           type: 'remote',
           title: this.$route.params.database,
-          item: this.$store.state.controls.properties
+          item
         });
         this.$modal.show(RemoteModelInfoModal, {}, {
           adaptive: true,

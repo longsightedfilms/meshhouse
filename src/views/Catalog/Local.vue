@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div>
     <catalog-header :database="$store.state.db.currentDB" />
     <categories-grid />
     <vue-context ref="categoryMenu">
@@ -37,27 +37,23 @@
         {{ $t('views.catalog.empty.description') }}
       </p>
     </div>
-  </fragment>
+  </div>
 </template>
 
 <script lang="ts">
 import eventBus from '@/eventBus';
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import VueContext from 'vue-context';
-import { Fragment } from 'vue-fragment';
 import CategoriesGrid from './CategoriesGrid.vue';
-import EditPropertiesModal from '@/views/Modals/EditPropertiesModal.vue';
 import CategoryContext from '@/components/UI/Context/CategoryContext.vue';
 import ModelContext from '@/components/UI/Context/ModelContext.vue';
 import ModelCard from '@/components/UI/Card/ModelCard.vue';
-import { findDatabaseIndex } from '@/functions/databases';
 import { Route } from 'vue-router';
 
 @Component({
   components: {
     CategoriesGrid,
     CategoryContext,
-    Fragment,
     ModelCard,
     VueContext,
     ModelContext

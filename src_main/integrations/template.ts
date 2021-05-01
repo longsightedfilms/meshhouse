@@ -53,6 +53,20 @@ export abstract class Integration {
       });
     });
   }
+  /**
+   * Closing database descriptor
+   */
+  closeDatabase(): Promise<void | Error> {
+    return new Promise((resolve, reject): void => {
+      this.db.close((err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
   abstract fetchCategories(query?: string): Promise<Category[] | Error>
   /**
    * Get all items from database
@@ -73,5 +87,5 @@ export abstract class Integration {
    * Incremental reindex catalog (inserts only difference)
    * @param files - files array
    */
-  abstract async reindexCatalog(files: string[]): Promise<DatabaseUpdateInformation>
+  abstract reindexCatalog(files: string[]): Promise<DatabaseUpdateInformation>
 }

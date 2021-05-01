@@ -1,0 +1,38 @@
+.v-notifications
+  position: absolute
+  display: flex
+  flex-direction: column
+  top: 0.5rem
+  inset-inline-start: 0.5rem
+  z-index: 10
+  width: 100%
+  max-width: 600px
+  .v-notification
+    margin-bottom: 0.25rem
+    &:last-child
+      margin-bottom: 0
+  &-enter-active
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1)
+  &-leave-active
+    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1)
+  &-enter, &-leave-to
+    transform: translateX(calc(-100% - 1rem))
+
+.v-notification
+  padding: 0.5rem
+  display: flex
+  align-items: center
+  width: 100%
+  color: #ffffff
+  .icon
+    width: 2rem
+    height: 2rem
+    margin-right: 1rem
+    flex: 0 0 2rem
+  .v-button
+    margin-left: auto
+    flex: 0 0 2rem
+  &--primary
+    background-color: var(--primary-color)
+  &--error
+    background-color: #DA3B01

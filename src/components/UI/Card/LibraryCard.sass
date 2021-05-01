@@ -1,0 +1,104 @@
+@import '../../../sass/variables'
+$borderRadius: 0.5rem
+
+@keyframes libraryShow
+  0%
+    opacity: 0
+    transform: translateX(-100%)
+  100%
+    opacity: 1
+    transform: translateX(0)
+
+.library__entry
+  color: $white
+  border: 0.125rem solid var(--blockColorDark)
+  border-radius: $borderRadius
+  aspect-ratio: 70 / 99
+  position: relative
+  overflow: hidden
+  animation: libraryShow 0.8s cubic-bezier(0.16, 1, 0.3, 1)
+  .background
+    position: absolute
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    object-fit: cover
+    object-position: 50%
+    transition: all 0.3s ease
+    border-radius: $borderRadius
+    transform: scale(1.01)
+    &:before
+      content: ''
+      position: absolute
+      top: 0
+      left: 0
+      width: 100%
+      height: 100%
+      background-color: var(--blockColor)
+  .content
+    background-color: rgba(0,0,0,0.1)
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.com/svgjs' width='640' height='905' preserveAspectRatio='none' viewBox='0 0 640 905'%3e%3cg mask='url(%26quot%3b%23SvgjsMask1015%26quot%3b)' fill='none'%3e%3cpath d='M0 0L175.77 0L0 124.41z' fill='rgba(255%2c 255%2c 255%2c .1)'%3e%3c/path%3e%3cpath d='M0 124.41L175.77 0L353.36 0L0 252.57999999999998z' fill='rgba(255%2c 255%2c 255%2c .075)'%3e%3c/path%3e%3cpath d='M0 252.57999999999998L353.36 0L373.08000000000004 0L0 620.64z' fill='rgba(255%2c 255%2c 255%2c .05)'%3e%3c/path%3e%3cpath d='M0 620.64L373.08000000000004 0L418.29 0L0 734.45z' fill='rgba(255%2c 255%2c 255%2c .025)'%3e%3c/path%3e%3cpath d='M640 905L369.01 905L640 615.97z' fill='rgba(0%2c 0%2c 0%2c .1)'%3e%3c/path%3e%3cpath d='M640 615.97L369.01 905L270.12 905L640 301.31z' fill='rgba(0%2c 0%2c 0%2c .075)'%3e%3c/path%3e%3cpath d='M640 301.30999999999995L270.12 905L116.95000000000002 905L640 218.21999999999994z' fill='rgba(0%2c 0%2c 0%2c .05)'%3e%3c/path%3e%3cpath d='M640 218.2199999999999L116.95000000000005 905L38.66000000000004 905L640 118.51999999999991z' fill='rgba(0%2c 0%2c 0%2c .025)'%3e%3c/path%3e%3c/g%3e%3cdefs%3e%3cmask id='SvgjsMask1015'%3e%3crect width='640' height='905' fill='white'%3e%3c/rect%3e%3c/mask%3e%3c/defs%3e%3c/svg%3e")
+    background-size: contain
+    padding: 1rem
+    width: 100%
+    height: 100%
+    display: flex
+    transition: all 0.3s ease
+    flex-direction: column
+    align-items: center
+    border-radius: $borderRadius
+    position: relative
+    z-index: 1
+  .logo
+    display: flex
+    align-items: center
+    justify-content: center
+    flex-direction: column
+    margin-top: calc(50% - 2rem)
+    &__image
+      display: block
+      width: 8rem
+      height: 8rem
+      object-fit: contain
+      object-position: 50%
+    &__avatar
+      display: flex
+      align-items: center
+      justify-content: center
+      width: 8rem
+      height: 8rem
+      background-color: var(--blockColor)
+      border-radius: 50%
+      font-weight: 700
+      font-size: 5.5rem
+      line-height: 1
+      grid-area: Avatar
+      overflow: hidden
+      color: #fff
+    &__title
+      margin-top: 2rem
+      text-transform: uppercase
+      font-weight: 700
+      font-size: 1.5rem
+      letter-spacing: 0.125rem
+  .count
+    margin-top: auto
+    display: flex
+    align-items: center
+    justify-content: space-between
+    width: 100%
+    font-size: 0.825rem
+  &:focus
+    border: 0.125rem solid $primary
+    .content
+      background-color: rgba(0,0,0,0.5)
+
+  &--disabled
+    cursor: not-allowed
+    .background
+      filter: saturate(0)
+    &:focus
+      border: 0.125rem solid var(--blockColorInvert)
+      .content
+        background-color: rgba(0,0,0,0.1)

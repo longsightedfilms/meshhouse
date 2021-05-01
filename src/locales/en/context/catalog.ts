@@ -1,5 +1,5 @@
 export default {
-  open: 'Open category',
-  properties: 'Category properties',
-  delete: 'Delete category'
+  open: 'Open catalog',
+  properties: 'Catalog properties',
+  delete: 'Delete catalog'
 };

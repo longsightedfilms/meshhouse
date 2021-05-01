@@ -109,7 +109,11 @@ export default class SidebarLink extends Vue {
   }
 
   deleteCatalog(catalog: DatabaseItem): void {
-    console.log(catalog);
+    this.$closeSidebar();
+    this.$modal.show(this.$modal_DeleteCatalogModal, { database: catalog.url }, {
+      adaptive: true,
+      clickToClose: true,
+    });
   }
 }
 </script>

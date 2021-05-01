@@ -25,6 +25,11 @@ import { createOSNotification } from '../../../functions/notifier';
 import uniqid from 'uniqid';
 import logger from '../../../logger';
 
+
+const baseURL = ApplicationStore.settings.get('integrations.proxy.customProxy')
+  ? ApplicationStore.settings.get('integrations.proxy.url')
+  : 'https://proxy-api.meshhouse.art';
+
 /**
  * SFMLab-based site integration class
  * @param slug Site slug
@@ -55,7 +60,7 @@ export default class SFMLabBaseIntegration extends Integration {
     this.name = name;
 
     this.sfmlabInstance = got.extend({
-      prefixUrl: 'https://proxy-api.meshhouse.art',
+      prefixUrl: baseURL,
       responseType: 'json'
     });
 
@@ -116,7 +121,7 @@ export default class SFMLabBaseIntegration extends Integration {
       sendVuexCommit('setOfflineStatus', false);
       sendVuexCommit('setLoadingStatus', false);
 
-      logger.verbose(`HTTP GET https://proxy-api.meshhouse.art/integrations/${this.slug}/models`);
+      logger.verbose(`HTTP GET ${baseURL}/integrations/${this.slug}/models`);
       const fetch: SFMLabFetch = (await this.sfmlabInstance.get<SFMLabFetch>(`integrations/${this.slug}/models`, {
         searchParams: params
       })).body;
@@ -163,6 +168,10 @@ export default class SFMLabBaseIntegration extends Integration {
           });
         });
       }
+      sendVuexCommit('addNotification', {
+        type: 'error',
+        message: err
+      });
       logger.error(new Error(err));
       return {
         models: [],
@@ -171,7 +180,7 @@ export default class SFMLabBaseIntegration extends Integration {
         totalPages: 0
       };
     } finally {
-      logger.verbose(`HTTP GET https://proxy-api.meshhouse.art/integrations/${this.slug}/models completed`);
+      logger.verbose(`HTTP GET ${baseURL}/integrations/${this.slug}/models completed`);
       sendVuexCommit('setLoadingStatus', true);
     }
   }
@@ -180,7 +189,7 @@ export default class SFMLabBaseIntegration extends Integration {
     try {
       sendVuexCommit('setOfflineStatus', false);
       sendVuexCommit('setLoadingStatus', false);
-      logger.verbose(`HTTP GET https://proxy-api.meshhouse.art/integrations/${this.slug}/models/${id}`);
+      logger.verbose(`HTTP GET ${baseURL}/integrations/${this.slug}/models/${id}`);
       const item = (await this.sfmlabInstance.get<Model>(`integrations/${this.slug}/models/${id}`)).body;
       const installed = await this.checkIsInstalledModel(id);
 
@@ -188,14 +197,19 @@ export default class SFMLabBaseIntegration extends Integration {
       item.remoteId = item.id;
 
       sendVuexCommit('setProperties', item);
-    } catch (e) {
-      if (e.code === 'ECONNABORTED') {
+    } catch (err) {
+      if (err.code === 'ECONNABORTED') {
         logger.warn('Internet connection or server is offline');
         sendVuexCommit('setOfflineStatus', true);
-        return Promise.reject(e);
+        return Promise.reject(err);
       }
+      sendVuexCommit('addNotification', {
+        type: 'error',
+        message: err
+      });
+      logger.error(new Error(err));
     } finally {
-      logger.verbose(`HTTP GET https://proxy-api.meshhouse.art/integrations/${this.slug}/models/${id} completed`);
+      logger.verbose(`HTTP GET ${baseURL}/integrations/${this.slug}/models/${id} completed`);
       sendVuexCommit('setLoadingStatus', true);
     }
   }
@@ -258,6 +272,10 @@ export default class SFMLabBaseIntegration extends Integration {
         }
       }
     } catch (err) {
+      sendVuexCommit('addNotification', {
+        type: 'error',
+        message: err
+      });
       logger.error(new Error(err));
       return Promise.reject(new Error(err));
     }
@@ -285,6 +303,10 @@ export default class SFMLabBaseIntegration extends Integration {
         }
       }
     } catch (err) {
+      sendVuexCommit('addNotification', {
+        type: 'error',
+        message: err
+      });
       logger.error(new Error(err));
       return Promise.reject(new Error(err));
     }
@@ -403,6 +425,10 @@ export default class SFMLabBaseIntegration extends Integration {
         serverStore.commit('removeDownloadItem', serverDownload.id);
         return Promise.resolve(true);
       } else {
+        sendVuexCommit('addNotification', {
+          type: 'error',
+          message: err
+        });
         logger.error(new Error(err));
         download.totalSize = -1;
         download.downloadedSize = -1;

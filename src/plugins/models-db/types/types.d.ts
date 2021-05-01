@@ -2,7 +2,9 @@
 type ApplicationStore = {
   controls: ControlsState;
   db: DatabaseState;
+  devices: DevicesState;
   downloads: Download[];
+  notifications: ApplicationNotification[];
   settings: SettingsState;
 }
 
@@ -68,6 +70,24 @@ type Download = {
   id: string;
 }
 
+type DevicesState = {
+  currentDevice: Device;
+  devices: Device[];
+}
+
+type Device = {
+  model: string;
+  os: string;
+  hostname: string;
+  uuid: string;
+  status?: boolean;
+}
+
+type ApplicationNotification = {
+  type: 'normal' | 'error';
+  message: string;
+}
+
 // Database
 
 type DatatableHeader = {
@@ -82,6 +102,7 @@ type DatabaseItem = {
   color: string;
   icon?: string;
   background: string;
+  backgroundTall?: string;
   url: string;
   path?: string | null;
   count?: string | number;
@@ -217,9 +238,16 @@ type Settings = {
   thumbnailSize: number;
   databasesVisible: boolean;
   theme: string;
+  systemDarkTheme: boolean;
   lastPage: 'main' | 'lastCatalog' | string;
   categoriesVisible: boolean;
   hideIntegrations: boolean;
+  integrations: {
+    proxy: {
+      customProxy: boolean;
+      url: string;
+    };
+  };
 }
 
 type ApplicationSettings = {

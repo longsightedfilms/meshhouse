@@ -191,7 +191,7 @@ export default function(): void {
 
     try {
       const db = new Integrations[title];
-      await db.fetchSingleModel(item);
+      await db.fetchSingleModel(item.id);
     } catch (err) {
       return Promise.reject(err);
     }

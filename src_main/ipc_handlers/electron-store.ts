@@ -4,8 +4,16 @@ import { ipcMain, app } from 'electron';
 import * as ApplicationStore from '../electron-store';
 import { sendVuexCommit } from './eventbus';
 import Integrations from '../integrations';
-import { recursiveIndexFolder } from '../functions/fs';
-import { unwatchDatabases, watchDatabases, handleDatabases } from '../integrations/functions';
+import {
+  recursiveIndexFolder,
+  batchDeleteFiles
+} from '../functions/fs';
+import {
+  unwatchDatabases,
+  watchDatabases,
+  handleDatabases,
+  isDatabaseRemote
+} from '../integrations/functions';
 
 export default function(): void {
   ipcMain.on('get-application-setting', (event, key) => {
@@ -53,6 +61,11 @@ export default function(): void {
   ipcMain.on('get-database', (event, key) => {
     const db = ApplicationStore.databases.get(key);
     event.returnValue = db;
+  });
+
+  ipcMain.handle('get-database', (event, key) => {
+    const db = ApplicationStore.databases.get(key);
+    return db;
   });
 
   ipcMain.handle('set-database', (event, params) => {
@@ -108,6 +121,48 @@ export default function(): void {
       return Promise.resolve(true);
     } else {
       return Promise.reject('Database exists');
+    }
+  });
+
+  ipcMain.handle('delete-database', async(event, db) => {
+    const list: DatabaseItem[] = ApplicationStore.databases.get('databases.local');
+    const idx = list.findIndex((item) => item.url === db);
+
+    const file = path.join(
+      app.getPath('userData'),
+      `/databases/${db}.sqlite3`
+    );
+
+    if (fs.existsSync(file)) {
+      try {
+        await unwatchDatabases();
+        const database = new Integrations.local(db);
+
+        let previews: string[] = [];
+        previews.push(list[idx].background ?? '', list[idx].backgroundTall ?? '');
+
+        const query = 'SELECT image FROM \'models\'';
+        const response = await database.fetchQuery(query);
+
+        previews = response.map((item: any) => item.image);
+        previews = previews.filter((item) => item !== '' && item !== undefined && item !== null);
+
+        await database.closeDatabase();
+
+        await batchDeleteFiles(previews);
+        await batchDeleteFiles([file]);
+
+        list.splice(idx, 1);
+        ApplicationStore.databases.set('databases.local', list);
+        sendVuexCommit('setApplicationDatabases', ApplicationStore.databases.get('databases'));
+
+        await watchDatabases();
+        return Promise.resolve();
+      } catch (error) {
+        return Promise.reject(new Error(error));
+      }
+    } else {
+      return Promise.reject('Database not exists');
     }
   });
 

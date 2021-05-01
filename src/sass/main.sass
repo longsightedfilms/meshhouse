@@ -1,6 +1,5 @@
 @import 'reset'
 @import 'variables'
-@import 'vuebar'
 @import '~vue-context/src/sass/vue-context'
 @import '~vue-multiselect/dist/vue-multiselect.min.css'
 @import '~swiper/swiper-bundle.css'
@@ -15,15 +14,15 @@ h1
   line-height: 1
   margin-bottom: 1rem
 
+*
+  -webkit-font-smoothing: subpixel-antialiased
+  text-rendering: geometricPrecision
+
 :root
   --primary-color: #{$primary}
 
 .application
   -webkit-user-select: none
-  display: grid
-  grid-template-columns: 1fr
-  grid-template-rows: auto calc(100vh - 5.5rem)
-  grid-template-areas: "Header" "Main"
   &.theme--light
     --blockColorLighter: #{lighten($themeLightMain, 7%)}
     --blockColorLight: #{lighten($themeLightMain, 3%)}
@@ -47,43 +46,44 @@ h1
     --textColor: #{$white}
     --scrollColor: #aaaaaa
   &__main
+    position: relative
     display: grid
     grid-template-columns: 1fr
     grid-template-rows: 1fr
     grid-area: Main
-    //background-color: var(--blockColor)
-  &__inner
-    max-height: calc(100vh - 80px)
+  &__content
+    height: calc(100vh - 88px)
+    overflow-y: auto
+    &--lg
+      height: calc(100vh - 2rem)
   &--linux, &--mac, &--fullscreen
-    grid-template-rows: 4rem calc(100vh - 4rem)
     .application
       &__main
         background-color: var(--blockColor)
       &__content
         background-color: var(--blockColorDark)
+        margin-top: 3rem
+        height: calc(100vh - 3rem)
+        &--lg
+          margin-top: 0
+          height: 100vh
       &__sidebar
-        height: calc(100vh - 4rem)
-  &--fullscreen
-    .application__inner
-      padding-top: 4rem
-      max-height: 100vh
+        height: calc(100vh - 3rem)
 // UI
 @import 'UI/badge'
 @import 'UI/button'
 @import 'UI/card'
 @import 'UI/context'
 @import 'UI/commentary'
-@import 'UI/dropdown'
 @import 'UI/header'
-@import 'UI/icon'
 @import 'UI/input'
 @import 'UI/label'
+@import 'UI/layout'
 @import 'UI/modal'
 @import 'UI/paginator'
 @import 'UI/sidebar'
 @import 'UI/slider'
 @import 'UI/switch'
-@import 'UI/tab'
 
 @import 'UI/utils'
 
@@ -93,3 +93,4 @@ h1
 
 // RTL fixes
 @import 'rtl'
+@import 'transitions'

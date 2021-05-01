@@ -110,42 +110,31 @@
 
 <script lang="ts">
 import EventBus from '@/eventBus';
-import Vue from 'vue';
-import Component from 'vue-class-component';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 import { getLocalLink, colorContrast } from '@/functions/image';
-import EditCatalogModal from '@/views/Modals/Edit/EditCatalogModal.vue';
 
-@Component({
-  props: {
-    database: {
-      type: Object,
-      required: false
-    },
-    sample: {
-      type: Boolean,
-      required: false,
-      default: false
-    }
-  }
-})
+@Component
 export default class CatalogHeader extends Vue {
+  @Prop({ type: Object, required: false }) readonly database!: DatabaseItem;
+  @Prop({ type: Boolean, required: false, default: false }) readonly sample!: boolean;
+
   get mainClass(): string {
-    return `catalog-header ${!this.$props.sample
+    return `catalog-header ${!this.sample
     && this.$store.state.settings.minimalisticHeaders
       ? 'catalog-header--minimal'
       : ''}`;
   }
 
   get imageLink(): string {
-    return getLocalLink(this.$props.database.background);
+    return getLocalLink(this.database.background);
   }
 
   get avatarTextColorClass(): string {
-    return colorContrast(this.$props.database.color);
+    return colorContrast(this.database.color);
   }
 
   get avatarTextPreview(): string {
-    return Array.from(this.$props.database.title).slice(0, 1).join('').toUpperCase();
+    return Array.from(this.database.title).slice(0, 1).join('').toUpperCase();
   }
 
   avatarStyle(navlink: DatabaseItem): object {
@@ -153,11 +142,11 @@ export default class CatalogHeader extends Vue {
   }
 
   get catalogBackground(): string {
-    if (this.$props.database.background !== '') {
-      if (!this.$props.database.background.includes('@/')) {
+    if (this.database.background && this.database.background !== '') {
+      if (!this.database.background.includes('@/')) {
         return this.$forceReloadImage(this.imageLink);
       } else {
-        return `/assets/integrations/backgrounds/${this.$props.database.url}.webp`;
+        return `/assets/integrations/backgrounds/${this.database.url}.webp`;
       }
     } else {
       return "data:image/svg+xml,%3Csvg width='2560' height='400' xmlns='http://www.w3.org/2000/svg'%3E%3ClinearGradient id='lg'%3E%3Cstop offset='0%25' stop-color='%232db8e7'/%3E%3Cstop offset='100%25' stop-color='%233081e2'/%3E%3C/linearGradient%3E%3Crect x='2' y='2' width='2556' height='396' style='fill:url(%23lg);stroke:%23555555;stroke-width:2'/%3E%3Ctext x='50%25' y='50%25' font-size='18' text-anchor='middle' alignment-baseline='middle' font-family='monospace, sans-serif' fill='%23555555'%3E2560&%23215;400%3C/text%3E%3C/svg%3E";
@@ -165,11 +154,11 @@ export default class CatalogHeader extends Vue {
   }
 
   get catalogIcon(): string {
-    if (this.$props.database.icon !== undefined) {
-      if (!this.$props.database.icon.includes('@/')) {
-        return this.$forceReloadImage(this.$props.database.icon);
+    if (this.database.icon !== undefined) {
+      if (!this.database.icon.includes('@/')) {
+        return this.$forceReloadImage(this.database.icon);
       } else {
-        return `/assets/integrations/wide/${this.$props.database.url}.svg`;
+        return `/assets/integrations/wide/${this.database.url}.svg`;
       }
     } else {
       return '';
@@ -177,7 +166,7 @@ export default class CatalogHeader extends Vue {
   }
 
   openEditCatalog(): void {
-    this.$modal.show(EditCatalogModal, {}, {
+    this.$modal.show(this.$modal_EditCatalogModal, {}, {
       adaptive: true,
       clickToClose: true,
       width: '100%',

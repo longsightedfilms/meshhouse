@@ -1,5 +1,5 @@
 <template>
-  <fragment>
+  <div>
     <catalog-header :database="$store.state.db.currentDB" />
     <div class="button button--grid">
       <span>
@@ -34,13 +34,12 @@
         {{ $t('views.catalog.empty.title') }}
       </h1>
     </div>
-  </fragment>
+  </div>
 </template>
 
 <script lang="ts">
 import eventBus from '@/eventBus';
 import { Vue, Component, Watch } from 'vue-property-decorator';
-import { Fragment } from 'vue-fragment';
 import VueContext from 'vue-context';
 import ModelContext from '@/components/UI/Context/ModelContext.vue';
 import ModelCard from '@/components/UI/Card/ModelCard.vue';
@@ -51,7 +50,6 @@ import { Route } from 'vue-router';
 @Component({
   components: {
     CatalogPaginator,
-    Fragment,
     ModelCard,
     VueContext,
     ModelContext

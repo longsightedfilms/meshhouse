@@ -34,5 +34,13 @@ declare module 'vue/types/vue' {
      * @param timestamp Timestamp
      */
     $formatDateRelative(timestamp: number): string;
+    /**
+     * Toggle all catalogs sidebar
+     */
+    $toggleSidebar(): void;
+    /**
+     * Closes all catalogs sidebar
+     */
+    $closeSidebar(): void;
   }
 }

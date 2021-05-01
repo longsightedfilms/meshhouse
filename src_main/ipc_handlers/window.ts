@@ -1,4 +1,6 @@
-import { ipcMain, BrowserWindow, dialog } from 'electron';
+import { ipcMain, dialog } from 'electron';
+import type { BrowserWindow as NativeWindow } from 'electron';
+import { BrowserWindow, setVibrancy } from 'electron-acrylic-window';
 import { isWindows10 } from '../functions/os';
 import { getVibrancyOptions } from '../functions/theme';
 
@@ -55,7 +57,7 @@ export default function(windowInstance: BrowserWindow | null): void {
 
   ipcMain.handle('show-open-dialog', async(event, args) => {
     if (windowInstance !== null) {
-      return await dialog.showOpenDialog(windowInstance, args);
+      return await dialog.showOpenDialog((windowInstance as NativeWindow), args);
     }
   });
 }

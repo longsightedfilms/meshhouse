@@ -1,6 +1,40 @@
 <template>
   <div class="application__header-title">
     <button
+      v-show="!$route.meta.toolbar"
+      class="back"
+      @click="backRoute"
+    >
+      <svg
+        width="15"
+        height="12"
+        viewBox="0 0 15 12"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <line
+          y2="6"
+          x2="1"
+          y1="6"
+          x1="15"
+          fill="none"
+        />
+        <line
+          y2="0"
+          x2="6"
+          y1="6"
+          x1="0"
+          fill="none"
+        />
+        <line
+          y2="12"
+          x2="6"
+          y1="6"
+          x1="0"
+          fill="none"
+        />
+      </svg>
+    </button>
+    <button
       v-show="$store.state.controls.isModalVisible"
       class="back"
       @click="back"
@@ -72,6 +106,10 @@ export default class HeaderWindowTitle extends Vue {
   back(): void {
     this.$modal.hideAll();
     this.$store.commit('setModalVisibility', false);
+  }
+
+  backRoute(): void {
+    this.$router.back();
   }
 }
 </script>

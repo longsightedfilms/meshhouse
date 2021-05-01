@@ -43,6 +43,10 @@ export default {
     integrations: {
       title: 'Main integrations settings',
       content: {
+        customProxy: {
+          title: 'Use custom API server',
+          hint: 'Custom API server must be complied with <a href="https://app.swaggerhub.com/apis/meshhouse/meshhouse-reverse-api-proxy/1.0.0">OpenAPI</a> standard. Changes will be applied after application restart.'
+        },
         path: 'Choose path to install models'
       }
     }

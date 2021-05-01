@@ -3,6 +3,7 @@ import settings from './settings';
 import about from './about';
 import properties from './properties';
 import addCategory from './addCategory';
+import deleteCatalog from './deleteCatalog';
 import deleteCategory from './deleteCategory';
 import editCategory from './editCategory';
 import updater from './updater';
@@ -14,6 +15,7 @@ export default {
   about: about,
   addCatalog: addCatalog,
   addCategory: addCategory,
+  deleteCatalog: deleteCatalog,
   deleteCategory: deleteCategory,
   editCatalog: editCatalog,
   editCategory: editCategory,

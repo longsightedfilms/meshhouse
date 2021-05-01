@@ -2,6 +2,7 @@ declare const __static: string;
 
 import path from 'path';
 import os from 'os';
+import si from 'systeminformation';
 
 /**
  * Returns true if OS is Windows 10
@@ -26,4 +27,19 @@ export function getIconForOS(): string {
   }
 
   return path.join(__static, '../build/icons', '512x512.png');
+}
+
+export async function getSystemInfo(): Promise<any> {
+  const pcInfo = await si.system();
+  const osInfo = await si.osInfo();
+  const uuid = (await si.uuid()).os;
+
+  const deviceInfo = {
+    model: `${pcInfo.manufacturer} ${pcInfo.model}`,
+    os: `${osInfo.distro} (${osInfo.arch}) ${osInfo.release}`,
+    hostname: osInfo.hostname,
+    uuid: uuid
+  };
+
+  return deviceInfo;
 }

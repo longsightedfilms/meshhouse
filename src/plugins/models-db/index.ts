@@ -64,8 +64,8 @@ export function ModelsDB(Vue: typeof _Vue): void {
     });
   };
 
-  Vue.prototype.$deleteDatabase = function(database: string): Promise<boolean> {
-    return Promise.resolve(true);
+  Vue.prototype.$deleteDatabase = async function(database: string): Promise<any> {
+    return await window.ipc.invoke('delete-database', database);
   };
 
   Vue.prototype.$openItem = function(file: string): void {
@@ -107,5 +107,21 @@ export function ModelsDB(Vue: typeof _Vue): void {
 
   Vue.prototype.$formatDateRelative = function(timestamp: number): string {
     return formatDateRelative(timestamp);
+  };
+
+  Vue.prototype.$toggleSidebar = function(): void {
+    store.commit('setDBVisibility', !store.state.settings.databasesVisible);
+    window.ipc.invoke('set-application-setting', {
+      key: 'databasesVisible',
+      value: store.state.settings.databasesVisible
+    });
+  };
+
+  Vue.prototype.$closeSidebar = function(): void {
+    store.commit('setDBVisibility', false);
+    window.ipc.invoke('set-application-setting', {
+      key: 'databasesVisible',
+      value: false
+    });
   };
 }

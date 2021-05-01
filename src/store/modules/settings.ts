@@ -7,6 +7,13 @@ export default {
     minimalisticHeaders: false,
     lastPage: 'main',
     thumbnailSize: 256,
+    systemDarkTheme: false,
+    integrations: {
+      proxy: {
+        customProxy: false,
+        url: ''
+      }
+    }
   },
   mutations:{
     setApplicationSettings(state: SettingsState, payload: Settings): void {
@@ -27,5 +34,11 @@ export default {
     setTheme(state: SettingsState, payload: Theme): void {
       state.theme = payload;
     },
+    setSystemDarkTheme(state: SettingsState, payload: boolean): void {
+      state.systemDarkTheme = payload;
+    },
+    setIntegrationsProxy(state: SettingsState, payload: any): void {
+      state.integrations.proxy = payload;
+    }
   }
 };

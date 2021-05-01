@@ -1,0 +1,134 @@
+$tabMaxHeight: calc(100vh - 2rem)
+
+.layout
+  color: var(--textColor)
+  &--tabs
+    display: flex
+  &--library
+    padding: 1rem
+
+.library
+  &__header
+    display: flex
+    align-items: flex-end
+    justify-content: space-between
+    margin-bottom: 1rem
+    h1
+      margin: 0
+    p
+      font-size: 0.825rem
+  &__grid
+    display: grid
+    grid-gap: 1rem
+    padding: 1rem 0
+    grid-template-columns: repeat(auto-fit, 320px)
+    justify-content: space-around
+    grid-auto-rows: 1fr
+
+.tab
+  padding: 1rem
+  background-color: var(--blockColor)
+  h1, h2
+    font-weight: 100
+    margin-bottom: 1.5rem
+  h1
+    font-size: 1.75rem
+  h2
+    font-size: 1.35rem
+  a
+    color: $primary
+    text-decoration: none
+    &:hover
+      text-decoration: underline
+  .filter-field, .setting
+    label
+      display: block
+      margin-bottom: 1rem
+  .setting
+    margin-bottom: 1rem
+    &--switch
+      margin-top: 2rem
+      display: flex
+      align-items: center
+      justify-content: space-between
+      label
+        margin-bottom: 0
+  &__block
+    display: flex
+    flex-direction: column
+    margin: 1rem 0
+    padding: 1rem
+    background-color: var(--blockColorLight)
+    &--header
+      display: flex
+      align-items: center
+      justify-content: space-between
+    &--hint
+      margin-top: 0.5rem
+      font-size: 0.85rem
+    .input-group
+      .input--file
+        max-width: 100%
+
+.tab
+  &__navigation
+    flex: 0 0 320px
+    height: $tabMaxHeight
+    overflow-y: auto
+    .navigation__label
+      display: block
+      color: var(--textColor)
+      padding: 1.25rem 1rem
+      font-weight: 500
+    .navigation__button
+      position: relative
+      display: flex
+      align-items: center
+      border-radius: 0
+      width: 100%
+      padding: 1rem 1rem
+      text-transform: none
+      letter-spacing: 0
+      font-size: 1rem
+      font-weight: 300
+      color: var(--textColor)
+      text-align: left
+      .icon
+        margin-right: 1rem
+        width: 1.125rem
+        height: 1.125rem
+      &:after
+        content: ''
+        position: absolute
+        display: block
+        left: 0
+        top: 50%
+        width: 4px
+        height: 1.5rem
+        opacity: 0
+        background-color: $primary
+        transform: translateY(-50%)
+      &:hover
+        background-color: var(--blockColor)
+      &.active
+        &:after
+          opacity: 1
+
+  &__container
+    flex: 1 1 100%
+    display: grid
+    grid-template-columns: 1fr
+    background-color: var(--blockColor)
+    height: $tabMaxHeight
+    overflow-y: auto
+    &--with-sidebar
+      grid-template-columns: 1fr 280px
+
+.application
+  &--linux, &--macos, &--fullscreen
+    .layout
+      &--tabs
+        max-height: 100vh
+    .tab
+      &__container
+        height: 100vh

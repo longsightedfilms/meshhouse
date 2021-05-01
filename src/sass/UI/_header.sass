@@ -10,7 +10,6 @@
   display: flex
   align-items: flex-end
   color: var(--textColor)
-  padding: 0 0 0.5rem 0
   z-index: 10
   &:after
     content: ''
@@ -20,6 +19,7 @@
     position: absolute
     width: calc(100% - 192px)
     height: calc(100% - 64px)
+    min-height: 2rem
     z-index: -1
     -webkit-app-region: drag
   &:before
@@ -91,18 +91,19 @@
     position: absolute
     top: 0
     width: 100vw
-    padding: 0.5rem 0 0.5rem 0
     &:before
       backdrop-filter: blur(20px)
       background: var(--blockColorGlass)
 .application--windows
   .application__header
-    padding: 2rem 0 0.5rem 0
+    min-height: 2rem
     &:after
       display: block
     &:before
       background: none
     &-navigation
+      margin-top: 2rem
+      margin-bottom: 0.5rem
       flex: 1 0 auto
       .breadcrumbs
         display: none

@@ -25,5 +25,9 @@ export default {
   updated: {
     title: 'Database updated',
     description: 'We updated the database, to go back, select the directory in the sidebar'
+  },
+  library: {
+    title: 'Your library',
+    total: 'Total models: {count}, total disk space: {size}'
   }
 };

@@ -9,4 +9,8 @@ export default {
     settings.set('minimalisticHeaders', false);
     settings.set('showInTray', false);
   }),
+  '>=0.2.8': ((settings: ElectronStore<ApplicationSettings>): void => {
+    settings.set('integrations.proxy.customProxy', false);
+    settings.set('integrations.proxy.url', '');
+  }),
 };

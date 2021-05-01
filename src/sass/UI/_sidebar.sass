@@ -1,5 +1,5 @@
 .application__sidebar
-  position: absolute
+  position: fixed
   z-index: 10
   inset-inline-start: 0
   bottom: 0
@@ -12,8 +12,9 @@
   &.visible
     transform: translateX(0)
   nav
+    height: 100vh
     .nav-container
-      max-height: calc(100vh - 114px * 2 - 1rem)
+      max-height: 100vh
   .show-databases
     position: absolute
     inset-inline-start: 100%

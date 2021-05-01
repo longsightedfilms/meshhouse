@@ -6,7 +6,7 @@
     <button
       class="show-databases"
       :title="$t('common.buttons.showCatalogs')"
-      @click="toggleVisibility"
+      @click="$toggleSidebar"
     >
       <p>{{ $t('common.buttons.showCatalogs') }}</p>
       <vue-icon
@@ -15,30 +15,28 @@
         raster
       />
     </button>
-    <nav v-bar>
+    <nav>
       <div class="nav-container">
-        <div>
-          <div v-if="!ifIntegrationsHidden">
-            <label class="label">{{ $t('common.types.databases.remote') }}</label>
-            <div>
-              <sidebar-link
-                v-for="item in $store.state.db.databases.integrations"
-                :key="'remote-' + item.title"
-                :navlink="item"
-                :progress="computeProgressLength(item.title)"
-              />
-            </div>
-          </div>
+        <div v-if="!ifIntegrationsHidden">
+          <label class="label">{{ $t('common.types.databases.remote') }}</label>
           <div>
-            <label class="label">{{ $t('common.types.databases.local') }}</label>
-            <div>
-              <sidebar-link
-                v-for="item in $store.state.db.databases.local"
-                :key="'local-' + item.title"
-                :navlink="item"
-                :progress="computeProgressLength(item.title)"
-              />
-            </div>
+            <sidebar-link
+              v-for="item in $store.state.db.databases.integrations"
+              :key="'remote-' + item.title"
+              :navlink="item"
+              :progress="computeProgressLength(item.title)"
+            />
+          </div>
+        </div>
+        <div>
+          <label class="label">{{ $t('common.types.databases.local') }}</label>
+          <div>
+            <sidebar-link
+              v-for="item in $store.state.db.databases.local"
+              :key="'local-' + item.title"
+              :navlink="item"
+              :progress="computeProgressLength(item.title)"
+            />
           </div>
         </div>
       </div>
@@ -86,14 +84,6 @@ export default class ApplicationSidebar extends Vue {
     } else {
       return 100 / (totalSpace / Number(databases[idx].totalsize));
     }
-  }
-
-  toggleVisibility(val: boolean): void {
-    this.$store.commit('setDBVisibility', !this.$store.state.settings.databasesVisible);
-    this.$ipcInvoke('set-application-setting', {
-      key: 'databasesVisible',
-      value: this.$store.state.settings.databasesVisible
-    });
   }
 }
 </script>

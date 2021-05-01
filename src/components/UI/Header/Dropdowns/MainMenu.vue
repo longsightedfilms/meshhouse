@@ -13,10 +13,10 @@
       />
       {{ $t('dropdowns.mainmenu.fullscreen') }}
     </a>
-    <a @click="showSettings">
+    <router-link to="/settings">
       <vue-icon icon="settings" />
       {{ $t('dropdowns.mainmenu.settings') }}
-    </a>
+    </router-link>
     <p class="title">
       <span>{{ $t('dropdowns.mainmenu.title.help') }}</span>
     </p>
@@ -49,7 +49,6 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import { Fragment } from 'vue-fragment';
-import SettingsModal from '@/views/Modals/SettingsModal.vue';
 import AboutProgramModal from '@/views/Modals/AboutProgramModal.vue';
 import UpdateAvailableModal from '@/views/Modals/Updater/UpdateAvailableModal.vue';
 import UpdateNotAvailableModal from '@/views/Modals/Updater/UpdateNotAvailableModal.vue';
@@ -94,22 +93,6 @@ export default class MainMenuDropdown extends Vue {
   destroyed(): void {
     window.ipc.removeAllListeners('update-available');
     window.ipc.removeAllListeners('update-not-available');
-  }
-
-  showSettings(): void {
-    this.$modal.show(SettingsModal, {}, {
-      adaptive: true,
-      clickToClose: true,
-      width: '100%',
-      height: '100%',
-    }, {
-      'before-open': () => {
-        this.$store.commit('setModalVisibility', true);
-      },
-      'before-close': () => {
-        this.$store.commit('setModalVisibility', false);
-      }
-    });
   }
 
   showAbout(): void {

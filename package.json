@@ -1,6 +1,6 @@
 {
   "name": "meshhouse",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "private": false,
   "description": "Open-source 3d models catalogizer",
   "author": {
@@ -43,6 +43,7 @@
     "sharp": "^0.25.4",
     "sqlite3": "^5.0.0",
     "swiper": "^6.1.1",
+    "systeminformation": "^4.30.1",
     "transliteration": "^2.1.9",
     "ua-parser-js": "^0.7.22",
     "uniqid": "^5.2.0",
@@ -63,7 +64,6 @@
     "vue-property-decorator": "^8.4.2",
     "vue-router": "^3.3.4",
     "vue-slider-component": "^3.1.2",
-    "vuebar": "0.0.20",
     "vuex": "^3.3.0",
     "winston": "^3.3.3"
   },
@@ -84,7 +84,7 @@
     "@vue/cli-service": "^4.4.6",
     "@vue/eslint-config-typescript": "^5.0.2",
     "aws-sdk": "^2.669.0",
-    "electron": "^10.1.5",
+    "electron": "^11.0.1",
     "electron-icon-builder": "^1.0.2",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
@@ -92,7 +92,7 @@
     "sass": "^1.26.5",
     "sass-loader": "^8.0.0",
     "ts-loader": "^7.0.5",
-    "typescript": "^3.9.7",
+    "typescript": "^4.1.1-rc",
     "vue-cli-plugin-electron-builder": "^2.0.0-rc.4",
     "vue-cli-plugin-i18n": "^1.0.1",
     "vue-cli-plugin-typescript": "0.0.1",

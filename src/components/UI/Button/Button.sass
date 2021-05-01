@@ -1,8 +1,4 @@
-$buttonBG: #ccc
-$buttonBGDarkTheme: #444
-
-$buttonPrimaryBG: #22a7f0
-$buttonPrimaryBGHover: #69caff
+@import "../../../sass/variables"
 
 .v-button
   position: relative
@@ -37,6 +33,22 @@ $buttonPrimaryBGHover: #69caff
     padding-inline-end: 3rem
     color: #7a7a7a
     cursor: not-allowed
+  &--glass
+    background-color: $buttonGlassBG
+    border-color: $buttonGlassBG
+    &:hover
+      background-color: $buttonGlassBG
+      border-color: $buttonGlassBGHover
+  &--icon-only
+    display: flex
+    align-items: center
+    padding: 0.438rem
+    .icon
+      margin: 0
+  &--sm
+    .icon
+      width: 1rem
+      height: 1rem
 
 .application.theme--dark
   .v-button
@@ -51,3 +63,9 @@ $buttonPrimaryBGHover: #69caff
       background-color: $buttonPrimaryBG
       &:hover
         border-color: $buttonPrimaryBGHover
+    &--glass
+      background-color: $buttonGlassBG
+      border-color: $buttonGlassBG
+      &:hover
+        background-color: $buttonGlassBG
+        border-color: $buttonGlassBGHover

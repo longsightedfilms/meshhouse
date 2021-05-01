@@ -1,8 +1,10 @@
-<template functional>
+<template>
   <header class="application__header">
-    <component :is="injections.components.HeaderNavigation" />
-    <component :is="injections.components.HeaderWindowTitle" />
-    <component :is="injections.components.HeaderWindowButtons" />
+    <header-navigation
+      v-if="$route.meta.toolbar"
+    />
+    <header-window-title />
+    <header-window-buttons />
   </header>
 </template>
 
@@ -14,14 +16,10 @@ import HeaderWindowTitle from '@/components/UI/Header/HeaderWindowTitle.vue';
 import HeaderWindowButtons from '@/components/UI/Header/HeaderWindowButtons.vue';
 
 @Component({
-  inject: {
-    components: {
-      default: {
-        HeaderNavigation,
-        HeaderWindowButtons,
-        HeaderWindowTitle
-      },
-    },
+  components: {
+    HeaderNavigation,
+    HeaderWindowButtons,
+    HeaderWindowTitle
   },
 })
 export default class ApplicationHeader extends Vue {}

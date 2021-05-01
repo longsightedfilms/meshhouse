@@ -2,16 +2,16 @@
   <div>
     <application-header />
     <span class="application__main">
-      <application-sidebar />
-      <main
-        v-bar
-        class="application__content"
-      >
-        <div ref="inner">
-          <div class="application__inner">
-            <router-view />
-          </div>
-        </div>
+      <notification-container />
+      <application-sidebar v-if="$route.meta.sidebar" />
+      <main :class="contentClass">
+        <transition
+          name="v-transition-fluent-screen"
+          mode="out-in"
+          appear
+        >
+          <router-view />
+        </transition>
       </main>
     </span>
   </div>
@@ -25,11 +25,13 @@
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import ApplicationHeader from '@/components/UI/Header/ApplicationHeader.vue';
 import ApplicationSidebar from '@/components/UI/Sidebar/ApplicationSidebar.vue';
+import NotificationContainer from '@/components/UI/Notification/NotificationContainer.vue';
 
 @Component({
   components: {
     ApplicationHeader,
     ApplicationSidebar,
+    NotificationContainer
   },
   metaInfo() {
     return {
@@ -64,6 +66,7 @@ export default class App extends Vue {
     const isFullScreen = await this.$ipcInvoke('is-fullscreen');
 
     const systemThemeDark = await this.$ipcInvoke('should-use-dark-theme');
+    this.$store.commit('setSystemDarkTheme', systemThemeDark);
     const os = await this.$ipcInvoke('get-os');
 
     this.$ipcInvoke('set-theme-source', theme);
@@ -108,11 +111,23 @@ export default class App extends Vue {
     window.ipc.removeAllListeners('theme-updated');
   }
 
+  get contentClass(): string {
+    let baseClass = 'application__content';
+    if (this.$route.path === '/settings') {
+      baseClass += ' application__content--lg';
+    }
+
+    return baseClass;
+  }
+
   async loadStartupSettings(): Promise<void> {
     this.$i18n.locale = await this.$ipcInvoke('get-application-setting', 'language');
     const settings = await this.$ipcInvoke('get-all-settings');
 
     this.$store.commit('setApplicationSettings', settings);
+    const currentDevice = await this.$ipcInvoke('get-machine-info');
+    this.$store.commit('setCurrentDevice', currentDevice);
+
     await this.handleApplicationClass();
     await this.$ipcInvoke('watch-databases');
     if (settings.lastPage === 'lastCatalog') {
@@ -120,7 +135,7 @@ export default class App extends Vue {
         await this.$router.push(settings.applicationWindow.lastOpened);
       }
     } else {
-      await this.$router.push('/');
+      await this.$router.push('/library');
     }
 
     await this.$ipcInvoke('app-loaded');

@@ -7,6 +7,13 @@
       <div class="progress-main" />
     </div>
     <button
+      :title="$t('views.catalog.library.title')"
+      class="button button--flat button--icon-only"
+      @click="$router.push('/library')"
+    >
+      <vue-icon icon="home" />
+    </button>
+    <button
       :title="$t('hints.navbar.addCatalog')"
       class="button button--flat button--icon-only"
       @click="showNewCatalog"
@@ -82,6 +89,7 @@
         class="download"
         :class="downloadClass"
         :hint="$t('hints.navbar.downloads')"
+        @click="clearDownloadClass"
       >
         <template slot="button">
           <vue-icon
@@ -105,11 +113,9 @@
 import eventBus from '@/eventBus';
 import Vue from 'vue';
 import Component from 'vue-class-component';
-import AddNewCatalogModal from '@/views/Modals/AddNewCatalogModal.vue';
 import FiltersDropdown from '@/components/UI/Header/Dropdowns/Filters.vue';
 import DownloadsDropdown from '@/components/UI/Header/Dropdowns/Downloads.vue';
 import MainMenuDropdown from '@/components/UI/Header/Dropdowns/MainMenu.vue';
-import { findDatabaseIndex } from '@/functions/databases';
 
 @Component({
   components: {
@@ -141,7 +147,7 @@ export default class HeaderNavigation extends Vue {
   }
 
   showNewCatalog(): void {
-    this.$modal.show(AddNewCatalogModal, {}, {
+    this.$modal.show(this.$modal_AddNewCatalogModal, {}, {
       adaptive: true,
       clickToClose: true,
       width: '100%',
@@ -154,6 +160,11 @@ export default class HeaderNavigation extends Vue {
         this.$store.commit('setModalVisibility', false);
       }
     });
+  }
+
+  clearDownloadClass(): void {
+    this.downloadStarted = false;
+    this.downloadCompleted = false;
   }
 
   updateItems(): void {

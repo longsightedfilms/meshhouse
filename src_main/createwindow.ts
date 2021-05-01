@@ -15,7 +15,7 @@ export function createWindow(
 ): BrowserWindow | null {
   let createdAppProtocol = false;
   let window: BrowserWindow | null = new BrowserWindow(options);
-  const loadingWindow: BrowserWindow = new BrowserWindow(loaderOptions);
+  let loadingWindow: BrowserWindow | null = new BrowserWindow(loaderOptions);
 
   window.setMenu(null);
 
@@ -60,14 +60,18 @@ export function createWindow(
     window = null;
   });
 
+  loadingWindow.on('closed', () => {
+    loadingWindow = null;
+  });
+
   loadingWindow.once('ready-to-show', () => {
-    loadingWindow.show();
-    loadingWindow.focus();
+    loadingWindow?.show();
+    loadingWindow?.focus();
   });
 
   ipcMain.handleOnce('app-loaded', () => {
-    loadingWindow.hide();
-    loadingWindow.close();
+    loadingWindow?.hide();
+    loadingWindow?.close();
     window?.show();
   });
 

@@ -9,35 +9,75 @@ const router = new Router({
     {
       path: '/',
       name: 'Home',
-      component: (): Promise<typeof import('*.vue')> =>
-        import(/* webpackChunkName: "Home" */ './views/Home.vue'),
+      component: (): Promise<typeof import('*.vue')> => {
+        return import(/* webpackChunkName: "Home" */ './views/Home.vue');
+      },
+      meta: {
+        toolbar: true,
+        sidebar: true,
+        backButton: false
+      }
+    },
+    {
+      path: '/library',
+      name: 'Library',
+      component: (): Promise<typeof import('*.vue')> => {
+        return import(/* webpackChunkName: "Home" */ './views/Library.vue');
+      },
+      meta: {
+        toolbar: true,
+        sidebar: false,
+        backButton: false
+      }
     },
     {
       path: '/updated-database',
       name: 'Updated',
-      component: (): Promise<typeof import('*.vue')> =>
-        import(/* webpackChunkName: "Updated" */ './views/Updated.vue'),
+      component: (): Promise<typeof import('*.vue')> => {
+        return import(/* webpackChunkName: "Updated" */ './views/Updated.vue');
+      },
+      meta: {
+        toolbar: true,
+        sidebar: true,
+        backButton: false
+      }
     },
     {
       path: '/db/local/:database/:category?',
       name: 'LocalDatabase',
-      component: (): Promise<typeof import('*.vue')> =>
-        import(
-          /* webpackChunkName: "LocalDatabase" */ './views/Catalog/Local.vue'
-        ),
+      component: (): Promise<typeof import('*.vue')> => {
+        return import(/* webpackChunkName: "LocalDatabase" */ './views/Catalog/Local.vue');
+      },
       meta: {
-        localDB: true
+        localDB: true,
+        toolbar: true,
+        sidebar: true,
+        backButton: false
       }
     },
     {
       path: '/db/remote/:database/:page?',
       name: 'RemoteDatabase',
-      component: (): Promise<typeof import('*.vue')> =>
-        import(
-          /* webpackChunkName: "LocalDatabase" */ './views/Catalog/Remote.vue'
-        ),
+      component: (): Promise<typeof import('*.vue')> => {
+        return import(/* webpackChunkName: "LocalDatabase" */ './views/Catalog/Remote.vue');
+      },
       meta: {
-        localDB: false
+        localDB: false,
+        toolbar: true,
+        sidebar: true,
+        backButton: false
+      }
+    },
+    {
+      path: '/settings',
+      name: 'Settings',
+      component: (): Promise<typeof import('*.vue')> => {
+        return import(/* webpackChunkName: "Settings" */ './views/Settings/Index.vue');
+      },
+      meta: {
+        toolbar: false,
+        sidebar: false,
+        backButton: true
       }
     },
   ],
@@ -51,8 +91,17 @@ router.beforeEach((to, from, next) => {
 });
 
 router.afterEach((to, from) => {
+  const content = document.querySelector('main.application__content');
+  content?.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  });
+  store.commit('setLoadingStatus', true);
   Vue.nextTick(() => {
-    if (to.name !== 'Home' && to.name !== 'Updated') {
+    if (to.name !== 'Home'
+    && to.name !== 'Updated'
+    && to.name !== 'Settings'
+    ) {
       router.app.$root.$ipcInvoke('set-application-setting', {
         key: 'applicationWindow.lastOpened',
         value: to.path

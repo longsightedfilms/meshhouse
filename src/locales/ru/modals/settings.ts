@@ -43,6 +43,10 @@ export default {
     integrations: {
       title: 'Общие настройки интеграций',
       content: {
+        customProxy: {
+          title: 'Использовать нестандартный сервер API',
+          hint: 'Сторонний API сервер обязан соответствовать стандарту <a href="https://app.swaggerhub.com/apis/meshhouse/meshhouse-reverse-api-proxy/1.0.0">OpenAPI</a>. Изменения вступят после перезапуска приложения.'
+        },
         path: 'Укажите путь, куда будут устанавливаться модели'
       }
     }

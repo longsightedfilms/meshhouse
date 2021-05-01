@@ -6,7 +6,7 @@
           icon="folder"
           inverted
         />
-        {{ $t('context.catalog.open') }}
+        {{ $t('context.category.open') }}
       </a>
     </li>
     <li>
@@ -15,7 +15,7 @@
           icon="edit"
           inverted
         />
-        {{ $t('context.catalog.properties') }}
+        {{ $t('context.category.properties') }}
       </a>
     </li>
     <li>
@@ -24,7 +24,7 @@
           icon="recycle-bin"
           inverted
         />
-        {{ $t('context.catalog.delete') }}
+        {{ $t('context.category.delete') }}
       </a>
     </li>
   </fragment>

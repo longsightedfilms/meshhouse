@@ -5,6 +5,7 @@ import catalog from './views/catalog';
 import modals from './modals/';
 // Context menus
 import catalogContext from './context/catalog';
+import categoryContext from './context/category';
 import modelContext from './context/model';
 // Dropdown, hints
 import download from './dropdowns/download';
@@ -20,6 +21,7 @@ export default {
   common: common,
   context: {
     catalog: catalogContext,
+    category: categoryContext,
     model: modelContext
   },
   dropdowns: {

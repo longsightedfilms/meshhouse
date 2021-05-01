@@ -1,5 +1,6 @@
 import { ipcMain } from 'electron-better-ipc';
 import { appWin } from '../background';
+import type { BrowserWindow } from 'electron';
 
 /**
  * Emit event to renderer vuex instance
@@ -18,7 +19,7 @@ export function sendVuexCommit(commit: string, params: any): void {
  */
 export async function getVuexState(path: string): Promise<any> {
   if (appWin !== null) {
-    const result = await ipcMain.callRenderer(appWin, 'vuex-state-send', path);
+    const result = await ipcMain.callRenderer((appWin as BrowserWindow), 'vuex-state-send', path);
     return result;
   }
 }
@@ -28,7 +29,7 @@ export async function getVuexState(path: string): Promise<any> {
  */
 export async function getLocalizedString(path: string, params?: object): Promise<any> {
   if (appWin !== null) {
-    const result = await ipcMain.callRenderer(appWin, 'i18n-t', {
+    const result = await ipcMain.callRenderer((appWin as BrowserWindow), 'i18n-t', {
       path,
       params
     });

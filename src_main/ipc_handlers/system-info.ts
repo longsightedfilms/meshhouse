@@ -1,4 +1,5 @@
 import { ipcMain, app } from 'electron';
+import { getSystemInfo } from '../functions/os';
 
 export default function(): void {
   ipcMain.on('get-os', (event) => {
@@ -15,5 +16,10 @@ export default function(): void {
 
   ipcMain.handle('get-user-data-path', (event) => {
     return app.getPath('userData');
+  });
+
+  ipcMain.handle('get-machine-info', async() => {
+    const info = await getSystemInfo();
+    return info;
   });
 }

@@ -6,129 +6,127 @@
     <div class="modal_content">
       <div class="left">
         <ValidationObserver ref="form">
-          <form v-bar>
+          <form>
             <div>
-              <div style="max-height: calc(100vh - 12rem)">
-                <ValidationProvider
-                  v-slot="{ errors }"
-                  name="catalogTitle"
-                  class="input-group"
-                  rules="required|notIntegrationName"
-                  immediate
+              <ValidationProvider
+                v-slot="{ errors }"
+                name="catalogTitle"
+                class="input-group"
+                rules="required|notIntegrationName"
+                immediate
+              >
+                <label>{{ $t('modals.addCatalog.labels.name') }}</label>
+                <input
+                  v-model.lazy="properties.title"
+                  type="text"
+                  class="input"
+                  :placeholder="$t('modals.addCatalog.hints.name')"
                 >
-                  <label>{{ $t('modals.addCatalog.labels.name') }}</label>
-                  <input
-                    v-model.lazy="properties.title"
-                    type="text"
-                    class="input"
-                    :placeholder="$t('modals.addCatalog.hints.name')"
-                  >
-                  <span class="input__message">
-                    {{ errors[0] }}
-                  </span>
-                </ValidationProvider>
-                <ValidationProvider
-                  ref="directoryProvider"
-                  v-slot="{ errors }"
-                  name="catalogPath"
-                  class="input-group"
-                  rules="required"
-                  immediate
+                <span class="input__message">
+                  {{ errors[0] }}
+                </span>
+              </ValidationProvider>
+              <ValidationProvider
+                ref="directoryProvider"
+                v-slot="{ errors }"
+                name="catalogPath"
+                class="input-group"
+                rules="required"
+                immediate
+              >
+                <input
+                  v-model="properties.path"
+                  type="hidden"
                 >
-                  <input
-                    v-model="properties.path"
-                    type="hidden"
-                  >
-                  <label>{{ $t('modals.addCatalog.labels.folder') }}</label>
-                  <button
-                    :title="properties.path"
-                    class="input input--file"
-                    @click.prevent="handleDirectoryInputClick"
-                  >
-                    <span v-if="properties.path !== ''">{{ properties.path }}</span>
-                    <span
-                      v-else
-                      class="placeholder"
-                    >
-                      {{ folderPlaceholder }}
-                    </span>
-                  </button>
-                  <span class="input__message">
-                    {{ errors[0] }}
-                  </span>
-                </ValidationProvider>
-                <ValidationProvider
-                  ref="imageProvider"
-                  v-slot="{ errors }"
-                  name="catalogImage"
-                  class="input-group"
-                  rules="image"
-                  immediate
+                <label>{{ $t('modals.addCatalog.labels.folder') }}</label>
+                <button
+                  :title="properties.path"
+                  class="input input--file"
+                  @click.prevent="handleDirectoryInputClick"
                 >
-                  <label>{{ $t('modals.addCatalog.labels.icon') }}</label>
-                  <input
-                    ref="image"
-                    type="file"
-                    accept=".jpg, .jpeg, .png, .svg, .webp"
-                    hidden
-                    @change="handleImageChange"
+                  <span v-if="properties.path !== ''">{{ properties.path }}</span>
+                  <span
+                    v-else
+                    class="placeholder"
                   >
-                  <button
-                    class="input input--file"
-                    @click.prevent="handleImageInputClick"
-                  >
-                    <span v-if="properties.icon !== ''">{{ properties.icon }}</span>
-                    <span
-                      v-else
-                      class="placeholder"
-                    >
-                      {{ $t('modals.addCatalog.hints.image') }}
-                    </span>
-                  </button>
-                  <span class="input__message">
-                    {{ errors[0] }}
+                    {{ folderPlaceholder }}
                   </span>
-                </ValidationProvider>
-                <ValidationProvider
-                  ref="imageProvider"
-                  v-slot="{ errors }"
-                  name="catalogImage"
-                  class="input-group"
-                  rules="image"
-                  immediate
+                </button>
+                <span class="input__message">
+                  {{ errors[0] }}
+                </span>
+              </ValidationProvider>
+              <ValidationProvider
+                ref="imageProvider"
+                v-slot="{ errors }"
+                name="catalogImage"
+                class="input-group"
+                rules="image"
+                immediate
+              >
+                <label>{{ $t('modals.addCatalog.labels.icon') }}</label>
+                <input
+                  ref="image"
+                  type="file"
+                  accept=".jpg, .jpeg, .png, .svg, .webp"
+                  hidden
+                  @change="handleImageChange"
                 >
-                  <label>{{ $t('modals.addCatalog.labels.image') }}</label>
-                  <input
-                    ref="background"
-                    type="file"
-                    accept=".jpg, .jpeg, .png, .webp"
-                    hidden
-                    @change="handleBackgroundChange"
+                <button
+                  class="input input--file"
+                  @click.prevent="handleImageInputClick"
+                >
+                  <span v-if="properties.icon !== ''">{{ properties.icon }}</span>
+                  <span
+                    v-else
+                    class="placeholder"
                   >
-                  <button
-                    class="input input--file"
-                    @click.prevent="handleBackgroundFileClick"
-                  >
-                    <span v-if="properties.background !== ''">{{ properties.background }}</span>
-                    <span
-                      v-else
-                      class="placeholder"
-                    >
-                      {{ $t('modals.addCatalog.hints.image') }}
-                    </span>
-                  </button>
-                  <span class="input__message">
-                    {{ errors[0] }}
+                    {{ $t('modals.addCatalog.hints.image') }}
                   </span>
-                </ValidationProvider>
-                <div class="input-group">
-                  <label>{{ $t('modals.addCatalog.labels.color') }}</label>
-                  <color-picker
-                    class="input--color"
-                    :value="properties.color"
-                    @input="handleUpdateColor"
-                  />
-                </div>
+                </button>
+                <span class="input__message">
+                  {{ errors[0] }}
+                </span>
+              </ValidationProvider>
+              <ValidationProvider
+                ref="imageProvider"
+                v-slot="{ errors }"
+                name="catalogImage"
+                class="input-group"
+                rules="image"
+                immediate
+              >
+                <label>{{ $t('modals.addCatalog.labels.image') }}</label>
+                <input
+                  ref="background"
+                  type="file"
+                  accept=".jpg, .jpeg, .png, .webp"
+                  hidden
+                  @change="handleBackgroundChange"
+                >
+                <button
+                  class="input input--file"
+                  @click.prevent="handleBackgroundFileClick"
+                >
+                  <span v-if="properties.background !== ''">{{ properties.background }}</span>
+                  <span
+                    v-else
+                    class="placeholder"
+                  >
+                    {{ $t('modals.addCatalog.hints.image') }}
+                  </span>
+                </button>
+                <span class="input__message">
+                  {{ errors[0] }}
+                </span>
+              </ValidationProvider>
+              <div class="input-group">
+                <label>{{ $t('modals.addCatalog.labels.color') }}</label>
+                <color-picker
+                  class="input--color"
+                  :value="properties.color"
+                  @input="handleUpdateColor"
+                />
               </div>
             </div>
           </form>
@@ -301,6 +299,7 @@ export default class AddNewCatalogModal extends Vue {
             color: this.properties.color,
             url: url,
             background: this.properties.background,
+            backgroundTall: '',
             icon: this.properties.icon,
             path: this.properties.path,
             localDB: true,
@@ -310,13 +309,18 @@ export default class AddNewCatalogModal extends Vue {
 
           if (this.imageChanged === true) {
             try {
-              const response = await this.$ipcInvoke('generate-bg-image', {
+              const backgroundObject = await this.$ipcInvoke('generate-bg-image', {
+                item: this.properties,
+                image: this.backgroundImage
+              });
+              const backgroundTallObject = await this.$ipcInvoke('generate-bg-tall-image', {
                 item: this.properties,
                 image: this.backgroundImage
               });
 
-              this.properties.background = response.imagePath;
-              catalog.background = response.imagePath;
+              this.properties.background = backgroundObject.imgPath;
+              catalog.background = backgroundObject.imgPath;
+              catalog.backgroundTall = backgroundTallObject.imgPath;
               await this.$addDatabase(catalog);
               this.$emit('close');
             } catch (err) {

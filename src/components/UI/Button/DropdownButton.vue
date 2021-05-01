@@ -22,48 +22,5 @@
     </nav>
   </div>
 </template>
-
-<script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component';
-import { mixin as clickaway } from 'vue-clickaway';
-
-@Component({
-  mixins: [
-    clickaway
-  ],
-  props: {
-    hint: {
-      type: String,
-      required: false,
-      default: ''
-    },
-    closeByClick: {
-      type: Boolean,
-      required: false,
-      default: false
-    }
-  }
-})
-export default class DropdownButton extends Vue {
-  toggled = false
-
-  get menuClass(): string {
-    return `dropdown__menu ${this.toggled ? 'show' : ''}`;
-  }
-
-  toggleDropdown(): void {
-    this.toggled = !this.toggled;
-  }
-
-  onClickedOutside(): void {
-    this.toggled = false;
-  }
-
-  onClickedInside(): void {
-    if (this.$props.closeByClick === true) {
-      this.toggled = false;
-    }
-  }
-}
-</script>
+<style src="./DropdownButton.sass" lang="sass"></style>
+<script src="./DropdownButton.ts" lang="ts"></script>
