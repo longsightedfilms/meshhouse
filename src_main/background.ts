@@ -31,8 +31,6 @@ const applicationOptions: any = {
   show: false,
   resizable: true,
   webPreferences: {
-    enableRemoteModule: true,
-    contextIsolation: false,
     experimentalFeatures: true,
     nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
     preload: path.join(__dirname, 'preload.js')
@@ -48,8 +46,6 @@ const loaderOptions: any = {
   resizable: false,
   icon: getIconForOS(),
   webPreferences: {
-    enableRemoteModule: false,
-    contextIsolation: false,
     nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
   },
 };
