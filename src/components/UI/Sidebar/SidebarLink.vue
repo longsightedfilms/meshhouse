@@ -2,17 +2,17 @@
   <router-link
     :to="routerLink"
     :style="{'--color': navlink.color}"
-    :event="!navlink.disabled ? 'click' : ''"
     :disabled="navlink.disabled"
     class="sidebar_link"
+    @click="onClick"
   >
     <div
       class="avatar"
-      :style="avatarStyle(navlink)"
+      :style="avatarStyle"
     >
       <img
         v-if="navlink.icon !== ''"
-        :src="retrieveImage(navlink.icon)"
+        :src="retrieveImage"
       >
       <p
         v-else
@@ -50,70 +50,71 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 import { colorContrast } from '@/functions/image';
 
-@Component({
-  props: {
-    navlink: {
-      type: Object,
-      required: true,
-      default: {
-        title: '',
-        color: '',
-        icon: '',
-        url: '',
-        path: null,
-        count: 0,
-        localDB: false,
-        totalsize: 0,
-        disabled: false
-      }
-    },
-    progress: {
-      type: Number,
-      required: true
-    }
-  }
-})
+@Component
 export default class SidebarLink extends Vue {
+  @Prop({
+    type: Object,
+    required: true,
+    default: {
+      title: '',
+      color: '',
+      icon: '',
+      url: '',
+      path: null,
+      count: 0,
+      localDB: false,
+      totalsize: 0,
+      disabled: false
+    }
+  }) readonly navlink!: DatabaseItem;
+  @Prop({ type: Number, required: true }) readonly progress!: number;
+
   get routerLink(): object {
     return {
-      path: `/db/${this.$props.navlink.localDB ? 'local' : 'remote' }/${this.$props.navlink.url}`,
+      path: `/db/${this.navlink.localDB ? 'local' : 'remote' }/${this.navlink.url}`,
       meta: {
-        title: this.$props.navlink.title,
-        localDB: this.$props.navlink.localDB
+        title: this.navlink.title,
+        localDB: this.navlink.localDB
       }
     };
   }
 
   get avatarTextColorClass(): string {
-    return colorContrast(this.$props.navlink.color);
+    return colorContrast(this.navlink.color);
   }
 
   get avatarTextPreview(): string {
-    return Array.from(this.$props.navlink.title).slice(0, 1).join('').toUpperCase();
+    return Array.from(this.navlink.title).slice(0, 1).join('').toUpperCase();
   }
 
-  avatarStyle(navlink: DatabaseItem): object {
-    return navlink.localDB ? { backgroundColor: navlink.color } : {};
+  get avatarStyle(): object {
+    return this.navlink.localDB ? { backgroundColor: this.navlink.color } : {};
   }
 
-  retrieveImage(src: string): string {
-    if (!this.$props.navlink.icon.includes('@/')) {
-      return this.$forceReloadImage(this.$props.navlink.icon);
+  get retrieveImage(): string {
+    if (this.navlink.icon) {
+      if (!this.navlink.icon.includes('@/')) {
+        return this.$forceReloadImage(this.navlink.icon);
+      } else {
+        return `/assets/integrations/${this.navlink.icon.substr(2)}`;
+      }
     } else {
-      return `/assets/integrations/${this.$props.navlink.icon.substr(2)}`;
+      return '#';
     }
   }
 
   deleteCatalog(catalog: DatabaseItem): void {
     this.$closeSidebar();
-    this.$modal.show(this.$modal_DeleteCatalogModal, { database: catalog.url }, {
-      adaptive: true,
-      clickToClose: true,
-    });
+    this.$showDialog('delete-catalog', { database: catalog.url });
+  }
+
+  onClick(): void {
+    if (!this.navlink.disabled) {
+      this.$router.push(this.routerLink);
+    }
   }
 }
 </script>

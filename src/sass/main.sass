@@ -53,9 +53,23 @@ h1
     grid-area: Main
   &__content
     height: calc(100vh - 88px)
-    overflow-y: auto
+    overflow-y: overlay
     &--lg
       height: calc(100vh - 2rem)
+  &--windows
+    *
+      &::-webkit-scrollbar
+        width: 5px
+        height: 5px
+      &::-webkit-scrollbar-thumb
+        background: var(--scrollColor)
+        border-radius: 0px
+      &::-webkit-scrollbar-thumb:hover
+        background: var(--scrollColor)
+      &::-webkit-scrollbar-track
+        background: var(--blockColorDark)
+        border-radius: 0px
+
   &--linux, &--mac, &--fullscreen
     .application
       &__main

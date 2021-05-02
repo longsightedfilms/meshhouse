@@ -6,5 +6,7 @@ declare module 'vue/types/vue' {
     $modal_AddNewCatalogModal: VueConstructor<Vue>;
     $modal_EditCatalogModal: VueConstructor<Vue>;
     $modal_DeleteCatalogModal: VueConstructor<Vue>;
+    $showDialog(component: string, props: any): void;
+    $hideModal(): void;
   }
 }

@@ -20,6 +20,7 @@ import { integrationsList } from '@/functions/databases';
 import { transliterate as tr, slugify } from 'transliteration';
 
 Vue.config.productionTip = false;
+Vue.config.performance = true;
 
 for (const [rule, validation] of Object.entries(rules)) {
   extend(rule, {

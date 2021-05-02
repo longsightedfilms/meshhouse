@@ -8,10 +8,12 @@ import type { BrowserWindow } from 'electron';
  * @param params commit arguments
  */
 export function sendVuexCommit(commit: string, params: any): void {
-  appWin?.webContents.send('vuex-commit-reply', {
-    commit,
-    args: params
-  });
+  if (appWin !== null) {
+    ipcMain.callRenderer((appWin as BrowserWindow), 'vuex-commit-reply', {
+      commit,
+      args: params
+    });
+  }
 }
 /**
  * Fetch vuex state from renderer process
@@ -42,10 +44,12 @@ export async function getLocalizedString(path: string, params?: object): Promise
  * @param params emitter arguments
  */
 export function sendEventBusEmit(channel: string, params: any): void {
-  appWin?.webContents.send('event-bus-emit', {
-    channel,
-    args: params
-  });
+  if (appWin !== null) {
+    ipcMain.callRenderer((appWin as BrowserWindow), 'event-bus-emit', {
+      channel,
+      args: params
+    });
+  }
 }
 
 /**
@@ -53,5 +57,7 @@ export function sendEventBusEmit(channel: string, params: any): void {
  * @param path url
  */
 export function sendRouterPush(path: string): void {
-  appWin?.webContents.send('router-push', path);
+  if (appWin !== null) {
+    ipcMain.callRenderer((appWin as BrowserWindow), 'router-push', path);
+  }
 }

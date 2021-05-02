@@ -22,14 +22,22 @@ window.functions = {
   convertToFileUrl: url.pathToFileURL
 };
 
-/*contextBridge.exposeInMainWorld(
-  'ipc', ipcRenderer
+contextBridge.exposeInMainWorld(
+  'ipc', {
+    answerMain: ipcRenderer.answerMain,
+    callMain: ipcRenderer.callMain,
+    on: ipcRenderer.on,
+    invoke: ipcRenderer.invoke,
+    send: ipcRenderer.send,
+    sendSync: ipcRenderer.sendSync,
+    removeAllListeners: ipcRenderer.removeAllListeners
+  }
 );
 
 contextBridge.exposeInMainWorld(
   'functions', {
-    convertToFileUrl(baseURL: string): url.URL {
-      return url.pathToFileURL(baseURL);
+    convertToFileUrl(baseURL: string): string {
+      return url.pathToFileURL(baseURL).pathname;
     }
   }
-);*/
+);

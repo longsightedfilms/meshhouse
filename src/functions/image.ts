@@ -4,8 +4,7 @@
  */
 export function getLocalLink(image: string): string {
   const local = image.search(/^https?:\/\//gm) === -1;
-
-  const imageURL = window.functions.convertToFileUrl(image).pathname;
+  const imageURL = window.functions.convertToFileUrl(image);
 
   return local ? `local://${imageURL}` : image;
 }

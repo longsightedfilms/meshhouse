@@ -72,10 +72,7 @@ export default class CatalogContext extends Vue {
 
   deleteCatalog(): void {
     this.$closeSidebar();
-    this.$modal.show(this.$modal_DeleteCatalogModal, { database: this.database.url }, {
-      adaptive: true,
-      clickToClose: true,
-    });
+    this.$showDialog('delete-catalog', { database: this.database.url });
   }
 }
 </script>

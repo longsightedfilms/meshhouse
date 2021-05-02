@@ -6,9 +6,10 @@ import { i18n } from '@/locales/i18n';
 
 const emitter = mitt();
 
-window.ipc.on('vuex-commit-reply', (event: any, params: any) => {
+window.ipc.answerMain('vuex-commit-reply', (params: any) => {
   const { commit, args } = params;
   store.commit(commit, args);
+  return true;
 });
 
 window.ipc.answerMain('vuex-state-send', (path: string) => {
@@ -21,13 +22,15 @@ window.ipc.answerMain('i18n-t', (args: any) => {
   return args !== undefined ? i18n.t(path, params) : i18n.t(path);
 });
 
-window.ipc.on('event-bus-emit', (event: any, params: any) => {
+window.ipc.answerMain('event-bus-emit', (params: any) => {
   const { channel, args } = params;
   emitter.emit(channel, args);
+  return true;
 });
 
-window.ipc.on('router-push', (event: any, path: string) => {
+window.ipc.answerMain('router-push', (path: string) => {
   router.push(path);
+  return true;
 });
 
 export default emitter;

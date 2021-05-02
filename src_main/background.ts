@@ -31,6 +31,7 @@ const applicationOptions: any = {
   show: false,
   resizable: true,
   webPreferences: {
+    contextIsolation: true,
     experimentalFeatures: true,
     nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,
     preload: path.join(__dirname, 'preload.js')
