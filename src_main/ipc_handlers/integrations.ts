@@ -275,7 +275,7 @@ export default function(): void {
   });
 
   ipcMain.handle('cancel-download-item', (event, id) => {
-    serverStore.commit('cancelDownloadItem', id);
+    serverStore.dispatch('cancelItem', id);
     return true;
   });
 }

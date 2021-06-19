@@ -75,13 +75,18 @@
               v-for="(image, idx) in $store.state.controls.properties.images"
               :key="idx"
             >
-              <div class="outer">
-                <img
-                  :src="image"
-                  :alt="$store.state.controls.properties.title"
-                  loading="lazy"
-                >
-              </div>
+              <img
+                class="slide-image"
+                :src="image"
+                :alt="$store.state.controls.properties.title"
+                loading="lazy"
+              >
+              <img
+                class="slide-image--background"
+                :src="image"
+                :alt="$store.state.controls.properties.title"
+                loading="lazy"
+              >
             </swiper-slide>
             <div
               slot="button-prev"

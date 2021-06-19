@@ -45,9 +45,17 @@ export default {
       content: {
         customProxy: {
           title: 'Использовать нестандартный сервер API',
-          hint: 'Сторонний API сервер обязан соответствовать стандарту <a href="https://app.swaggerhub.com/apis/meshhouse/meshhouse-reverse-api-proxy/1.0.0">OpenAPI</a>. Изменения вступят после перезапуска приложения.'
+          hint: 'Сторонний API сервер обязан соответствовать стандарту <a href="https://app.swaggerhub.com/apis/meshhouse/meshhouse-reverse-api-proxy/1.0.0">OpenAPI</a>.'
         },
-        path: 'Укажите путь, куда будут устанавливаться модели'
+        path: 'Укажите путь, куда будут устанавливаться модели',
+        sfmlab: {
+          title: 'Настройки SFMLab',
+          content: {
+            matureContent: {
+              title: 'Показывать контент для взрослых'
+            }
+          }
+        }
       }
     }
   },

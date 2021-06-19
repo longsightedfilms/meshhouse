@@ -17,6 +17,9 @@ export default {
     proxy: {
       customProxy: false,
       url: ''
+    },
+    sfmlab: {
+      showMatureContent: false
     }
   }
 };

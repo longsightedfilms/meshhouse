@@ -47,7 +47,7 @@
             :key="`link-${idx}`"
             class="model--link"
           >
-            <p>{{ link.filename }}</p>
+            <p>{{ link.filename }} ({{ link.size }})</p>
             <button
               class="button button--flat"
               @click="installModel(link)"

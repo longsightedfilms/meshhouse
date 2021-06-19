@@ -4,5 +4,7 @@ export default {
   sortDESC: 'Descending sort',
   filters: 'Filters',
   downloads: 'Downloads',
-  refreshCatalog: 'Refresh catalog'
+  refreshCatalog: 'Refresh catalog',
+  matureContent: 'Mature content',
+  savedItem: 'Item has been installed'
 };

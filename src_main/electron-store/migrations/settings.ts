@@ -12,5 +12,6 @@ export default {
   '>=0.2.8': ((settings: ElectronStore<ApplicationSettings>): void => {
     settings.set('integrations.proxy.customProxy', false);
     settings.set('integrations.proxy.url', '');
+    settings.set('integrations.sfmlab.showMatureContent', false);
   }),
 };

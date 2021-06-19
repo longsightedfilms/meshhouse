@@ -12,6 +12,9 @@ export default {
       proxy: {
         customProxy: false,
         url: ''
+      },
+      sfmlab: {
+        showMatureContent: false
       }
     }
   },
@@ -39,6 +42,9 @@ export default {
     },
     setIntegrationsProxy(state: SettingsState, payload: any): void {
       state.integrations.proxy = payload;
+    },
+    setSFMLabMature(state: SettingsState, payload: boolean): void {
+      state.integrations.sfmlab.showMatureContent = payload;
     }
   }
 };

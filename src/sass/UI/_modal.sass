@@ -9,11 +9,15 @@
     .vm--container
       top: 32px !important
       height: calc(100vh - 32px) !important
+
+.vm--overlay
+  &-hidden
+    display: none
+
 .vm--modal
   background-color: var(--blockColor) !important
   border-radius: 0 !important
   color: var(--textColor)
-  //padding: 1rem
   box-shadow: none !important
   left: 0px !important
   margin: 0 auto
@@ -245,35 +249,36 @@
             &::-webkit-progress-value
               background-color: $primary
   &--model-info
+    padding: 0
+    border: none
     padding-top: 6rem
     height: calc(100vh - 48px)
     .modal_header
       position: absolute
       top: 1rem
       width: 100%
+      margin: -1rem 0
       z-index: 2
-      background-color: var(--blockColorGlass)
-      backdrop-filter: blur(20px)
     .modal_content
+      padding: 0 1rem
       .model-info__image
         margin: 0 -1rem 2rem
-        .outer
+        .slide-image
           position: relative
-          &:before
-            display: block
-            content: ""
-            width: 100%
-            padding-top: (9 / 16) * 100%
-          img
+          object-fit: contain
+          object-position: 50%
+          aspect-ratio: 16/9
+          margin: 0 auto
+          width: 100%
+          z-index: 1
+          &--background
             position: absolute
-            top: 0
-            right: 0
-            bottom: 0
-            left: 0
-            display: block
             width: 100%
-            object-fit: contain
+            height: 100%
+            object-fit: cover
             object-position: 50%
+            top: 0
+            filter: brightness(0.5) blur(40px)
   &--links
     .modal--note
       text-align: center

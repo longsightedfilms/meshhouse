@@ -13,7 +13,7 @@
     </div>
     <div class="card_properties">
       <p class="size">
-        {{ modelSize(item.size) }}
+        {{ modelSize(item.size || 0) }}
       </p>
       <p class="extension">
         {{ $returnHumanLikeExtension(item.extension) }}
@@ -26,9 +26,8 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 import VueContext from 'vue-context';
-import Component from 'vue-class-component';
 import ModelImage from '@/components/UI/Image/ModelImage.vue';
 import RemoteModelInfoModal from '@/views/Modals/RemoteModelInfoModal.vue';
 
@@ -36,14 +35,13 @@ import RemoteModelInfoModal from '@/views/Modals/RemoteModelInfoModal.vue';
   components: {
     ModelImage,
     VueContext
-  },
-  props: {
-    item: Object
   }
 })
 export default class ModelCard extends Vue {
+  @Prop({ type: Object, required: true }) readonly item!: Model
+
   modelSize(size: number): string {
-    return  this.$formatSize(size);
+    return this.$formatSize(size);
   }
 
   async handleDblClick(item: Model): Promise<void> {
@@ -65,6 +63,10 @@ export default class ModelCard extends Vue {
         }, {
           'before-open': () => {
             this.$store.commit('setModalVisibility', true);
+            setTimeout(() => {
+              const overlay = document.querySelector('.vm--container .vm--overlay');
+              overlay?.classList.add('vm--overlay-hidden');
+            });
           },
           'before-close': () => {
             this.$store.commit('setModalVisibility', false);

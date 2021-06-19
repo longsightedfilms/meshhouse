@@ -38,7 +38,7 @@
           <button
             v-if="!isFinished(download)"
             class="button button--flat button--flat-danger button--icon-only"
-            @click="$store.commit('cancelDownloadItem', download)"
+            @click="cancelDownload(download)"
           >
             <vue-icon
               icon="stop"
@@ -99,6 +99,11 @@ export default class DownloadsDropdown extends Vue {
 
   computeFileSize(item: Download): string {
     return `${this.$formatSize(item.downloadedSize)} / ${this.$formatSize(item.totalSize)}`;
+  }
+
+  async cancelDownload(download: any): Promise<void> {
+    await this.$ipcInvoke('cancel-download-item', download.id);
+    this.$store.commit('cancelDownloadItem', download);
   }
 }
 </script>

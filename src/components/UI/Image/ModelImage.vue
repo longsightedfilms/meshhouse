@@ -10,29 +10,39 @@
       class="icon"
       :src="iconFile"
     >
-    <span
-      v-if="isRemoteItem && item.installed"
-      class="icon-badge"
-    >
-      <vue-icon icon="checked" />
-    </span>
+    <div class="badges">
+      <span
+        v-if="item.mature_content"
+        class="badge badge--mature"
+        :title="$t('hints.navbar.matureContent')"
+      >
+        <vue-icon
+          icon="gender"
+          raster
+        />
+      </span>
+      <span
+        v-if="isRemoteItem && item.installed"
+        class="badge badge--saved"
+        :title="$t('hints.navbar.savedItem')"
+      >
+        <vue-icon
+          icon="save-close"
+          raster
+        />
+      </span>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 import { getLocalLink } from '@/functions/image';
 
-@Component({
-  props: {
-    item: {
-      type: Object,
-      required: true
-    }
-  }
-})
+@Component({})
 export default class ModelImage extends Vue {
+  @Prop({ type: Object, required: true }) readonly item!: Model
+
   get imageLink(): string {
     return getLocalLink(this.$props.item.image);
   }

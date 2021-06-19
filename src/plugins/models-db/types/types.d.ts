@@ -169,6 +169,7 @@ type Model = {
   image: string;
   images?: string[];
   installed?: boolean;
+  mature_content?: boolean;
   downloadLinks?: SFMLabLink[];
   comments?: ModelComment[];
 }
@@ -246,6 +247,9 @@ type Settings = {
     proxy: {
       customProxy: boolean;
       url: string;
+    };
+    sfmlab: {
+      showMatureContent: boolean;
     };
   };
 }

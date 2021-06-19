@@ -4,6 +4,7 @@ import MainIndexTab from './Main/Index.vue';
 import MainProgramsTab from './Main/Programs.vue';
 
 import IntegrationsIndexTab from './Integrations/Index.vue';
+import IntegrationsSFMLabTab from './Integrations/SFMLab.vue';
 
 import SyncIndexTab from './Sync/Index.vue';
 import SyncRemoteTab from './Sync/Remote.vue';
@@ -35,6 +36,7 @@ type SubmenuSidebarElement = {
     MainIndexTab,
     MainProgramsTab,
     IntegrationsIndexTab,
+    IntegrationsSFMLabTab,
     SyncIndexTab,
     SyncRemoteTab,
     SyncDevicesTab
@@ -71,6 +73,10 @@ export default class ModalSettings extends Vue {
         {
           title: 'modals.settings.tabs.integrations.title',
           component: 'IntegrationsIndexTab'
+        },
+        {
+          title: 'modals.settings.tabs.integrations.content.sfmlab.title',
+          component: 'IntegrationsSFMLabTab'
         }
       ]
     },

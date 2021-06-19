@@ -4,7 +4,7 @@
 import fs from 'fs';
 import path from 'path';
 import got from 'got';
-import type { Got } from 'got';
+import type { Got, Options, CancelableRequest } from 'got';
 import sanitize from 'sanitize-filename';
 import { appWin as windowInstance } from '../../../background';
 import { Integration } from '../../template';
@@ -26,9 +26,36 @@ import uniqid from 'uniqid';
 import logger from '../../../logger';
 
 
-const baseURL = ApplicationStore.settings.get('integrations.proxy.customProxy')
-  ? ApplicationStore.settings.get('integrations.proxy.url')
-  : 'https://proxy-api.meshhouse.art';
+function getBaseURL(): string {
+  return ApplicationStore.settings.get('integrations.proxy.customProxy')
+    ? ApplicationStore.settings.get('integrations.proxy.url')
+    : 'https://proxy-api.meshhouse.art';
+}
+
+function isMatureContentVisible(): boolean {
+  return ApplicationStore.settings.get('integrations.sfmlab.showMatureContent') ?? false;
+}
+
+function generateUniqueId(): string {
+  return uniqid();
+}
+
+async function sfmlabRequest(url: string, params?: Options): Promise<any> {
+  const headers = isMatureContentVisible()
+    ? {
+      'X-Meshhouse-Mature': 'true'
+    } : undefined;
+
+  const instance = got.extend({
+    prefixUrl: getBaseURL(),
+    responseType: 'json',
+    headers
+  });
+
+  const response = await instance(url, params);
+
+  return response;
+}
 
 /**
  * SFMLab-based site integration class
@@ -49,20 +76,11 @@ export default class SFMLabBaseIntegration extends Integration {
    * Site base url (ex. https://example.com)
    */
   url = '';
-  /**
-   * Base axios instance
-   */
-  sfmlabInstance: Got
 
   constructor(slug: string, name: string) {
     super(slug);
     this.slug = slug;
     this.name = name;
-
-    this.sfmlabInstance = got.extend({
-      prefixUrl: baseURL,
-      responseType: 'json'
-    });
 
     this.initializeLocalDatabase();
   }
@@ -121,8 +139,8 @@ export default class SFMLabBaseIntegration extends Integration {
       sendVuexCommit('setOfflineStatus', false);
       sendVuexCommit('setLoadingStatus', false);
 
-      logger.verbose(`HTTP GET ${baseURL}/integrations/${this.slug}/models`);
-      const fetch: SFMLabFetch = (await this.sfmlabInstance.get<SFMLabFetch>(`integrations/${this.slug}/models`, {
+      logger.verbose(`HTTP GET ${getBaseURL()}/integrations/${this.slug}/models`);
+      const fetch: SFMLabFetch = (await sfmlabRequest(`integrations/${this.slug}/models`, {
         searchParams: params
       })).body;
 
@@ -180,7 +198,7 @@ export default class SFMLabBaseIntegration extends Integration {
         totalPages: 0
       };
     } finally {
-      logger.verbose(`HTTP GET ${baseURL}/integrations/${this.slug}/models completed`);
+      logger.verbose(`HTTP GET ${getBaseURL()}/integrations/${this.slug}/models completed`);
       sendVuexCommit('setLoadingStatus', true);
     }
   }
@@ -189,8 +207,8 @@ export default class SFMLabBaseIntegration extends Integration {
     try {
       sendVuexCommit('setOfflineStatus', false);
       sendVuexCommit('setLoadingStatus', false);
-      logger.verbose(`HTTP GET ${baseURL}/integrations/${this.slug}/models/${id}`);
-      const item = (await this.sfmlabInstance.get<Model>(`integrations/${this.slug}/models/${id}`)).body;
+      logger.verbose(`HTTP GET ${getBaseURL()}/integrations/${this.slug}/models/${id}`);
+      const item = (await sfmlabRequest(`integrations/${this.slug}/models/${id}`)).body;
       const installed = await this.checkIsInstalledModel(id);
 
       item.installed = (installed as boolean);
@@ -209,7 +227,7 @@ export default class SFMLabBaseIntegration extends Integration {
       });
       logger.error(new Error(err));
     } finally {
-      logger.verbose(`HTTP GET ${baseURL}/integrations/${this.slug}/models/${id} completed`);
+      logger.verbose(`HTTP GET ${getBaseURL()}/integrations/${this.slug}/models/${id} completed`);
       sendVuexCommit('setLoadingStatus', true);
     }
   }
@@ -321,7 +339,8 @@ export default class SFMLabBaseIntegration extends Integration {
       return Promise.reject(new Error('Path not set'));
     }
 
-    const id = uniqid();
+    const id = generateUniqueId();
+    console.log(id);
 
     const download = {
       img: item.images !== undefined ? item.images[0] : '',
@@ -348,13 +367,19 @@ export default class SFMLabBaseIntegration extends Integration {
         download.downloadedSize = Number(loaded);
 
         sendVuexCommit('updateDownloadItem', download);
-
-        windowInstance?.setProgressBar(progress.percent);
+        try {
+          serverStore.commit('updateProgressItem', download);
+          serverStore.commit('updateProgressPercent');
+        } catch (err) {
+          console.error(err);
+        }
       });
 
     const serverDownload = {
       id,
-      request
+      request,
+      totalSize: 0,
+      downloadedSize: 0,
     };
 
     serverStore.commit('addDownloadItem', serverDownload);
@@ -398,6 +423,7 @@ export default class SFMLabBaseIntegration extends Integration {
       createOSNotification(notificationTitle, notificationMessage);
       sendEventBusEmit('download-completed', undefined);
       serverStore.commit('removeDownloadItem', serverDownload.id);
+      serverStore.commit('updateProgressPercent');
 
       logger.verbose('Updating database settings');
       const db = ApplicationStore.databases.get(`databases.integrations.${this.slug}`);
@@ -422,7 +448,6 @@ export default class SFMLabBaseIntegration extends Integration {
     } catch (err) {
       if (request.isCanceled) {
         logger.warn(`Downloading item ${item.name} has been canceled`);
-        serverStore.commit('removeDownloadItem', serverDownload.id);
         return Promise.resolve(true);
       } else {
         sendVuexCommit('addNotification', {
@@ -437,6 +462,7 @@ export default class SFMLabBaseIntegration extends Integration {
         });
 
         serverStore.commit('removeDownloadItem', serverDownload.id);
+        serverStore.commit('updateProgressPercent');
         sendVuexCommit('updateDownloadItem', download);
         return Promise.reject(new Error(err));
       }
