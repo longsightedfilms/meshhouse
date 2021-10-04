@@ -14,4 +14,6 @@ jobs:
     - name: install electron native dependencies
       run: npm run postinstall
     - name: build windows x64 binary
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: npm run electron:build
