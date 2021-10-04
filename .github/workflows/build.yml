@@ -1,0 +1,17 @@
+name: Build
+on: [push]
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@master
+      with:
+        node-version: 14
+    - name: install dependencies
+      run: npm install
+    - name: install electron native dependencies
+      run: npm run postinstall
+    - name: build windows x64 binary
+      run: npm run electron:build
