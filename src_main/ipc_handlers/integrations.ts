@@ -2,7 +2,7 @@ import Integrations from '../integrations';
 import { Integration } from '../integrations/template';
 import { ipcMain } from 'electron';
 import { watchDatabases } from '../integrations/functions';
-import serverStore from '../store';
+import DownloadManager from '../classes/downloadManager';
 import logger from '../logger';
 
 export async function protocolDownloadHandle(id: number | string, integration: string): Promise<void> {
@@ -191,7 +191,8 @@ export default function(): void {
 
     try {
       const db = new Integrations[title];
-      await db.fetchSingleModel(item.id);
+      const response = await db.fetchSingleModel(item.id);
+      return response;
     } catch (err) {
       return Promise.reject(err);
     }
@@ -275,7 +276,7 @@ export default function(): void {
   });
 
   ipcMain.handle('cancel-download-item', (event, id) => {
-    serverStore.dispatch('cancelItem', id);
+    DownloadManager.cancelItem(id);
     return true;
   });
 }

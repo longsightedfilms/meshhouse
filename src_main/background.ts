@@ -183,6 +183,7 @@ ipcMain.on('install-update', () => {
 
 ipcHandlers.imageHandler();
 ipcHandlers.integrationsHandler();
+ipcHandlers.favoritesHandler();
 ipcHandlers.fsHandler();
 ipcHandlers.themeHandler();
 ipcHandlers.shellHandler();

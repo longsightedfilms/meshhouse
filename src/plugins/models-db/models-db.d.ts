@@ -35,6 +35,11 @@ declare module 'vue/types/vue' {
      */
     $formatDateRelative(timestamp: number): string;
     /**
+     * Format date to user locale using date-fns package
+     * @param timestamp Timestamp
+     */
+    $formatDate(timestamp: number | string): string;
+    /**
      * Toggle all catalogs sidebar
      */
     $toggleSidebar(): void;

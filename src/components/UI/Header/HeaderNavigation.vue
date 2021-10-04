@@ -1,11 +1,5 @@
 <template>
   <div class="application__header-navigation">
-    <div
-      v-show="!$store.state.controls.isLoaded"
-      class="progress__container"
-    >
-      <div class="progress-main" />
-    </div>
     <button
       :title="$t('views.catalog.library.title')"
       class="button button--flat button--icon-only"
@@ -85,10 +79,23 @@
         </template>
         <filters-dropdown />
       </vue-dropdown>
+      <div class="dropdown">
+        <button
+          :title="$t('views.favorites.title')"
+          class="button button--flat button--icon-only"
+          @click="$router.push('/favorites')"
+        >
+          <vue-icon
+            icon="bookmarks"
+            raster
+          />
+        </button>
+      </div>
       <vue-dropdown
         class="download"
         :class="downloadClass"
         :hint="$t('hints.navbar.downloads')"
+        :notify="$store.state.downloads.started || $store.state.downloads.finished"
         @click="clearDownloadClass"
       >
         <template slot="button">
@@ -125,25 +132,10 @@ import MainMenuDropdown from '@/components/UI/Header/Dropdowns/MainMenu.vue';
   }
 })
 export default class HeaderNavigation extends Vue {
-  downloadStarted = false
-  downloadCompleted = false
-
   title: string[] = []
 
   get downloadClass(): string {
-    return `${this.downloadStarted ? 'active' : ''} ${this.downloadCompleted ? 'completed' : ''}`;
-  }
-
-  mounted(): void {
-    eventBus.on('download-started', () => {
-      this.downloadStarted = true;
-      setTimeout(() => {
-        this.downloadStarted = false;
-      }, 1000);
-    });
-    eventBus.on('download-completed', () => {
-      this.downloadCompleted = true;
-    });
+    return `${this.$store.state.downloads.completed ? 'completed' : ''}`;
   }
 
   showNewCatalog(): void {
@@ -163,8 +155,8 @@ export default class HeaderNavigation extends Vue {
   }
 
   clearDownloadClass(): void {
-    this.downloadStarted = false;
-    this.downloadCompleted = false;
+    this.$store.commit('setStarted', false);
+    this.$store.commit('setCompleted', false);
   }
 
   updateItems(): void {

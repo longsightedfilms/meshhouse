@@ -1,6 +1,7 @@
 import common from './common';
 // Views
 import catalog from './views/catalog';
+import favorites from './views/favorites';
 // Modals
 import modals from './modals/';
 // Context menus
@@ -34,6 +35,7 @@ export default {
   notifications: notifications,
   validations: validationMessages,
   views: {
-    catalog: catalog
+    catalog: catalog,
+    favorites: favorites
   },
 };

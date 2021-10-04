@@ -63,10 +63,12 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component } from 'vue-property-decorator';
+import { Vue, Component, Prop } from 'vue-property-decorator';
 
 @Component({})
-export default class RemoteModelInfoModal extends Vue {
+export default class FileSelectorModal extends Vue {
+  @Prop({ type: Object, required: false }) readonly item!: Model
+
   back(): void {
     this.$modal.hideAll();
     this.$store.commit('setModalVisibility', false);
@@ -78,7 +80,7 @@ export default class RemoteModelInfoModal extends Vue {
     await this.$ipcInvoke('download-item-integration', {
       type: 'remote',
       title: this.$route.params.database,
-      item: this.$store.state.controls.properties,
+      item: this.item || this.$store.state.controls.properties,
       link: linkItem
     });
   }

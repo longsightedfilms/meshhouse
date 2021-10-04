@@ -28,6 +28,14 @@ export default {
     },
     setLicenses(state: DatabaseState, payload: SFMLabLicense[]): void {
       state.licenses = payload;
+    },
+    setLocalFavorite(state: DatabaseState, payload: any): void {
+      if (Array.isArray(state.loadedData)) {
+        const idx = state.loadedData.findIndex((item: Model) => item.remoteId === payload.id);
+        if (idx !== -1) {
+          state.loadedData[idx].favorite = payload.status;
+        }
+      }
     }
   }
 };

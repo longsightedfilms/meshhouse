@@ -44,7 +44,7 @@ import VueContext from 'vue-context';
 import ModelContext from '@/components/UI/Context/ModelContext.vue';
 import ModelCard from '@/components/UI/Card/ModelCard.vue';
 import CatalogPaginator from './CatalogPaginator.vue';
-import MultipleLinksModal from '@/views/Modals/MultipleLinksDetected.vue';
+import FileSelectorModal from '@/views/Modals/FileSelectorModal.vue';
 import { Route } from 'vue-router';
 
 @Component({
@@ -96,7 +96,7 @@ export default class RemoteDatabase extends Vue {
       this.databaseInitialize();
     }));
     eventBus.on('multiple-links', (() => {
-      this.$modal.show(MultipleLinksModal, {}, {
+      this.$modal.show(FileSelectorModal, {}, {
         clickToClose: true,
         height: 'auto'
       });

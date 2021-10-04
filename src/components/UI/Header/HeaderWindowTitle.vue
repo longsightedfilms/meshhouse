@@ -109,7 +109,11 @@ export default class HeaderWindowTitle extends Vue {
   }
 
   backRoute(): void {
-    this.$router.back();
+    if (window.history.length > 1) {
+      this.$router.back();
+    } else {
+      this.$router.push('/');
+    }
   }
 }
 </script>

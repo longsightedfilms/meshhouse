@@ -13,6 +13,11 @@ export default class DropdownButton extends Mixins(clickaway) {
     type: Boolean,
     default: false
   }) readonly closeByClick!: boolean;
+  @Prop({
+    required: false,
+    type: Boolean,
+    default: false
+  }) readonly notify!: boolean;
 
   toggled = false
 

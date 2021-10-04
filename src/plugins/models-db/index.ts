@@ -6,7 +6,7 @@ import sanitizeHTML from 'sanitize-html';
 
 import { formatBytes } from '@/functions/format';
 import { modelsExtensions, getParameterByExtension } from '@/functions/extension';
-import { formatDateRelative } from '@/functions/date';
+import { formatDateRelative, formatDate } from '@/functions/date';
 
 window.ipc.invoke('init-databases');
 
@@ -107,6 +107,10 @@ export function ModelsDB(Vue: typeof _Vue): void {
 
   Vue.prototype.$formatDateRelative = function(timestamp: number): string {
     return formatDateRelative(timestamp);
+  };
+
+  Vue.prototype.$formatDate = function(timestamp: string | number): string {
+    return formatDate(timestamp);
   };
 
   Vue.prototype.$toggleSidebar = function(): void {

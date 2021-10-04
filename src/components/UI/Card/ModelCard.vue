@@ -29,7 +29,6 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import VueContext from 'vue-context';
 import ModelImage from '@/components/UI/Image/ModelImage.vue';
-import RemoteModelInfoModal from '@/views/Modals/RemoteModelInfoModal.vue';
 
 @Component({
   components: {
@@ -44,34 +43,13 @@ export default class ModelCard extends Vue {
     return this.$formatSize(size);
   }
 
-  async handleDblClick(item: Model): Promise<void> {
+  handleDblClick(item: Model): void {
     if (Object.hasOwnProperty.call(item, 'installed')) {
       // Is remote item
       if (item.installed === true) {
         this.$openItem(item.path);
       } else {
-        await this.$ipcInvoke('get-single-model-integration', {
-          type: 'remote',
-          title: this.$route.params.database,
-          item
-        });
-        this.$modal.show(RemoteModelInfoModal, {}, {
-          adaptive: true,
-          clickToClose: true,
-          width: '100%',
-          height: '100%',
-        }, {
-          'before-open': () => {
-            this.$store.commit('setModalVisibility', true);
-            setTimeout(() => {
-              const overlay = document.querySelector('.vm--container .vm--overlay');
-              overlay?.classList.add('vm--overlay-hidden');
-            });
-          },
-          'before-close': () => {
-            this.$store.commit('setModalVisibility', false);
-          }
-        });
+        this.$router.push(`/model/${this.$route.params.database}/${item.id}`);
       }
     } else {
       this.$openItem(item.path);

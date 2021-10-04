@@ -1,9 +1,18 @@
 .button
+  position: relative
   padding: 0.5rem 2rem
   border-radius: 0.125rem
   color: $white
   font-size: 1rem
   font-weight: 100
+  &__notify
+    position: absolute
+    top: 0.25rem
+    right: 0.25rem
+    width: 0.5rem
+    height: 0.5rem
+    background-color: $primary
+    border-radius: 50%
   &:disabled
     cursor: not-allowed
     background-color: var(--buttonHover)

@@ -1,26 +1,37 @@
 import eventBus from '@/eventBus';
 
 export default {
-  state: [],
+  state: {
+    started: false,
+    completed: false,
+    items: []
+  },
   mutations: {
-    addDownloadItem(state: Download[], payload: Download): void {
-      state.push(payload);
+    addDownloadItem(state: DownloadState, payload: Download): void {
+      state.items.push(payload);
+      state.started = true;
       eventBus.emit('download-started');
     },
-    cancelDownloadItem(state: Download[], payload: Download): void {
-      const idx = state.findIndex((download: Download) => download.id === payload.id);
-      state[idx].totalSize = -1;
-      state[idx].downloadedSize = -1;
+    cancelDownloadItem(state: DownloadState, payload: Download): void {
+      const idx = state.items.findIndex((download: Download) => download.id === payload.id);
+      state.items[idx].totalSize = -1;
+      state.items[idx].downloadedSize = -1;
     },
-    clearDownloadsList(state: Download[]): void {
-      state = [];
+    clearDownloadsList(state: DownloadState): void {
+      state.items = [];
     },
-    deleteDownloadItem(state: Download[], index: number): void {
-      state.splice(index, 1);
+    deleteDownloadItem(state: DownloadState, index: number): void {
+      state.items.splice(index, 1);
     },
-    updateDownloadItem(state: Download[], payload: Download): void {
-      const idx = state.findIndex((download: Download) => download.id === payload.id);
-      state.splice(idx, 1, payload);
+    updateDownloadItem(state: DownloadState, payload: Download): void {
+      const idx = state.items.findIndex((download: Download) => download.id === payload.id);
+      state.items.splice(idx, 1, payload);
+    },
+    setStarted(state: DownloadState, payload: boolean): void {
+      state.started = payload;
+    },
+    setCompleted(state: DownloadState, payload: boolean): void {
+      state.completed = payload;
     }
   }
 };

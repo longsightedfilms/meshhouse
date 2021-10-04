@@ -31,6 +31,18 @@ const router = new Router({
       }
     },
     {
+      path: '/favorites',
+      name: 'Favorites',
+      component: (): Promise<typeof import('*.vue')> => {
+        return import(/* webpackChunkName: "Home" */ './views/Favorites.vue');
+      },
+      meta: {
+        toolbar: false,
+        sidebar: false,
+        backButton: true
+      }
+    },
+    {
       path: '/updated-database',
       name: 'Updated',
       component: (): Promise<typeof import('*.vue')> => {
@@ -40,6 +52,18 @@ const router = new Router({
         toolbar: true,
         sidebar: true,
         backButton: false
+      }
+    },
+    {
+      path: '/model/:database/:id',
+      name: 'ModelPage',
+      component: (): Promise<typeof import('*.vue')> => {
+        return import(/* webpackChunkName: "Updated" */ './views/ModelPage.vue');
+      },
+      meta: {
+        toolbar: false,
+        sidebar: false,
+        backButton: true
       }
     },
     {

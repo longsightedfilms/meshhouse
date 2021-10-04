@@ -113,7 +113,7 @@ export default class App extends Vue {
 
   get contentClass(): string {
     let baseClass = 'application__content';
-    if (this.$route.path === '/settings') {
+    if (!this.$route.meta.toolbar) {
       baseClass += ' application__content--lg';
     }
 

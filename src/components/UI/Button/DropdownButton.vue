@@ -12,6 +12,10 @@
       <slot name="button">
         Dropdown
       </slot>
+      <span
+        v-if="notify"
+        class="button__notify"
+      />
     </button>
     <nav :class="menuClass">
       <slot name="default">

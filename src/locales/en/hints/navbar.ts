@@ -6,5 +6,6 @@ export default {
   downloads: 'Downloads',
   refreshCatalog: 'Refresh catalog',
   matureContent: 'Mature content',
-  savedItem: 'Item has been installed'
+  savedItem: 'Item has been installed',
+  favoriteItem: 'Item saved in favorites'
 };

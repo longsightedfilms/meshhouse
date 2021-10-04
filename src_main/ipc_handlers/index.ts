@@ -1,3 +1,4 @@
+import favorites from './favorites';
 import fs from './fs';
 import image from './image';
 import integrations from './integrations';
@@ -7,6 +8,8 @@ import store from './electron-store';
 import systemInfo from './system-info';
 import window from './window';
 
+
+export const favoritesHandler = favorites;
 export const fsHandler = fs;
 export const themeHandler = theme;
 export const shellHandler = shell;

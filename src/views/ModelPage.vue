@@ -2,49 +2,29 @@
   <div>
     <div class="modal modal--model-info">
       <div class="modal_header">
-        <button
-          class="back"
-          @click="back"
-        >
-          <svg
-            width="15"
-            height="12"
-            viewBox="0 0 15 12"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <line
-              y2="6"
-              x2="1"
-              y1="6"
-              x1="15"
-              fill="none"
-            />
-            <line
-              y2="0"
-              x2="6"
-              y1="6"
-              x1="0"
-              fill="none"
-            />
-            <line
-              y2="12"
-              x2="6"
-              y1="6"
-              x1="0"
-              fill="none"
-            />
-          </svg>
-        </button>
-        <h1>{{ $store.state.controls.properties.name }}</h1>
+        <h1>{{ model.name }}</h1>
         <div class="catalog-header__info-block">
           <vue-icon
             icon="stack"
             raster
           />
-          <p>{{ $store.state.controls.properties.size }}</p>
+          <p>{{ model.size }}</p>
         </div>
         <button
-          v-if="!$store.state.controls.properties.installed"
+          class="button button--flat button--icon-only"
+          @click="handleFavorites"
+        >
+          <span
+            v-if="isCurrentFavorite"
+            class="button__notify"
+          />
+          <vue-icon
+            icon="bookmark"
+            raster
+          />
+        </button>
+        <button
+          v-if="!model.installed"
           class="button button--flat"
           @click="installModel()"
         >
@@ -52,7 +32,7 @@
           {{ $t('context.model.install') }}
         </button>
         <button
-          v-if="$store.state.controls.properties.installed"
+          v-if="model.installed"
           class="button button--flat"
           @click="installOtherFileModel()"
         >
@@ -60,7 +40,7 @@
           {{ $t('context.model.update') }}
         </button>
         <button
-          v-if="$store.state.controls.properties.installed"
+          v-if="model.installed"
           class="button button--flat"
           @click="deleteModel()"
         >
@@ -72,19 +52,19 @@
         <div class="model-info__image">
           <swiper :options="swiperOptions">
             <swiper-slide
-              v-for="(image, idx) in $store.state.controls.properties.images"
+              v-for="(image, idx) in model.images || []"
               :key="idx"
             >
               <img
                 class="slide-image"
                 :src="image"
-                :alt="$store.state.controls.properties.title"
+                :alt="model.name"
                 loading="lazy"
               >
               <img
                 class="slide-image--background"
                 :src="image"
-                :alt="$store.state.controls.properties.title"
+                :alt="model.name"
                 loading="lazy"
               >
             </swiper-slide>
@@ -114,13 +94,14 @@
         </div>
         <h1>{{ $t('modals.model.description') }}</h1>
         <div
+          class="model-info__description"
           @click="handleClicks"
-          v-html="$sanitizeHTML($store.state.controls.properties.description)"
+          v-html="$sanitizeHTML(model.description || '')"
         />
         <div class="commentaries">
           <h1>{{ $t('modals.model.comments') }}</h1>
           <div
-            v-for="(comment, idx) in $store.state.controls.properties.comments"
+            v-for="(comment, idx) in model.comments || []"
             :key="`comment-${idx}`"
             class="commentary"
           >
@@ -149,21 +130,48 @@
 </template>
 
 <script lang="ts">
+import eventBus from '@/eventBus';
 import { Vue, Component } from 'vue-property-decorator';
 import getAwesomeSwiper from 'vue-awesome-swiper/dist/exporter';
+import FileSelectorModal from '@/views/Modals/FileSelectorModal.vue';
 import { Swiper as SwiperClass, Pagination, Navigation } from 'swiper/core';
+import { Route } from 'vue-router';
 
 SwiperClass.use([Pagination, Navigation]);
 
 const { Swiper, SwiperSlide } = getAwesomeSwiper(SwiperClass);
 
-@Component({
+@Component<ModelPage>({
   components: {
     Swiper,
     SwiperSlide
+  },
+  async beforeRouteEnter(to: Route, from: Route, next: Function) {
+    const isFavorite = await window.ipc.invoke('is-in-favorite', {
+      database: to.params.database,
+      remoteId: to.params.id
+    });
+
+    const data = await window.ipc.invoke('get-single-model-integration', {
+      type: 'remote',
+      title: to.params.database,
+      item: {
+        id: to.params.id
+      }
+    });
+
+    next((vm: ModelPage) => {
+      vm.isCurrentFavorite = isFavorite;
+      vm.model = data;
+    });
+  },
+  metaInfo() {
+    return {
+      title: this.model.name ?? ''
+    };
   }
 })
-export default class RemoteModelInfoModal extends Vue {
+export default class ModelPage extends Vue {
   swiperOptions: object = {
     pagination: {
       el: '.swiper-pagination'
@@ -174,39 +182,78 @@ export default class RemoteModelInfoModal extends Vue {
     }
   }
 
-  back(): void {
-    this.$modal.hideAll();
-    this.$store.commit('setModalVisibility', false);
+  isCurrentFavorite = false
+
+  model: Model = {
+    id: -1,
+    remoteId: -1,
+    name: '',
+    extension: '',
+    path: '',
+    category: '',
+    image: '',
+    images: []
+  }
+
+  mounted(): void {
+    eventBus.on('multiple-links', (() => {
+      this.$modal.show(FileSelectorModal, { item: this.model }, {
+        clickToClose: true,
+        height: 'auto'
+      });
+    }));
+  }
+
+  beforeDestroy(): void {
+    eventBus.all.clear();
   }
 
   async installModel(): Promise<void> {
-    this.back();
+    this.$router.back();
 
     await this.$ipcInvoke('download-handle-integration', {
       type: 'remote',
       title: this.$route.params.database,
-      item: this.$store.state.controls.properties
+      item: this.model
     });
   }
 
   async installOtherFileModel(): Promise<void> {
-    this.back();
+    this.$router.back();
 
     await this.$ipcInvoke('update-handle-integration', {
       type: 'remote',
       title: this.$route.params.database,
-      item: this.$store.state.controls.properties
+      item: this.model
     });
   }
 
   async deleteModel(): Promise<void> {
-    this.back();
-
     await this.$ipcInvoke('delete-item-integration', {
       type: 'remote',
       title: this.$route.params.database,
-      item: this.$store.state.controls.properties
+      item: this.model
     });
+  }
+
+  async handleFavorites(): Promise<void> {
+    const payload = {
+      database: this.$route.params.database,
+      remoteId: this.$route.params.id,
+      thumbnail: this.model.images ? this.model.images[0] : this.model.image ?? '',
+      title: this.model.name
+    };
+
+    try {
+      const method = this.isCurrentFavorite
+        ? 'remove-favorite'
+        : 'add-favorite';
+
+      await this.$ipcInvoke(method, payload);
+      this.isCurrentFavorite = !this.isCurrentFavorite;
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   handleClicks(event: any): void {

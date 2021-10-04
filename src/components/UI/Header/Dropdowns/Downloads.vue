@@ -3,14 +3,14 @@
     <p class="title">
       <span>{{ $t('hints.navbar.downloads') }}</span>
     </p>
-    <div v-if="$store.state.downloads.length > 0">
+    <div v-if="$store.state.downloads.items.length > 0">
       <div
-        v-for="(download, idx) in $store.state.downloads"
+        v-for="(download, idx) in $store.state.downloads.items"
         :key="download.id"
         class="download__item"
       >
         <div class="image">
-          <img :src="download.img">
+          <img :src="download.thumbnail">
         </div>
         <div class="content">
           <p class="title">

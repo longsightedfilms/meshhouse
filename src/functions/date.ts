@@ -1,5 +1,5 @@
 import { i18n } from '@/locales/i18n';
-import { formatRelative } from 'date-fns';
+import { formatRelative, intlFormat } from 'date-fns';
 import { enUS, ru } from 'date-fns/locale';
 
 const locales: any = { enUS, ru };
@@ -28,4 +28,8 @@ export function formatDateRelative(timestamp: number): string {
     return 'unknown';
   }
 
+}
+
+export function formatDate(timestamp: string | number): string {
+  return intlFormat(new Date(timestamp));
 }

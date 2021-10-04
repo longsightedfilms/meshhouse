@@ -33,4 +33,11 @@ window.ipc.answerMain('router-push', (path: string) => {
   return true;
 });
 
+emitter.on('download-started', () => {
+  store.commit('setStarted', true);
+});
+emitter.on('download-completed', () => {
+  store.commit('setCompleted', true);
+});
+
 export default emitter;

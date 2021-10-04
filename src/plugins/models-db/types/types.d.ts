@@ -44,6 +44,12 @@ type DatabaseState = {
   currentDB: DatabaseItem | undefined;
 }
 
+type DownloadState = {
+  started: boolean;
+  completed: boolean;
+  items: Download[];
+}
+
 type Filters = {
   order: string;
     where: {
@@ -61,7 +67,7 @@ type FilterPayload = {
 }
 
 type Download = {
-  img: string;
+  thumbnail: string;
   title: string;
   path: string;
   totalSize: number;
@@ -169,7 +175,9 @@ type Model = {
   image: string;
   images?: string[];
   installed?: boolean;
+  favorite?: boolean;
   mature_content?: boolean;
+  description?: string;
   downloadLinks?: SFMLabLink[];
   comments?: ModelComment[];
 }
@@ -312,7 +320,7 @@ type SFMLabParams = {
   category?: string;
   order_by?: string;
   license?: number;
-  search_text?: string;
+  search?: string;
   page?: number;
 }
 
@@ -321,4 +329,15 @@ type ModelComment = {
   avatar: string;
   message: string;
   date: number;
+}
+
+
+
+type Favorite = {
+  id: string;
+  database: string;
+  remoteId: number | string;
+  thumbnail: string;
+  title: string;
+  createdAt: string;
 }

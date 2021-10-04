@@ -1,5 +1,11 @@
 <template>
   <header class="application__header">
+    <div
+      v-show="!$store.state.controls.isLoaded"
+      class="progress__container"
+    >
+      <div class="progress-main" />
+    </div>
     <header-navigation
       v-if="$route.meta.toolbar"
     />

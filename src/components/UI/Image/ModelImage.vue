@@ -22,6 +22,16 @@
         />
       </span>
       <span
+        v-if="isRemoteItem && item.favorite"
+        class="badge badge--saved"
+        :title="$t('hints.navbar.favoriteItem')"
+      >
+        <vue-icon
+          icon="bookmark"
+          raster
+        />
+      </span>
+      <span
         v-if="isRemoteItem && item.installed"
         class="badge badge--saved"
         :title="$t('hints.navbar.savedItem')"

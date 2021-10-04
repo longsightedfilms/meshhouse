@@ -37,6 +37,16 @@
       </a>
     </li>
     <li>
+      <a @click.prevent="handleFavorites()">
+        <vue-icon
+          icon="bookmark"
+          raster
+          inverted
+        />
+        {{ $t(`views.favorites.${!$store.state.controls.properties.favorite ? 'add' : 'delete'}`) }}
+      </a>
+    </li>
+    <li>
       <a @click.prevent="openRemoteInfo()">
         <vue-icon
           icon="edit"
@@ -77,7 +87,6 @@
 import Vue from 'vue';
 import Component from 'vue-class-component';
 import EditPropertiesModal from '@/views/Modals/Edit/EditPropertiesModal.vue';
-import RemoteModelInfoModal from '@/views/Modals/RemoteModelInfoModal.vue';
 import { Fragment } from 'vue-fragment';
 
 @Component({
@@ -114,25 +123,31 @@ export default class ModelContext extends Vue {
     });
   }
 
-  async openRemoteInfo(): Promise<void> {
-    await this.$ipcInvoke('get-single-model-integration', {
-      type: 'remote',
-      title: this.$route.params.database,
-      item: this.$store.state.controls.properties
-    });
-    this.$modal.show(RemoteModelInfoModal, {}, {
-      adaptive: true,
-      clickToClose: true,
-      width: '100%',
-      height: '100%',
-    }, {
-      'before-open': () => {
-        this.$store.commit('setModalVisibility', true);
-      },
-      'before-close': () => {
-        this.$store.commit('setModalVisibility', false);
-      }
-    });
+  async handleFavorites(): Promise<void> {
+    const payload = {
+      database: this.$route.params.database,
+      remoteId: this.$store.state.controls.properties.remoteId,
+      thumbnail: this.$store.state.controls.properties.images ? this.$store.state.controls.properties.images[0] : this.$store.state.controls.properties.image ?? '',
+      title: this.$store.state.controls.properties.name
+    };
+
+    try {
+      const method = this.$store.state.controls.properties.favorite
+        ? 'remove-favorite'
+        : 'add-favorite';
+
+      await this.$ipcInvoke(method, payload);
+      this.$store.commit('setLocalFavorite', {
+        id: this.$store.state.controls.properties.remoteId,
+        status: method === 'add-favorite'
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  openRemoteInfo(): void {
+    this.$router.push(`/model/${this.$route.params.database}/${this.$store.state.controls.properties.id}`);
   }
 
   openProperties(): void {

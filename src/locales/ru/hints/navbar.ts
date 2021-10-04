@@ -6,5 +6,6 @@ export default {
   downloads: 'Загрузки',
   refreshCatalog: 'Обновить каталог',
   matureContent: 'Контент для взрослых',
-  savedItem: 'Предмет установлен'
+  savedItem: 'Предмет установлен',
+  favoriteItem: 'Предмет сохранен в избранном'
 };

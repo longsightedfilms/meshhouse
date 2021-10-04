@@ -9,7 +9,6 @@ import sanitize from 'sanitize-filename';
 import { appWin as windowInstance } from '../../../background';
 import { Integration } from '../../template';
 import * as ApplicationStore from '../../../electron-store';
-import serverStore from '../../../store';
 import {
   sendVuexCommit,
   getVuexState,
@@ -24,6 +23,10 @@ import { installFile } from '../../../functions/archive';
 import { createOSNotification } from '../../../functions/notifier';
 import uniqid from 'uniqid';
 import logger from '../../../logger';
+import Favorite from '../../../classes/favorites';
+import DownloadManager from '../../../classes/downloadManager';
+
+const USE_ALTERNATIVE_URL_SCHEME = false;
 
 
 function getBaseURL(): string {
@@ -32,12 +35,16 @@ function getBaseURL(): string {
     : 'https://proxy-api.meshhouse.art';
 }
 
+function getPrefixedURL(url: string, withBaseURL = false): string {
+  return `${withBaseURL ? getBaseURL() + '/' : ''}${USE_ALTERNATIVE_URL_SCHEME ? '' : 'integrations/'}${url}`;
+}
+
 function isMatureContentVisible(): boolean {
   return ApplicationStore.settings.get('integrations.sfmlab.showMatureContent') ?? false;
 }
 
 function generateUniqueId(): string {
-  return uniqid();
+  return uniqid('download-');
 }
 
 async function sfmlabRequest(url: string, params?: Options): Promise<any> {
@@ -133,28 +140,34 @@ export default class SFMLabBaseIntegration extends Integration {
       }
 
       if (filters.where.name !== '') {
-        params.search_text = filters.where.name;
+        params.search = filters.where.name;
       }
 
       sendVuexCommit('setOfflineStatus', false);
       sendVuexCommit('setLoadingStatus', false);
 
-      logger.verbose(`HTTP GET ${getBaseURL()}/integrations/${this.slug}/models`);
-      const fetch: SFMLabFetch = (await sfmlabRequest(`integrations/${this.slug}/models`, {
+      logger.verbose(`HTTP GET ${getPrefixedURL(`${this.slug}/models`, true)}`);
+      const fetch: SFMLabFetch = (await sfmlabRequest(getPrefixedURL(`${this.slug}/models`), {
         searchParams: params
       })).body;
 
       const models: Model[] = [];
+      const favoriteList = new Favorite();
 
       for (const model of fetch.models) {
         const dbQuery = `SELECT * FROM models WHERE remoteId=${model.id}`;
         const item = (await this.fetchQuery(dbQuery) as Model[]);
+        const isFavorite = favoriteList.isInFavorite({
+          database: this.slug,
+          remoteId: model.id
+        });
 
         model.remoteId = model.id;
         model.size = item.length !== 0 ? item[0].size : 0;
         model.folderPath = item.length !== 0 ? item[0].folderPath : '';
         model.path = item.length !== 0 ? item[0].path : '';
         model.installed = item.length !== 0;
+        model.favorite = isFavorite;
 
         models.push(model);
       }
@@ -198,23 +211,23 @@ export default class SFMLabBaseIntegration extends Integration {
         totalPages: 0
       };
     } finally {
-      logger.verbose(`HTTP GET ${getBaseURL()}/integrations/${this.slug}/models completed`);
+      logger.verbose(`HTTP GET ${getPrefixedURL(`${this.slug}/models`, true)} completed`);
       sendVuexCommit('setLoadingStatus', true);
     }
   }
 
-  async fetchSingleModel(id: number): Promise<void | Error> {
+  async fetchSingleModel(id: number): Promise<Model | void | Error> {
     try {
       sendVuexCommit('setOfflineStatus', false);
       sendVuexCommit('setLoadingStatus', false);
-      logger.verbose(`HTTP GET ${getBaseURL()}/integrations/${this.slug}/models/${id}`);
-      const item = (await sfmlabRequest(`integrations/${this.slug}/models/${id}`)).body;
+      logger.verbose(`HTTP GET ${getPrefixedURL(`${this.slug}/models/${id}`, true)}`);
+      const item = (await sfmlabRequest(getPrefixedURL(`${this.slug}/models/${id}`))).body;
       const installed = await this.checkIsInstalledModel(id);
 
       item.installed = (installed as boolean);
       item.remoteId = item.id;
 
-      sendVuexCommit('setProperties', item);
+      return item;
     } catch (err) {
       if (err.code === 'ECONNABORTED') {
         logger.warn('Internet connection or server is offline');
@@ -227,7 +240,7 @@ export default class SFMLabBaseIntegration extends Integration {
       });
       logger.error(new Error(err));
     } finally {
-      logger.verbose(`HTTP GET ${getBaseURL()}/integrations/${this.slug}/models/${id} completed`);
+      logger.verbose(`HTTP GET ${getPrefixedURL(`${this.slug}/models/${id}`, true)} completed`);
       sendVuexCommit('setLoadingStatus', true);
     }
   }
@@ -277,8 +290,7 @@ export default class SFMLabBaseIntegration extends Integration {
   async downloadHandle(id: number): Promise<void | Error> {
     try {
       let links: SFMLabLink[] | undefined = undefined;
-      await this.fetchSingleModel(id);
-      const item = await getVuexState('state.controls.properties');
+      const item: any = await this.fetchSingleModel(id);
       links = item.downloadLinks;
 
       if (links !== undefined) {
@@ -339,20 +351,20 @@ export default class SFMLabBaseIntegration extends Integration {
       return Promise.reject(new Error('Path not set'));
     }
 
-    const id = generateUniqueId();
-    console.log(id);
-
-    const download = {
-      img: item.images !== undefined ? item.images[0] : '',
+    const download: DownloadItem = {
+      thumbnail: item.images !== undefined ? item.images[0] : item.image ?? '',
       title: item.name,
       path: path.join(ApplicationStore.databases.get(`databases.integrations.${this.slug}`).path, sanitize(item.name)),
+      integration: this.slug,
       totalSize: 0,
       downloadedSize: 0,
+      projectId: String(item.remoteId),
       startedAt: new Date().getTime(),
-      id
+      completedAt: 0,
+      id: generateUniqueId()
     };
 
-    sendVuexCommit('addDownloadItem', download);
+    DownloadManager.addItem(download);
 
     const link = downloadLink.link;
     const filename = downloadLink.filename;
@@ -366,23 +378,13 @@ export default class SFMLabBaseIntegration extends Integration {
         download.totalSize = Number(total);
         download.downloadedSize = Number(loaded);
 
-        sendVuexCommit('updateDownloadItem', download);
-        try {
-          serverStore.commit('updateProgressItem', download);
-          serverStore.commit('updateProgressPercent');
-        } catch (err) {
-          console.error(err);
-        }
+        DownloadManager.updateProgress(download);
       });
 
-    const serverDownload = {
-      id,
-      request,
-      totalSize: 0,
-      downloadedSize: 0,
-    };
-
-    serverStore.commit('addDownloadItem', serverDownload);
+    DownloadManager.addItemRequest({
+      id: download.id,
+      request
+    });
     try {
       windowInstance?.setProgressBar(2);
       logger.info(`Downloading item ${item.name}`);
@@ -422,8 +424,7 @@ export default class SFMLabBaseIntegration extends Integration {
       const notificationMessage = await getLocalizedString('notifications.download.text', { title: item.name });
       createOSNotification(notificationTitle, notificationMessage);
       sendEventBusEmit('download-completed', undefined);
-      serverStore.commit('removeDownloadItem', serverDownload.id);
-      serverStore.commit('updateProgressPercent');
+      DownloadManager.updateProgressPercent();
 
       logger.verbose('Updating database settings');
       const db = ApplicationStore.databases.get(`databases.integrations.${this.slug}`);
@@ -461,9 +462,8 @@ export default class SFMLabBaseIntegration extends Integration {
           mode: 'error'
         });
 
-        serverStore.commit('removeDownloadItem', serverDownload.id);
-        serverStore.commit('updateProgressPercent');
-        sendVuexCommit('updateDownloadItem', download);
+        DownloadManager.updateProgress(download);
+        DownloadManager.updateProgressPercent();
         return Promise.reject(new Error(err));
       }
     }

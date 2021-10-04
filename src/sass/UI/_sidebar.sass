@@ -21,6 +21,7 @@
     bottom: 0
     //width: 3rem
     //height: 3rem
+    min-width: 3rem
     padding: 0.5rem 1rem
     display: flex
     align-items: center
@@ -31,10 +32,10 @@
       text-transform: uppercase
       font-weight: 700
       margin: 0
-      margin-inline-end: 0rem
+      padding-inline-end: 0rem
       max-width: 0
       white-space: nowrap
-      word-break: none
+      word-break: keep-all
       overflow: hidden
       letter-spacing: 0.125rem
       transition: all 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1)
@@ -47,8 +48,8 @@
     &:hover
       background-color: var(--buttonHover)
       p
-        margin-inline-end: 1rem
-        max-width: 300px
+        padding-inline-end: 2rem
+        max-width: 500px
     &:focus
       outline: 0
 
