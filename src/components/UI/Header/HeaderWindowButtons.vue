@@ -61,6 +61,7 @@
 </template>
 
 <script lang="ts">
+import eventBus from '@/eventBus';
 import Vue from 'vue';
 import Component from 'vue-class-component';
 
@@ -68,19 +69,25 @@ import Component from 'vue-class-component';
 export default class HeaderWindowButtons extends Vue {
   maximized = false
 
+  mounted(): void {
+    eventBus.on('maximize', (() => {
+      this.maximized = true;
+    }));
+    eventBus.on('unmaximize', (() => {
+      this.maximized = false;
+    }));
+  }
+
+  beforeDestroy(): void {
+    eventBus.all.clear();
+  }
+
   minimize(): void {
     this.$ipcInvoke('minimize');
   }
 
   maximize(): void {
-    const isMaximized = this.$ipcSendSync('is-maximized');
-    if (isMaximized) {
-      this.$ipcInvoke('unmaximize');
-      this.maximized = false;
-    } else {
-      this.$ipcInvoke('maximize');
-      this.maximized = true;
-    }
+    this.$ipcInvoke(this.maximized ? 'unmaximize' : 'maximize');
   }
 
   close(): void {

@@ -42,6 +42,16 @@
       />
       {{ $t('dropdowns.mainmenu.checkUpdates') }}
     </a>
+    <a
+      v-if="showDevTools"
+      @click="$ipcInvoke('open-dev-tools')"
+    >
+      <vue-icon
+        icon="update"
+        raster
+      />
+      Open Chrome DevTools
+    </a>
   </fragment>
 </template>
 
@@ -130,6 +140,10 @@ export default class MainMenuDropdown extends Vue {
 
   get currentOS(): string {
     return window.ipc.sendSync('get-os');
+  }
+
+  get showDevTools(): boolean {
+    return process.env.NODE_ENV === 'development';
   }
 }
 </script>

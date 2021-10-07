@@ -22,10 +22,6 @@ export default function(windowInstance: BrowserWindow | null): void {
     }
   });
 
-  ipcMain.on('is-maximized', (event) => {
-    event.returnValue = windowInstance?.isMaximized();
-  });
-
   ipcMain.handle('minimize', () => {
     windowInstance?.minimize();
   });
@@ -59,5 +55,9 @@ export default function(windowInstance: BrowserWindow | null): void {
     if (windowInstance !== null) {
       return await dialog.showOpenDialog((windowInstance as NativeWindow), args);
     }
+  });
+
+  ipcMain.handle('open-dev-tools', (event, value) => {
+    windowInstance?.webContents.openDevTools();
   });
 }

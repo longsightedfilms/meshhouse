@@ -5,6 +5,8 @@ import { createProtocol } from 'vue-cli-plugin-electron-builder/lib';
 import * as ApplicationStore from './electron-store';
 import * as ipcHandlers from './ipc_handlers';
 
+import { sendEventBusEmit } from './ipc_handlers/eventbus';
+
 import { ipcMain } from 'electron';
 
 export function createWindow(
@@ -42,6 +44,14 @@ export function createWindow(
       window?.hide();
     });
   }
+
+  window.on('maximize', () => {
+    sendEventBusEmit('maximize', {});
+  });
+
+  window.on('unmaximize', () => {
+    sendEventBusEmit('unmaximize', {});
+  });
 
   window.on('close', () => {
     ApplicationStore.settings.set('applicationWindow.width', window?.getBounds().width ?? 1024);

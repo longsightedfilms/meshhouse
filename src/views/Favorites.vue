@@ -1,33 +1,67 @@
 <template>
-  <main class="layout layout--favorites">
-    <div class="favorites__header">
-      <h1>{{ $t('views.favorites.title') }}</h1>
-      <p>{{ $tc('views.favorites.items', favoritesList.length) }}</p>
-    </div>
-    <div class="favorites__list">
-      <div
-        v-for="(favorite, idx) in favoritesList"
-        :key="idx"
-        class="favorite"
+  <main class="layout layout--sidebar">
+    <aside class="layout__sidebar">
+      <label class="sidebar-heading">{{ $t('views.favorites.title') }}</label>
+      <button
+        class="sidebar-nav"
+        @click="$router.back()"
+      >
+        <vue-icon
+          class="sidebar-nav__icon"
+          icon="home"
+        />
+      </button>
+      <button
+        v-for="item in integrationsList"
+        :key="item.slug"
+        class="sidebar-nav"
+        :class="selectedFilter === item.slug ? 'sidebar-nav--active' : ''"
+        @click="selectedFilter = item.slug"
       >
         <img
-          class="favorite__image"
-          :src="favorite.thumbnail"
-          :alt="favorite.title"
+          v-if="item.icon !== ''"
+          class="sidebar-nav__icon sidebar-nav__icon--lg"
+          :src="retrieveImage(item.icon)"
         >
-        <div class="favorite__info">
-          <h2>{{ favorite.title }} [{{ favorite.database }}]</h2>
-          <p>{{ $t('views.favorites.date', { date: $formatDate(favorite.createdAt) }) }}</p>
-        </div>
-        <div class="favorite__actions">
-          <button
-            class="button button--flat"
-            @click="redirectToItem(favorite)"
+        {{ item.title }}
+        <span class="sidebar-nav__badge">
+          {{ item.count }}
+        </span>
+      </button>
+    </aside>
+    <main class="layout__content">
+      <div
+        v-if="visibleFavorites.length > 0"
+        class="favorites__grid"
+      >
+        <div
+          v-for="(favorite, idx) in visibleFavorites"
+          :key="idx"
+          class="favorite"
+          tabindex="-1"
+          @dblclick="redirectToItem(favorite)"
+        >
+          <img
+            class="favorite__image"
+            :src="favorite.thumbnail"
+            :alt="favorite.title"
           >
-            {{ $t('views.favorites.showItem') }}
-          </button>
+          <img
+            class="favorite__integration"
+            :src="retrieveImage(getIntegrationIcon(favorite.database))"
+          >
+          <div class="favorite__date">
+            <vue-icon
+              icon="calendar"
+              raster
+            />
+            <p>{{ $formatDate(favorite.createdAt) }}</p>
+          </div>
+          <p class="favorite__title">
+            {{ favorite.title }}
+          </p>
           <button
-            class="button button--flat button--icon-only"
+            class="button button--flat button--flat-danger button--icon-only"
             :title="$t('views.favorites.delete')"
             @click="removeFromList(favorite)"
           >
@@ -35,7 +69,19 @@
           </button>
         </div>
       </div>
-    </div>
+      <div
+        v-else
+        class="favorites__empty"
+      >
+        <vue-icon icon="box" />
+        <h1>
+          {{ $t('views.favorites.empty') }}
+        </h1>
+        <p>
+          {{ $t('views.favorites.emptyNotice') }}
+        </p>
+      </div>
+    </main>
   </main>
 </template>
 
@@ -51,6 +97,38 @@ import { Vue, Component } from 'vue-property-decorator';
 })
 export default class Favorites extends Vue {
   favoritesList: Favorite[] = []
+  selectedFilter = 'all'
+
+  get integrationsList(): any[] {
+    const items = [
+      {
+        title: this.$i18n.t('common.list.all'),
+        slug: 'all',
+        icon: '',
+        count: this.favoritesList.length
+      }
+    ];
+    const integrations = this.$store.state.db.databases.integrations;
+
+    for (const key in integrations) {
+      items.push({
+        title: integrations[key].title,
+        slug: integrations[key].url,
+        icon: integrations[key].icon,
+        count: this.favoritesList.filter((favorite: Favorite) => favorite.database === integrations[key].url).length
+      });
+    }
+
+    return items;
+  }
+
+  get visibleFavorites(): Favorite[] {
+    if (this.selectedFilter === 'all') {
+      return this.favoritesList;
+    }
+
+    return this.favoritesList.filter((favorite: Favorite) => favorite.database === this.selectedFilter);
+  }
 
   async created(): Promise<void> {
     this.favoritesList = await this.$ipcInvoke('get-favorites-list');
@@ -68,6 +146,22 @@ export default class Favorites extends Vue {
 
   redirectToItem(item: Favorite): void {
     this.$router.push(`/model/${item.database}/${item.remoteId}`);
+  }
+
+  retrieveImage(icon?: string): string {
+    if (icon) {
+      if (!icon.includes('@/')) {
+        return this.$forceReloadImage(icon);
+      } else {
+        return `/assets/integrations/${icon.substr(2)}`;
+      }
+    } else {
+      return '#';
+    }
+  }
+
+  getIntegrationIcon(db: string): string {
+    return this.$store.state.db.databases.integrations[db].icon || '';
   }
 }
 </script>

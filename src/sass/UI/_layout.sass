@@ -6,6 +6,140 @@ $tabMaxHeight: calc(100vh - 2rem)
     display: flex
   &--library
     padding: 1rem
+  &--sidebar, &--sidebar-with-header
+    display: grid
+    grid-gap: 1rem
+    grid-template-rows: 1fr
+    grid-template-columns: 300px 1fr
+    grid-template-areas: "sidebar content"
+    height: $tabMaxHeight
+    overflow: hidden
+  &--sidebar-with-header
+    grid-template-rows: auto 1fr
+    grid-template-areas: "header header" "sidebar content"
+
+.layout
+  &__header
+    grid-area: header
+    display: flex
+    align-items: center
+    justify-content: space-between
+    padding: 1rem
+    h1
+      margin: 0
+  &__sidebar
+    grid-area: sidebar
+    overflow-y: auto
+    display: flex
+    flex-direction: column
+    margin-right: -1rem
+  &__content
+    grid-area: content
+    overflow-y: auto
+
+
+.navigation__label
+  display: block
+  color: var(--textColor)
+  padding: 1.25rem 1rem
+  font-weight: 500
+.navigation__button
+  position: relative
+  display: flex
+  align-items: center
+  border-radius: 0
+  width: 100%
+  padding: 1rem 1rem
+  text-transform: none
+  letter-spacing: 0
+  font-size: 1rem
+  font-weight: 300
+  color: var(--textColor)
+  text-align: left
+  .icon
+    margin-right: 1rem
+    width: 1.125rem
+    height: 1.125rem
+  &:after
+    content: ''
+    position: absolute
+    display: block
+    left: 0
+    top: 50%
+    width: 4px
+    height: 1.5rem
+    opacity: 0
+    background-color: $primary
+    transform: translateY(-50%)
+  &:hover
+    background-color: var(--blockColor)
+  &.active
+    &:after
+      opacity: 1
+
+.sidebar-label
+  display: block
+  color: var(--textColor)
+  padding: 1.25rem 1rem
+  font-weight: 500
+
+.sidebar-heading
+  display: block
+  color: var(--textColor)
+  padding: 1.25rem 1rem
+  font-weight: 100
+  font-size: 2rem
+  line-height: 2rem
+
+.sidebar-nav
+  position: relative
+  display: flex
+  align-items: center
+  border-radius: 0
+  width: 100%
+  padding: 1rem 1rem
+  text-transform: none
+  letter-spacing: 0
+  font-size: 1rem
+  font-weight: 300
+  color: var(--textColor)
+  text-align: left
+  &:after
+    content: ''
+    position: absolute
+    display: block
+    left: 0
+    top: 50%
+    width: 4px
+    height: 1.5rem
+    opacity: 0
+    background-color: $primary
+    transform: translateY(-50%)
+  &:hover
+    background-color: var(--blockColor)
+  &--active
+    &:after
+      opacity: 1
+
+.sidebar-nav
+  &__icon
+    margin-right: 1rem
+    width: 1.125rem
+    height: 1.125rem
+    &--lg
+      width: 2rem
+      height: 2rem
+  &__badge
+    background-color: var(--blockColorLight)
+    border: 2px solid darken($white, 40%)
+    color: var(--textColor)
+    font-size: 0.85rem
+    line-height: 1
+    font-weight: 700
+    text-align: right
+    padding: 0.125rem 0.5rem
+    margin-left: auto
+
 
 .library
   &__header
@@ -75,45 +209,6 @@ $tabMaxHeight: calc(100vh - 2rem)
     flex: 0 0 320px
     height: $tabMaxHeight
     overflow-y: auto
-    .navigation__label
-      display: block
-      color: var(--textColor)
-      padding: 1.25rem 1rem
-      font-weight: 500
-    .navigation__button
-      position: relative
-      display: flex
-      align-items: center
-      border-radius: 0
-      width: 100%
-      padding: 1rem 1rem
-      text-transform: none
-      letter-spacing: 0
-      font-size: 1rem
-      font-weight: 300
-      color: var(--textColor)
-      text-align: left
-      .icon
-        margin-right: 1rem
-        width: 1.125rem
-        height: 1.125rem
-      &:after
-        content: ''
-        position: absolute
-        display: block
-        left: 0
-        top: 50%
-        width: 4px
-        height: 1.5rem
-        opacity: 0
-        background-color: $primary
-        transform: translateY(-50%)
-      &:hover
-        background-color: var(--blockColor)
-      &.active
-        &:after
-          opacity: 1
-
   &__container
     flex: 1 1 100%
     display: grid

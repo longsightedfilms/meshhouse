@@ -4,5 +4,7 @@ export default {
   date: 'Added to favorites: {date}',
   showItem: 'Show item',
   add: 'Add to favorites',
-  delete: 'Delete from favorites'
+  delete: 'Delete from favorites',
+  empty: 'Empty favorites list',
+  emptyNotice: 'You can add to favorites list by click on "bookmark" button'
 };
