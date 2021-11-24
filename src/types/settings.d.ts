@@ -1,4 +1,4 @@
-type SettingsState = Settings;
+type SettingsStore = Settings;
 
 type StoreSettings = {
   [key: string]: any;
@@ -56,6 +56,11 @@ type DatabaseSettings = {
     local: DatabaseItem[];
     integrations: any;
   };
+}
+
+type DatabasesState = {
+  local: DatabaseItem[];
+  integrations: any;
 }
 
 type Theme = 'system' | 'light' | 'dark'

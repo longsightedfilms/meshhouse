@@ -1,41 +1,54 @@
+import { Module, Mutation, VuexModule } from 'vuex-module-decorators';
 import { INTEGRATIONS } from '@/constants';
 
-export default {
-  state: {
-    currentDB: undefined,
-    databases: [],
-    categories: [],
-    licenses: [],
-    loadedData: []
-  },
-  mutations: {
-    setApplicationDatabases(state: DatabaseState, payload: any): void {
-      state.databases = payload;
-    },
-    setCurrentDatabase(state: DatabaseState, payload: string): void {
-      if (INTEGRATIONS.filter((val: string) => val === payload).length === 0) {
-        const index = state.databases.local.findIndex((db: DatabaseItem) => db.url === payload);
-        state.currentDB = state.databases.local[index];
-      } else {
-        state.currentDB = state.databases.integrations[payload];
-      }
-    },
-    setCategories(state: DatabaseState, payload: Category[]): void {
-      state.categories = payload;
-    },
-    setLoadedData(state: DatabaseState, payload: Model | Model[]): void {
-      state.loadedData = payload;
-    },
-    setLicenses(state: DatabaseState, payload: SFMLabLicense[]): void {
-      state.licenses = payload;
-    },
-    setLocalFavorite(state: DatabaseState, payload: any): void {
-      if (Array.isArray(state.loadedData)) {
-        const idx = state.loadedData.findIndex((item: Model) => item.remoteId === payload.id);
-        if (idx !== -1) {
-          state.loadedData[idx].favorite = payload.status;
-        }
+@Module({ name: 'db' })
+export default class DatabaseStore extends VuexModule {
+  currentDB: DatabaseItem | undefined = undefined
+  databases: DatabasesState = {
+    local: [],
+    integrations: {}
+  }
+  categories: Category[] = []
+  licenses: SFMLabLicense[] = []
+  loadedData: Model | Model[] = []
+
+  @Mutation
+  setApplicationDatabases(payload: DatabasesState): void {
+    this.databases = payload;
+  }
+
+  @Mutation
+  setCurrentDatabase(payload: string): void {
+    if (INTEGRATIONS.filter((val: string) => val === payload).length === 0) {
+      const index = this.databases.local.findIndex((db: DatabaseItem) => db.url === payload);
+      this.currentDB = this.databases.local[index];
+    } else {
+      this.currentDB = this.databases.integrations[payload];
+    }
+  }
+
+  @Mutation
+  setCategories(payload: Category[]): void {
+    this.categories = payload;
+  }
+
+  @Mutation
+  setLoadedData(payload: Model | Model[]): void {
+    this.loadedData = payload;
+  }
+
+  @Mutation
+  setLicenses(payload: SFMLabLicense[]): void {
+    this.licenses = payload;
+  }
+
+  @Mutation
+  setLocalFavorite(payload: any): void {
+    if (Array.isArray(this.loadedData)) {
+      const idx = this.loadedData.findIndex((item: Model) => item.remoteId === payload.id);
+      if (idx !== -1) {
+        this.loadedData[idx].favorite = payload.status;
       }
     }
   }
-};
+}

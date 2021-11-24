@@ -6,7 +6,7 @@ type ApplicationStore = {
   filters: FiltersState;
   downloads: Download[];
   notifications: ApplicationNotification[];
-  settings: SettingsState;
+  settings: SettingsStore;
 }
 
 type ControlsState = {

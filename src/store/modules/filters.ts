@@ -1,21 +1,20 @@
-export default {
-  state: {
-    order: 'ASC',
-    search: '',
-    category: -1,
-    extension: '',
-    path: ''
-  },
-  mutations: {
-    setFilterOrder(state: FiltersState, payload: 'ASC' | 'DESC'): void {
-      state.order = payload;
-    },
-    setFilter(state: FiltersState, payload: FilterPayload): void {
-      state[payload.field] = payload.value;
-    },
-    setFilters(state: FiltersState, payload: FiltersState): Promise<boolean> {
-      state.filters = payload;
-      return Promise.resolve(true);
-    },
-  },
-};
+import { Module, Mutation, VuexModule } from 'vuex-module-decorators';
+
+@Module({ name: 'filters' })
+export default class FiltersStore extends VuexModule {
+  order = 'ASC'
+  search = ''
+  category = -1
+  extension = ''
+  path = ''
+
+  @Mutation
+  setFilterOrder(payload: 'ASC' | 'DESC'): void {
+    this.order = payload;
+  }
+
+  @Mutation
+  setFilter(payload: FilterPayload): void {
+    (this as FiltersState)[payload.field] = payload.value;
+  }
+}

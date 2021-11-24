@@ -1,10 +1,12 @@
 import { Vue, Component } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
 import LastPageSelector from '@/components/ComposedSettings/LastPageSelector.vue';
 import LanguageSelector from '@/components/ComposedSettings/LanguageSelector.vue';
 import ThemeSelector from '@/components/ComposedSettings/ThemeSelector.vue';
 import { ToggleButton } from 'vue-js-toggle-button';
+import SettingsStore from '@/store/modules/settings';
 
-@Component({
+@Component<MainSettingsTab>({
   components: {
     LastPageSelector,
     LanguageSelector,
@@ -12,20 +14,23 @@ import { ToggleButton } from 'vue-js-toggle-button';
     ToggleButton
   }
 })
-
 export default class MainSettingsTab extends Vue {
-  hideIntegrations = this.$store.state.settings.hideIntegrations
-  minimalisticHeaders = this.$store.state.settings.minimalisticHeaders
-  showInTray = this.$store.state.settings.showInTray
+  get settings(): SettingsStore {
+    return getModule(SettingsStore, this.$store);
+  }
+
+  hideIntegrations = this.settings.hideIntegrations
+  minimalisticHeaders = this.settings.minimalisticHeaders
+  showInTray = this.settings.showInTray
 
   async handleSliderChange(event: VueToggleChangeEvent, setting: string): Promise<void> {
     (this as any)[setting] = event.value;
-    this.$ipcInvoke('set-application-setting', {
+    this.$ipcInvoke<void>('set-application-setting', {
       key: setting,
       value: (this as any)[setting]
     });
 
-    const settings = await this.$ipcInvoke('get-all-settings');
-    this.$store.commit('setApplicationSettings', settings);
+    const settings = await this.$ipcInvoke<ApplicationSettings>('get-all-settings');
+    this.settings.setApplicationSettings(settings);
   }
 }

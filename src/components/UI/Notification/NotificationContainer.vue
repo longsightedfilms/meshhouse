@@ -5,7 +5,7 @@
     tag="div"
   >
     <div
-      v-for="(obj, idx) in $store.state.notifications"
+      v-for="(obj, idx) in notifications"
       :key="`v-notification-${idx}`"
       :class="buttonClass(obj)"
     >
@@ -37,12 +37,16 @@
 </style>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component';
+import { Vue, Component } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
+import NotificationsStore from '@/store/modules/notifications';
 
-@Component({
-})
+@Component<NotificationContainer>({})
 export default class NotificationContainer extends Vue {
+  get notifications(): ApplicationNotification[] {
+    return getModule(NotificationsStore, this.$store).notifications;
+  }
+
   buttonClass(notification: ApplicationNotification): string {
     let fullClass = 'v-notification';
 

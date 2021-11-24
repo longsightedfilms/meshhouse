@@ -1,23 +1,28 @@
 import { Vue, Component } from 'vue-property-decorator';
 import { ToggleButton } from 'vue-js-toggle-button';
+import { getModule } from 'vuex-module-decorators';
+import SettingsStore from '@/store/modules/settings';
 
-@Component({
+@Component<IntegrationsSFMLabTab>({
   components: {
     ToggleButton
   }
 })
-
 export default class IntegrationsSFMLabTab extends Vue {
   showMatureContent = false
 
+  get settings(): SettingsStore {
+    return getModule(SettingsStore, this.$store);
+  }
+
   mounted(): void {
-    this.showMatureContent = this.$store.state.settings.integrations.sfmlab.showMatureContent ?? false;
+    this.showMatureContent = this.settings.integrations.sfmlab.showMatureContent ?? false;
   }
 
   handleMatureContentChange(event: VueToggleChangeEvent): void {
     this.showMatureContent = event.value;
-    this.$store.commit('setSFMLabMature', this.showMatureContent);
-    this.$ipcInvoke('set-application-setting', {
+    this.settings.setSFMLabMature(this.showMatureContent);
+    this.$ipcInvoke<void>('set-application-setting', {
       key: 'integrations.sfmlab.showMatureContent',
       value: this.showMatureContent
     });
