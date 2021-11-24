@@ -17,6 +17,13 @@ $tabMaxHeight: calc(100vh - 2rem)
   &--sidebar-with-header
     grid-template-rows: auto 1fr
     grid-template-areas: "header header" "sidebar content"
+  &--model
+    display: grid
+    grid-template-rows: 1fr
+    grid-template-columns: 1fr 320px
+    grid-template-areas: "content sidebar"
+    height: $tabMaxHeight
+    overflow: hidden
 
 .layout
   &__header
@@ -36,6 +43,7 @@ $tabMaxHeight: calc(100vh - 2rem)
   &__content
     grid-area: content
     overflow-y: auto
+    position: relative
 
 
 .navigation__label
@@ -227,3 +235,40 @@ $tabMaxHeight: calc(100vh - 2rem)
     .tab
       &__container
         height: 100vh
+
+
+.model
+  &-header
+    display: flex
+    align-items: center
+    margin: 0
+    padding: 1rem
+    position: sticky
+    z-index: 100
+    top: 0
+    width: 100%
+    background-color: var(--blockColorGlass)
+    backdrop-filter: blur(20px)
+    h2
+      text-transform: uppercase
+      letter-spacing: 0.125rem
+      text-align: center
+      font-weight: 700
+    h1
+      margin-bottom: 0
+      margin-inline-end: auto
+  &-description
+    padding: 1rem
+    .description
+      a
+        color: $primary
+
+@media (min-width: 1900px)
+  .layout
+    &--model
+      grid-template-columns: 1fr 450px
+
+@media (min-width: 1360px) and (max-width: 1899px)
+  .layout
+    &--model
+      grid-template-columns: 1fr 380px

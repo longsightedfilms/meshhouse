@@ -45,7 +45,7 @@ export default class IntegrationsIndexTab extends Vue {
   }
 
   async handleDirectoryClick(integration: string): Promise<void> {
-    const dialog = await this.$ipcInvoke('show-open-dialog', {
+    const dialog = await this.$ipcInvoke<Electron.OpenDialogReturnValue>('show-open-dialog', {
       properties: ['openDirectory']
     });
 

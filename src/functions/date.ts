@@ -1,8 +1,9 @@
 import { i18n } from '@/locales/i18n';
 import { formatRelative, intlFormat } from 'date-fns';
 import { enUS, ru } from 'date-fns/locale';
+import type { Locale } from 'date-fns';
 
-const locales: any = { enUS, ru };
+const locales: Record<string, Locale> = { enUS, ru };
 
 function mapLocateToFNS(locale: string): string {
   if (locale === 'en') {

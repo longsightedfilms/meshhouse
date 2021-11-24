@@ -9,15 +9,6 @@ export const integrationsList: string[] = [
 ];
 
 /**
- * List of integration, where license field are exists
- */
-export const integrationsWithLicenseField: string[] = [
-  'sfmlab',
-  'smutbase',
-  'open3dlab'
-];
-
-/**
  * Returns true if typeof SFMLabLink[]
  * @param link checked variable
  */

@@ -115,17 +115,24 @@ export default class Local extends Integration {
     logger.info(`Fetching items from local database "${this.name}"`);
     sendVuexCommit('setLoadingStatus', false);
 
-    const params = await getVuexState('state.controls.filters');
+    const params: FiltersState = await getVuexState('state.filters');
 
-    if(category !== undefined) {
-      params.where.category = category;
+    if (category !== undefined) {
+      params.category = category;
     }
+
+    const whereQuery = {
+      name: params.search,
+      extension: params.extension,
+      category: params.category,
+      path: ''
+    };
 
     let dbQuery = query;
 
     if (dbQuery === undefined) {
       dbQuery = 'SELECT * FROM \'models\'';
-      dbQuery += this.dynamicQueryBuilder(params.where);
+      dbQuery += this.dynamicQueryBuilder(whereQuery);
       dbQuery += ` ORDER BY name COLLATE NOCASE ${params.order}`;
     }
     sendVuexCommit('setLoadingStatus', true);
@@ -144,7 +151,7 @@ export default class Local extends Integration {
   async fetchCategories(query?: string): Promise<Category[] | Error> {
     logger.info(`Fetching categories from local database "${this.name}"`);
     let dbQuery = '';
-    const category = await getVuexState('state.controls.filters.where.category');
+    const category = await getVuexState('state.filters.category');
 
     if(query === undefined) {
       dbQuery = `SELECT * FROM 'categories' WHERE parentId = ${category} ORDER BY name ASC`;

@@ -141,7 +141,7 @@ export default class EditPropertiesModal extends Vue {
       this.properties.category = null;
     }
 
-    const categories = await this.$ipcInvoke('get-integration-categories', {
+    const categories = await this.$ipcInvoke<Category[]>('get-integration-categories', {
       type: 'local',
       title: this.$route.params.database,
       query: 'SELECT * FROM \'categories\''
@@ -194,7 +194,7 @@ export default class EditPropertiesModal extends Vue {
   async updateItem(): Promise<void> {
     this.busy = true;
     const query = `SELECT * FROM 'Models' WHERE path ='${this.properties.path}'`;
-    const models = await this.$ipcInvoke('get-integration-models', {
+    const models = await this.$ipcInvoke<Model[]>('get-integration-models', {
       type: 'local',
       title: this.$route.params.database,
       query
@@ -207,7 +207,7 @@ export default class EditPropertiesModal extends Vue {
 
     if (this.properties.imageChanged === true) {
       try {
-        const response = await this.$ipcInvoke('generate-thumbnail-image', {
+        const response = await this.$ipcInvoke<ImageProcessorOutput>('generate-thumbnail-image', {
           item: this.properties,
           image: this.uploadImage
         });

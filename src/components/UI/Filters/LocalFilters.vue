@@ -20,10 +20,9 @@ import Vue from 'vue';
 import Component from 'vue-class-component';
 import Multiselect from 'vue-multiselect';
 import { Fragment } from 'vue-fragment';
-import { findDatabaseIndex } from '@/functions/databases';
-import { modelsExtensions } from '@/functions/extension';
+import { EXTENSIONS } from '@/constants';
 
-@Component({
+@Component<LocalFilters>({
   components: {
     Fragment,
     Multiselect
@@ -52,11 +51,12 @@ export default class LocalFilters extends Vue {
         icon: 'none'
       }
     ];
-    Object.values(modelsExtensions).forEach((element: ExtensionProperty) => {
-      this.sceneTypes.push({
+
+    this.sceneTypes = Object.values(EXTENSIONS).map((element: ExtensionProperty) => {
+      return {
         title: `${element.title} (.${element.icon})`,
         icon: `.${element.icon}`
-      });
+      };
     });
   }
 
@@ -69,10 +69,10 @@ export default class LocalFilters extends Vue {
   }
 
   setFilters(): void {
-    this.$ipcInvoke('get-integration-models', {
+    this.$ipcInvoke<Model[]>('get-integration-models', {
       type: 'local',
       title: this.$route.params.database
-    }).then((result: Model[]): void => {
+    }).then((result): void => {
       this.$store.commit('setLoadedData', result);
     });
   }

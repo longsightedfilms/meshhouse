@@ -12,16 +12,16 @@ export default class MainProgramsTab extends Vue {
     [key: string]: HTMLInputElement;
   }
 
-  dccForm: DCCSettings = this.$ipcSendSync('get-all-dcc-settings')
+  dccForm: DCCSettings = this.$ipcSendSync<DCCSettings>('get-all-dcc-settings')
 
   saveSettingToFile(): void {
-    this.$ipcInvoke('set-all-dcc-settings', this.dccForm);
+    this.$ipcInvoke<void>('set-all-dcc-settings', this.dccForm);
     this.$emit('close');
   }
 
   handleSliderChange(event: VueToggleChangeEvent, dcc: string): void {
     this.dccForm[dcc].useSystemAssociation = event.value;
-    this.$ipcInvoke('set-all-dcc-settings', this.dccForm);
+    this.$ipcInvoke<void>('set-all-dcc-settings', this.dccForm);
   }
 
   handleDirectoryChange(event: Event, dcc: string): void {

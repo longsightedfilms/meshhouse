@@ -5,10 +5,10 @@ declare module 'vue/types/vue' {
     /**
      * Sends async message to main process
      */
-    $ipcInvoke(channel: string, args?: any): Promise<any>;
+    $ipcInvoke<T>(channel: string, args?: any): Promise<T>;
     /**
      * Sends sync message to main process
      */
-    $ipcSendSync(channel: string, args?: any): any;
+    $ipcSendSync<T>(channel: string, args?: any): T;
   }
 }

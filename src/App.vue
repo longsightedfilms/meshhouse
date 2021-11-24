@@ -62,15 +62,15 @@ export default class App extends Vue {
     let bodyClass = 'application';
     let cssTheme = '';
 
-    const theme = await this.$ipcInvoke('get-application-setting', 'theme');
-    const isFullScreen = await this.$ipcInvoke('is-fullscreen');
+    const theme = await this.$ipcInvoke<Theme>('get-application-setting', 'theme');
+    const isFullScreen = await this.$ipcInvoke<boolean>('is-fullscreen');
 
-    const systemThemeDark = await this.$ipcInvoke('should-use-dark-theme');
+    const systemThemeDark = await this.$ipcInvoke<boolean>('should-use-dark-theme');
     this.$store.commit('setSystemDarkTheme', systemThemeDark);
-    const os = await this.$ipcInvoke('get-os');
+    const os = await this.$ipcInvoke<string>('get-os');
 
-    this.$ipcInvoke('set-theme-source', theme);
-    this.$ipcInvoke('set-window-vibrance', theme);
+    this.$ipcInvoke<void>('set-theme-source', theme);
+    this.$ipcInvoke<void>('set-window-vibrance', theme);
 
     if (theme !== 'system') {
       cssTheme = this.$store.state.settings.theme === 'light' ? 'theme--light' : 'theme--dark';
@@ -121,15 +121,15 @@ export default class App extends Vue {
   }
 
   async loadStartupSettings(): Promise<void> {
-    this.$i18n.locale = await this.$ipcInvoke('get-application-setting', 'language');
-    const settings = await this.$ipcInvoke('get-all-settings');
+    this.$i18n.locale = await this.$ipcInvoke<string>('get-application-setting', 'language');
+    const settings = await this.$ipcInvoke<ApplicationSettings>('get-all-settings');
 
     this.$store.commit('setApplicationSettings', settings);
-    const currentDevice = await this.$ipcInvoke('get-machine-info');
+    const currentDevice = await this.$ipcInvoke<any>('get-machine-info');
     this.$store.commit('setCurrentDevice', currentDevice);
 
     await this.handleApplicationClass();
-    await this.$ipcInvoke('watch-databases');
+    await this.$ipcInvoke<void>('watch-databases');
     if (settings.lastPage === 'lastCatalog') {
       if (this.$route.fullPath !== settings.applicationWindow.lastOpened) {
         await this.$router.push(settings.applicationWindow.lastOpened);

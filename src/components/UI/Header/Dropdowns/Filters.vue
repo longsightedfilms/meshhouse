@@ -66,6 +66,10 @@ export default class FiltersDropdown extends Vue {
     this.$store.commit('setThumbnailSize', val);
   }
 
+  mounted(): void {
+    this.handleFiltersChange();
+  }
+
   @Watch('$route.params.database')
   handleFiltersChange(): void {
     this.currentFilter = isDatabaseRemote(this.$route.params.database) ? RemoteFilters : LocalFilters;

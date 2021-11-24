@@ -15,3 +15,8 @@ type DownloadRequest = {
   id: string;
   request: any;
 }
+
+type ImageProcessorOutput = {
+  status: string;
+  imgPath: string;
+}

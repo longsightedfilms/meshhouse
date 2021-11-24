@@ -26,17 +26,11 @@ import logger from '../../../logger';
 import Favorite from '../../../classes/favorites';
 import DownloadManager from '../../../classes/downloadManager';
 
-const USE_ALTERNATIVE_URL_SCHEME = false;
-
 
 function getBaseURL(): string {
   return ApplicationStore.settings.get('integrations.proxy.customProxy')
     ? ApplicationStore.settings.get('integrations.proxy.url')
     : 'https://proxy-api.meshhouse.art';
-}
-
-function getPrefixedURL(url: string, withBaseURL = false): string {
-  return `${withBaseURL ? getBaseURL() + '/' : ''}${USE_ALTERNATIVE_URL_SCHEME ? '' : 'integrations/'}${url}`;
 }
 
 function isMatureContentVisible(): boolean {
@@ -48,15 +42,9 @@ function generateUniqueId(): string {
 }
 
 async function sfmlabRequest(url: string, params?: Options): Promise<any> {
-  const headers = isMatureContentVisible()
-    ? {
-      'X-Meshhouse-Mature': 'true'
-    } : undefined;
-
   const instance = got.extend({
-    prefixUrl: getBaseURL(),
-    responseType: 'json',
-    headers
+    prefixUrl: 'https://sfmlab-api.meshhouse.art',
+    responseType: 'json'
   });
 
   const response = await instance(url, params);
@@ -121,37 +109,23 @@ export default class SFMLabBaseIntegration extends Integration {
 
   async fetchItemsFromDatabase(page?: string): Promise<SFMLabFetch | Error> {
     try {
-      const filters = await getVuexState('state.controls.filters');
-      const params: SFMLabParams = {};
-      if (filters.where.category !== -1) {
-        params.category = String(filters.where.category);
-      }
-
-      if (filters.where.license !== -1) {
-        params.license = filters.where.license;
-      }
-
-      if (filters.order === 'DESC') {
-        params.order_by = 'created';
-      }
-
-      if (page !== undefined) {
-        params.page = Number(page);
-      }
-
-      if (filters.where.name !== '') {
-        params.search = filters.where.name;
-      }
+      const filters: FiltersState = await getVuexState('state.filters');
+      const params: SFMLabParams = {
+        adult_content: isMatureContentVisible() ? 'included' : 'excluded',
+        page: Number(page || 1),
+        search: filters.search,
+        limit: 50
+      };
 
       sendVuexCommit('setOfflineStatus', false);
       sendVuexCommit('setLoadingStatus', false);
 
-      logger.verbose(`HTTP GET ${getPrefixedURL(`${this.slug}/models`, true)}`);
-      const fetch: SFMLabFetch = (await sfmlabRequest(getPrefixedURL(`${this.slug}/models`), {
+      logger.verbose(`HTTP GET ${`${this.slug}/models`}`);
+      const fetch: SFMLabFetch = (await sfmlabRequest(`${this.slug}/models`, {
         searchParams: params
       })).body;
 
-      const models: Model[] = [];
+      const models: RemoteModel[] = [];
       const favoriteList = new Favorite();
 
       for (const model of fetch.models) {
@@ -173,9 +147,7 @@ export default class SFMLabBaseIntegration extends Integration {
       }
       return {
         models: models,
-        categories: fetch.categories,
-        licenses: fetch.licenses,
-        totalPages: fetch.totalPages
+        pagination: fetch.pagination
       };
     } catch (err) {
       if (err.code === 'ECONNABORTED') {
@@ -190,9 +162,11 @@ export default class SFMLabBaseIntegration extends Integration {
             } else {
               const obj = {
                 models: rows,
-                categories: [],
-                licenses: [],
-                totalPages: 1
+                pagination: {
+                  page: 1,
+                  totalPages: 1,
+                  totalItems: rows.length
+                }
               };
               resolve(obj);
             }
@@ -206,22 +180,24 @@ export default class SFMLabBaseIntegration extends Integration {
       logger.error(new Error(err));
       return {
         models: [],
-        categories: [],
-        licenses: [],
-        totalPages: 0
+        pagination: {
+          page: 1,
+          totalPages: 1,
+          totalItems: 0
+        }
       };
     } finally {
-      logger.verbose(`HTTP GET ${getPrefixedURL(`${this.slug}/models`, true)} completed`);
+      logger.verbose(`HTTP GET ${`${this.slug}/models`} completed`);
       sendVuexCommit('setLoadingStatus', true);
     }
   }
 
-  async fetchSingleModel(id: number): Promise<Model | void | Error> {
+  async fetchSingleModel(id: number): Promise<SFMLabModel | void | Error> {
     try {
       sendVuexCommit('setOfflineStatus', false);
       sendVuexCommit('setLoadingStatus', false);
-      logger.verbose(`HTTP GET ${getPrefixedURL(`${this.slug}/models/${id}`, true)}`);
-      const item = (await sfmlabRequest(getPrefixedURL(`${this.slug}/models/${id}`))).body;
+      logger.verbose(`HTTP GET ${this.slug}/models/${id}}`);
+      const item = (await sfmlabRequest(`${this.slug}/models/${id}`)).body;
       const installed = await this.checkIsInstalledModel(id);
 
       item.installed = (installed as boolean);
@@ -240,7 +216,7 @@ export default class SFMLabBaseIntegration extends Integration {
       });
       logger.error(new Error(err));
     } finally {
-      logger.verbose(`HTTP GET ${getPrefixedURL(`${this.slug}/models/${id}`, true)} completed`);
+      logger.verbose(`HTTP GET ${this.slug}/models/${id}} completed`);
       sendVuexCommit('setLoadingStatus', true);
     }
   }

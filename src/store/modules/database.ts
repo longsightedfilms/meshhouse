@@ -1,4 +1,4 @@
-import { integrationsList } from '@/functions/databases';
+import { INTEGRATIONS } from '@/constants';
 
 export default {
   state: {
@@ -13,7 +13,7 @@ export default {
       state.databases = payload;
     },
     setCurrentDatabase(state: DatabaseState, payload: string): void {
-      if (integrationsList.filter((val: string) => val === payload).length === 0) {
+      if (INTEGRATIONS.filter((val: string) => val === payload).length === 0) {
         const index = state.databases.local.findIndex((db: DatabaseItem) => db.url === payload);
         state.currentDB = state.databases.local[index];
       } else {

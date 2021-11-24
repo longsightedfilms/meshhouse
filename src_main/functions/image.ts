@@ -5,11 +5,6 @@ import uniqid from 'uniqid';
 import { app } from 'electron';
 import logger from '../logger';
 
-type ImageProcessorOutput = {
-  status: string;
-  imgPath: string;
-}
-
 /**
  * Creates background image 2560x400px and saves to userData folder
  * @param item model

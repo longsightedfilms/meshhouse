@@ -30,6 +30,7 @@ const applicationOptions: any = {
   frame: process.platform === 'win32' ? false : true,
   show: false,
   resizable: true,
+  backgroundColor: '#fff',
   webPreferences: {
     contextIsolation: true,
     experimentalFeatures: true,
@@ -42,9 +43,10 @@ const loaderOptions: any = {
   frame: false,
   movable: false,
   width: 640,
-  height: 640,
+  height: 360,
   show: false,
   resizable: false,
+  backgroundColor: '#fff',
   icon: getIconForOS(),
   webPreferences: {
     nodeIntegration: process.env.ELECTRON_NODE_INTEGRATION,

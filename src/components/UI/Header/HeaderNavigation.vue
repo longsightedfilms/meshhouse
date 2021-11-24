@@ -27,14 +27,14 @@
       class="buttons"
     >
       <button
-        :title="$store.state.controls.filters.order === 'ASC'
+        :title="$store.state.filters.order === 'ASC'
           ? $t('hints.navbar.sortASC')
           : $t('hints.navbar.sortDESC')"
         class="button button--flat button--icon-only"
         @click="handleChangeOrder"
       >
         <vue-icon
-          :icon="$store.state.controls.filters.order === 'ASC'
+          :icon="$store.state.filters.order === 'ASC'
             ? 'sort-alpha-down'
             : 'sort-alpha-up'"
           raster
@@ -50,13 +50,13 @@
         type="text"
         class="input"
         size="1"
-        :value="$store.state.controls.filters.where.name"
+        :value="$store.state.filters.search"
         :placeholder="$t('common.labels.search')"
         @input="handleSearchInput"
         @change="handleSearchField"
       >
       <button
-        v-if="$store.state.controls.filters.where.name !== ''"
+        v-if="$store.state.filters.search !== ''"
         class="clear"
         @click="clearSearchField"
       >
@@ -164,14 +164,14 @@ export default class HeaderNavigation extends Vue {
   }
 
   handleChangeOrder(): void {
-    const order = this.$store.state.controls.filters.order;
+    const order = this.$store.state.filters.order;
     this.$store.commit('setFilterOrder', order === 'ASC' ? 'DESC' : 'ASC');
     this.updateItems();
   }
 
   handleSearchField(event: KeyboardEvent): void {
     this.$store.commit('setFilter', {
-      field: 'name',
+      field: 'search',
       value: (event.target as HTMLInputElement).value
     });
     this.updateItems();
@@ -179,14 +179,14 @@ export default class HeaderNavigation extends Vue {
 
   handleSearchInput(event: KeyboardEvent): void {
     this.$store.commit('setFilter', {
-      field: 'name',
+      field: 'search',
       value: (event.target as HTMLInputElement).value
     });
   }
 
   clearSearchField(): void {
     this.$store.commit('setFilter', {
-      field: 'name',
+      field: 'search',
       value: ''
     });
     this.updateItems();

@@ -58,7 +58,7 @@ const router = new Router({
       path: '/model/:database/:id',
       name: 'ModelPage',
       component: (): Promise<typeof import('*.vue')> => {
-        return import(/* webpackChunkName: "Updated" */ './views/ModelPage.vue');
+        return import(/* webpackChunkName: "Updated" */ './views/ModelPageDynamic.vue');
       },
       meta: {
         toolbar: false,

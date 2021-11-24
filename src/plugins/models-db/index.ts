@@ -4,8 +4,9 @@ import { transliterate as tr, slugify } from 'transliteration';
 import store from '@/store/main';
 import sanitizeHTML from 'sanitize-html';
 
+import { EXTENSIONS } from '@/constants';
 import { formatBytes } from '@/functions/format';
-import { modelsExtensions, getParameterByExtension } from '@/functions/extension';
+import { getParameterByExtension } from '@/functions/extension';
 import { formatDateRelative, formatDate } from '@/functions/date';
 
 window.ipc.invoke('init-databases');
@@ -22,7 +23,7 @@ export function ModelsDB(Vue: typeof _Vue): void {
   Vue.prototype.$returnHumanLikeExtension = function(
     extension: string
   ): string {
-    return modelsExtensions[extension].title ?? '';
+    return EXTENSIONS[extension].title ?? '';
   };
 
   Vue.prototype.$forceReloadImage = function(image: string): string {

@@ -69,7 +69,7 @@ import Component from 'vue-class-component';
 export default class HeaderWindowButtons extends Vue {
   maximized = false
 
-  mounted(): void {
+  created(): void {
     eventBus.on('maximize', (() => {
       this.maximized = true;
     }));

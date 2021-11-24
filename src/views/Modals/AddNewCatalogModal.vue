@@ -206,7 +206,7 @@ export default class AddNewCatalogModal extends Vue {
   preview = ''
 
   get folderPlaceholder(): string {
-    switch(this.$ipcSendSync('get-os')) {
+    switch(this.$ipcSendSync<string>('get-os')) {
     case 'win32':
       return 'C:\\Models\\My fancy models';
     case 'linux':
@@ -233,7 +233,7 @@ export default class AddNewCatalogModal extends Vue {
   }
 
   async handleDirectoryInputClick(): Promise<void> {
-    const dialog = await this.$ipcInvoke('show-open-dialog', {
+    const dialog = await this.$ipcInvoke<Electron.OpenDialogReturnValue>('show-open-dialog', {
       properties: ['openDirectory']
     });
 
@@ -309,11 +309,11 @@ export default class AddNewCatalogModal extends Vue {
 
           if (this.imageChanged === true) {
             try {
-              const backgroundObject = await this.$ipcInvoke('generate-bg-image', {
+              const backgroundObject = await this.$ipcInvoke<ImageProcessorOutput>('generate-bg-image', {
                 item: this.properties,
                 image: this.backgroundImage
               });
-              const backgroundTallObject = await this.$ipcInvoke('generate-bg-tall-image', {
+              const backgroundTallObject = await this.$ipcInvoke<ImageProcessorOutput>('generate-bg-tall-image', {
                 item: this.properties,
                 image: this.backgroundImage
               });

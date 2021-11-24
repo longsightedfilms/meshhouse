@@ -1,14 +1,5 @@
 export default {
   state: {
-    filters: {
-      order: 'ASC',
-      where: {
-        category: -1,
-        extension: 'none',
-        name: '',
-        path: '',
-      },
-    },
     fullscreen: false,
     imageRandomizer: 0,
     isOffline: false,
@@ -25,16 +16,6 @@ export default {
   mutations: {
     incrementImageRandomizer(state: ControlsState): void {
       state.imageRandomizer++;
-    },
-    setFilterOrder(state: ControlsState, payload: string): void {
-      state.filters.order = payload;
-    },
-    setFilter(state: ControlsState, payload: FilterPayload): void {
-      state.filters.where[payload.field] = payload.value;
-    },
-    setFilters(state: ControlsState, payload: Filters): Promise<boolean> {
-      state.filters = payload;
-      return Promise.resolve(true);
     },
     setFullscreen(state: ControlsState, payload: boolean): void {
       state.fullscreen = payload;

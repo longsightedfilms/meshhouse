@@ -1,0 +1,59 @@
+@import "../../../sass/variables"
+@import '~swiper/swiper-bundle.css'
+
+.model-swiper__top
+  .swiper-slide
+    width: 100% !important
+    .slide-image
+      position: relative
+      object-fit: contain
+      object-position: 50%
+      aspect-ratio: 16/9
+      margin: 0 auto
+      width: 100%
+      z-index: 1
+      &--background
+        position: absolute
+        width: 100%
+        height: 100%
+        object-fit: cover
+        object-position: 50%
+        top: 0
+        filter: brightness(0.5) blur(40px)
+
+.swiper-button-prev, .swiper-button-next
+  width: 5rem
+  height: 5rem
+  .icon
+    filter: invert(62%) sepia(92%) saturate(3197%) hue-rotate(172deg) brightness(99%) contrast(91%)
+  &:after
+    display: none
+
+
+.swiper-pagination-bullet
+  border-radius: 0
+  height: 0.375rem
+  width: 3rem
+  background-color: $white
+  &-active
+    background-color: $primary
+
+.model-swiper__bottom
+  background-color: var(--blockColorLight)
+  padding: 1rem 0
+  .swiper-slide
+    border: 0.125rem solid rgba(0,0,0,0)
+    width: 128px
+    .slide-image
+      position: relative
+      object-fit: contain
+      object-position: 50%
+      aspect-ratio: 16/9
+      margin: 0 auto
+      width: 100%
+      z-index: 1
+      filter: brightness(0.8) saturate(0.1)
+    &.swiper-slide-active
+      border-color: $primary
+      .slide-image
+        filter: none

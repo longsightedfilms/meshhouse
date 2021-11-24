@@ -15,8 +15,8 @@ import VueIcon from '@/components/UI/Icon/Icon.vue';
 import VueDropdown from '@/components/UI/Button/DropdownButton.vue';
 import VueLoader from '@/components/UI/Loader/Loader.vue';
 import CatalogHeader from '@/components/UI/Header/CatalogHeader.vue';
+import { INTEGRATIONS } from '@/constants';
 
-import { integrationsList } from '@/functions/databases';
 import { transliterate as tr, slugify } from 'transliteration';
 
 Vue.config.productionTip = false;
@@ -31,7 +31,7 @@ for (const [rule, validation] of Object.entries(rules)) {
 extend('notIntegrationName', ((value: string): boolean => {
   const slug = value.trim().replace(/[~!@#$%^&*()=+.,?/\\|]+/, '');
   const url = slugify(slug);
-  return integrationsList.findIndex((integrationName: string) => integrationName === url) === -1;
+  return INTEGRATIONS.findIndex((integrationName: string) => integrationName === url) === -1;
 }));
 
 Vue.component('v-button', VueButton);

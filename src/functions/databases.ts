@@ -1,17 +1,4 @@
-export const integrationsList: string[] = [
-  'meshhouse',
-  'sfmlab',
-  'smutbase',
-  'open3dlab'
-];
-/**
- * List of integration, where license field are exists
- */
-export const integrationsWithLicenseField: string[] = [
-  'sfmlab',
-  'smutbase',
-  'open3dlab'
-];
+import { INTEGRATIONS } from '@/constants';
 
 export function isDownloadLink(link: SFMLabLink[] | Error): link is SFMLabLink[] {
   return (link as SFMLabLink[]).length !== undefined;
@@ -27,5 +14,5 @@ export function findDatabaseIndex(url: string): number {
 }
 
 export function isDatabaseRemote(url: string): boolean {
-  return integrationsList.findIndex((value: string) => value === url) !== -1;
+  return INTEGRATIONS.includes(url);
 }

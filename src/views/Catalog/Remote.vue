@@ -7,14 +7,14 @@
       </span>
     </div>
     <div
-      v-if="$store.state.db.loadedData.length !== 0"
+      v-if="models.length !== 0"
       :class="gridClass"
       :style="dynamicGrid"
     >
-      <model-card
-        v-for="item in $store.state.db.loadedData"
-        :key="item.name + item.index + item.extension"
-        :item="item"
+      <model-card-remote
+        v-for="model in models"
+        :key="model.title + model.id"
+        :model="model"
         tabindex="0"
       />
       <vue-context ref="menu">
@@ -22,11 +22,11 @@
       </vue-context>
     </div>
     <catalog-paginator
-      v-if="$store.state.db.loadedData.length !== 0 && !$store.state.controls.isOffline"
-      :total-pages="totalPages"
+      v-if="models.length !== 0 && !$store.state.controls.isOffline"
+      :total-pages="pagination.totalPages"
     />
     <div
-      v-if="$store.state.db.loadedData.length === 0"
+      v-if="models.length === 0"
       class="models-empty"
     >
       <vue-icon icon="box" />
@@ -42,7 +42,7 @@ import eventBus from '@/eventBus';
 import { Vue, Component, Watch } from 'vue-property-decorator';
 import VueContext from 'vue-context';
 import ModelContext from '@/components/UI/Context/ModelContext.vue';
-import ModelCard from '@/components/UI/Card/ModelCard.vue';
+import ModelCardRemote from '@/components/UI/ModelCard/ModelCardRemote.vue';
 import CatalogPaginator from './CatalogPaginator.vue';
 import FileSelectorModal from '@/views/Modals/FileSelectorModal.vue';
 import { Route } from 'vue-router';
@@ -50,25 +50,21 @@ import { Route } from 'vue-router';
 @Component({
   components: {
     CatalogPaginator,
-    ModelCard,
+    ModelCardRemote,
     VueContext,
     ModelContext
   },
   async beforeRouteEnter(to: Route, from: Route, next: Function) {
-    const data = await window.ipc.invoke('get-integration-models', {
+    const data: SFMLabFetch = await window.ipc.invoke('get-integration-models', {
       type: 'remote',
       title: to.params.database,
       query: to.params.page
     });
 
-    next((vm: Vue) => {
+    next((vm: RemoteDatabase) => {
       vm.$store.commit('setCurrentDatabase', to.params.database);
-      vm.$store.commit('setLoadedData', data.models);
-      vm.$store.commit('setCategories', data.categories);
-      (vm as RemoteDatabase).totalPages = data.totalPages;
-      if (Object.hasOwnProperty.call(data, 'licenses')) {
-        vm.$store.commit('setLicenses', data.licenses);
-      }
+      vm.models = data.models;
+      vm.pagination = data.pagination;
     });
   },
   metaInfo() {
@@ -78,7 +74,12 @@ import { Route } from 'vue-router';
   }
 })
 export default class RemoteDatabase extends Vue {
-  totalPages = 0
+  models: RemoteModel[] = []
+  pagination = {
+    page: 1,
+    totalPages: 1,
+    totalItems: 0
+  }
 
   @Watch('$route')
   async onRouteChanged(): Promise<void> {
@@ -108,19 +109,15 @@ export default class RemoteDatabase extends Vue {
   }
 
   async databaseInitialize(): Promise<void> {
-    const data = await this.$ipcInvoke('get-integration-models', {
+    const data: SFMLabFetch = await this.$ipcInvoke('get-integration-models', {
       type: 'remote',
       title: this.$route.params.database,
       query: this.$route.params.page
     });
 
     this.$store.commit('setCurrentDatabase', this.$route.params.database);
-    this.$store.commit('setLoadedData', data.models);
-    this.$store.commit('setCategories', data.categories);
-    this.totalPages = data.totalPages;
-    if (Object.hasOwnProperty.call(data, 'licenses')) {
-      this.$store.commit('setLicenses', data.licenses);
-    }
+    this.models = data.models;
+    this.pagination = data.pagination;
   }
 
   get gridClass(): string {

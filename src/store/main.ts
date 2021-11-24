@@ -5,6 +5,7 @@ import database from './modules/database';
 import downloads from './modules/downloads';
 import settings from './modules/settings';
 import devices from './modules/devices';
+import filters from './modules/filters';
 import notifications from './modules/notifications';
 
 Vue.use(Vuex);
@@ -14,6 +15,7 @@ export default new Vuex.Store<ApplicationStore>({
     controls,
     db: database,
     devices,
+    filters,
     downloads,
     notifications,
     settings
