@@ -22,7 +22,7 @@
     "postinstall": "electron-builder install-app-deps",
     "postuninstall": "electron-builder install-app-deps"
   },
-  "exports": "./background.js",
+  "main": "background.js",
   "dependencies": {
     "7zip-bin": "^5.1.1",
     "@zhangfuxing/unrar": "github:longsightedfilms/unrar",
