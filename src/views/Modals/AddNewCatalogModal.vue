@@ -206,7 +206,7 @@ export default class AddNewCatalogModal extends Vue {
   preview = ''
 
   get folderPlaceholder(): string {
-    switch(this.$ipcSendSync<string>('get-os')) {
+    switch(this.$store.getters.currentOS) {
     case 'win32':
       return 'C:\\Models\\My fancy models';
     case 'linux':

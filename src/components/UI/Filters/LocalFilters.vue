@@ -16,8 +16,8 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
-import Component from 'vue-class-component';
+import eventBus from '@/eventBus';
+import { Vue, Component } from 'vue-property-decorator';
 import Multiselect from 'vue-multiselect';
 import { Fragment } from 'vue-fragment';
 import { EXTENSIONS } from '@/constants';
@@ -33,7 +33,6 @@ export default class LocalFilters extends Vue {
     title: this.$i18n.t('common.list.all').toString(),
     icon: 'none'
   }
-  sceneTypes: ExtensionProperty[] = []
 
   mounted(): void {
     const thumbnailSize = this.$store.state.settings.thumbnailSize;
@@ -41,23 +40,28 @@ export default class LocalFilters extends Vue {
     if(thumbnailSize !== undefined) {
       this.$store.commit('setThumbnailSize', thumbnailSize);
     }
+
     this.scene = {
       title: this.$i18n.t('common.list.all').toString(),
       icon: 'none'
     };
-    this.sceneTypes = [
-      {
-        title: this.$i18n.t('common.list.all').toString(),
-        icon: 'none'
-      }
-    ];
+  }
 
-    this.sceneTypes = Object.values(EXTENSIONS).map((element: ExtensionProperty) => {
+  get sceneTypes(): ExtensionProperty[] {
+    const extensions = Object.values(EXTENSIONS).map((element: ExtensionProperty) => {
       return {
         title: `${element.title} (.${element.icon})`,
         icon: `.${element.icon}`
       };
     });
+
+    return [
+      {
+        title: this.$i18n.t('common.list.all').toString(),
+        icon: 'none'
+      },
+      ...extensions
+    ];
   }
 
   handleDccSelect(select: ExtensionProperty): void {
@@ -65,16 +69,7 @@ export default class LocalFilters extends Vue {
       field: 'extension',
       value: select.icon
     });
-    this.setFilters();
-  }
-
-  setFilters(): void {
-    this.$ipcInvoke<Model[]>('get-integration-models', {
-      type: 'local',
-      title: this.$route.params.database
-    }).then((result): void => {
-      this.$store.commit('setLoadedData', result);
-    });
+    eventBus.emit('filters-updated');
   }
 }
 </script>

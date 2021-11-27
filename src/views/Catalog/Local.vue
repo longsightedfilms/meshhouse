@@ -11,14 +11,14 @@
       </span>
     </div>
     <div
-      v-if="$store.state.db.loadedData.length !== 0"
+      v-if="models.length !== 0"
       :class="gridClass"
       :style="dynamicGrid"
     >
-      <model-card
-        v-for="item in $store.state.db.loadedData"
-        :key="item.name + item.index + item.extension"
-        :item="item"
+      <model-card-local
+        v-for="model in models"
+        :key="model.name + model.id + model.extension"
+        :model="model"
         tabindex="0"
       />
       <vue-context ref="menu">
@@ -47,14 +47,14 @@ import VueContext from 'vue-context';
 import CategoriesGrid from './CategoriesGrid.vue';
 import CategoryContext from '@/components/UI/Context/CategoryContext.vue';
 import ModelContext from '@/components/UI/Context/ModelContext.vue';
-import ModelCard from '@/components/UI/Card/ModelCard.vue';
+import ModelCardLocal from '@/components/UI/ModelCard/ModelCardLocal.vue';
 import { Route } from 'vue-router';
 
 @Component({
   components: {
     CategoriesGrid,
     CategoryContext,
-    ModelCard,
+    ModelCardLocal,
     VueContext,
     ModelContext
   },
@@ -70,9 +70,9 @@ import { Route } from 'vue-router';
       title: to.params.database
     });
 
-    next((vm: Vue) => {
+    next((vm: LocalDatabase) => {
       vm.$store.commit('setCurrentDatabase', to.params.database);
-      vm.$store.commit('setLoadedData', models);
+      vm.models = models;
       vm.$store.commit('setCategories', categories);
     });
   },
@@ -83,25 +83,27 @@ import { Route } from 'vue-router';
   }
 })
 export default class LocalDatabase extends Vue {
+  models: Model[] = []
+
   @Watch('$route')
   async onRouteChanged(): Promise<void> {
     await this.databaseInitialize();
   }
 
   async databaseInitialize(): Promise<void> {
-    const models = await this.$ipcInvoke('get-integration-models', {
+    const models = await this.$ipcInvoke<Model[]>('get-integration-models', {
       type: 'local',
       title: this.$route.params.database,
       category: this.$route.params.category
     });
 
-    const categories = await this.$ipcInvoke('get-integration-categories', {
+    const categories = await this.$ipcInvoke<Category[]>('get-integration-categories', {
       type: 'local',
       title: this.$route.params.database
     });
 
     this.$store.commit('setCurrentDatabase', this.$route.params.database);
-    this.$store.commit('setLoadedData', models);
+    this.models = models;
     this.$store.commit('setCategories', categories);
   }
 
@@ -133,7 +135,7 @@ export default class LocalDatabase extends Vue {
       };
     } else {
       return {
-        gridTemplateColumns: `repeat(auto-fit, ${thumbnailSize}px)`,
+        gridTemplateColumns: 'repeat(auto-fit, var(--thumbnail-size))',
       };
     }
   }

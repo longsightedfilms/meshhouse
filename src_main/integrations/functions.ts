@@ -1,11 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 import Integrations from './index';
+import IntegrationLocal from './local';
+import { Integration } from './template';
 import recursive from 'recursive-readdir';
 import chokidar from 'chokidar';
 import { databases } from '../electron-store';
 import { modelsExtensions } from '../extensions/models';
 import { sendVuexCommit, sendEventBusEmit } from '../ipc_handlers/eventbus';
+import logger from '../logger';
 
 let watcher: chokidar.FSWatcher;
 
@@ -61,7 +64,7 @@ export function isDatabaseRemote(url: string): boolean {
  * Creates appropriate integration class instance
  * @param database database object or database url
  */
-export function handleDatabases(database: DatabaseItem | string): Integrations | null {
+export function handleDatabases(database: DatabaseItem | string): Integration | IntegrationLocal | null {
   let searchableDB;
 
   if (typeof database === 'string') {
@@ -82,24 +85,25 @@ export function handleDatabases(database: DatabaseItem | string): Integrations |
 }
 
 /**
- * Apply migration to databases if needed and search new files
+ * Update database handler
+ * @param database database object
+ * @returns database update result
  */
-export async function updateDatabases(): Promise<boolean> {
-  const db = databases.get('databases');
+async function handleUpdateDatabase(database: DatabaseItem): Promise<{count: number; totalsize: number}> {
+  const handleDB = handleDatabases(database);
 
-  // Update model count and total size
-  for await (const [index, database] of db.local.entries()) {
-    const handleDB = handleDatabases(database);
+  if (handleDB !== null && handleDB instanceof IntegrationLocal) {
+    await handleDB.updateDatabaseVersion();
 
-    if (handleDB !== null) {
-      await handleDB.updateDatabaseVersion();
+    let totalSize = 0;
+    const files = await recursive(database.path, [filterByModels]);
+    await handleDB.reindexCatalog(files);
+    const models = await handleDB.fetchItemsFromDatabase('SELECT * FROM \'models\'');
 
-      let totalSize = 0;
-      const files = await recursive(database.path, [filterByModels]);
-      await handleDB.reindexCatalog(files);
-      const models = await handleDB.fetchItemsFromDatabase('SELECT * FROM \'models\'');
+    if (Array.isArray(models)) {
+      const promises: Promise<any>[] = [];
 
-      models.forEach(async(model: Model) => {
+      models.map((model: Model) => {
         const stats = fs.statSync(model.path);
         model.size = stats['size'];
         totalSize += stats['size'];
@@ -107,12 +111,49 @@ export async function updateDatabases(): Promise<boolean> {
         const query = `UPDATE models
         SET ${handleDB.updateBuilder(model)}
         WHERE id = ${model.id}`;
-        await handleDB.runQuery(query);
+
+        promises.push(handleDB.runQuery(query));
       });
 
-      db.local[index].count = models.length;
-      db.local[index].totalsize = totalSize;
+      await Promise.all(promises);
+
+      return {
+        count: models.length,
+        totalsize: totalSize
+      };
     }
+
+    logger.error(models);
+
+    return {
+      count: 0,
+      totalsize: 0
+    };
+  }
+
+  return {
+    count: 0,
+    totalsize: 0
+  };
+}
+
+/**
+ * Apply migration to databases if needed and search new files
+ */
+export async function updateDatabases(): Promise<boolean> {
+  const db = databases.get('databases');
+
+  // Update model count and total size
+  const promises: Promise<any>[] = [];
+  for (const [index, database] of db.local.entries()) {
+    promises.push(handleUpdateDatabase(database));
+  }
+
+  const results = await Promise.all(promises);
+
+  for (const [index, database] of db.local.entries()) {
+    db.local[index].count = results[index].count;
+    db.local[index].totalsize = results[index].totalsize;
   }
 
   databases.set('databases', db);

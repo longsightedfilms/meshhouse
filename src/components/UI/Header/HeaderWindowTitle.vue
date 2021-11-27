@@ -83,8 +83,6 @@ import { Vue, Component } from 'vue-property-decorator';
 
 @Component({})
 export default class HeaderWindowTitle extends Vue {
-  os = 'linux'
-
   get appIcon(): string {
     const os = this.os;
     let icon = 'icon.png';
@@ -99,8 +97,8 @@ export default class HeaderWindowTitle extends Vue {
     return `/${icon}`;
   }
 
-  async mounted(): Promise<void> {
-    this.os = await this.$ipcInvoke('get-os');
+  get os(): string {
+    return this.$store.getters.currentOS;
   }
 
   back(): void {

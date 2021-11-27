@@ -121,7 +121,6 @@ export default class Remote extends Vue {
 
   handleRedirectToModelPage(href: string): void {
     let isIntegration = false;
-    console.log(href);
 
     const MODEL_PAGES = [
       'https://sfmlab.com/project/',

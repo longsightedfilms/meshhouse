@@ -8,7 +8,7 @@ const GAME_ENGINE_EXTENSIONS: Extension = {
 const INTERCHANGE_EXTENSIONS: Extension = {
   '.fbx': {
     title: 'Autodesk FBX',
-    icon: 'max'
+    icon: 'fbx'
   }
 };
 

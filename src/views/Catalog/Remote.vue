@@ -133,7 +133,7 @@ export default class RemoteDatabase extends Vue {
       };
     } else {
       return {
-        gridTemplateColumns: `repeat(auto-fit, ${thumbnailSize}px)`,
+        gridTemplateColumns: 'repeat(auto-fit, var(--thumbnail-size))',
       };
     }
   }

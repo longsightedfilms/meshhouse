@@ -4,7 +4,7 @@
       <h2>{{ $t('context.model.properties') }}</h2>
     </header>
     <div class="modal_content">
-      <model-image
+      <model-image-local
         :item="properties"
       />
       <ValidationObserver
@@ -80,7 +80,7 @@
         </div>
         <div class="info">
           <dd>{{ $t('views.catalog.models.size') }}</dd>
-          <dt>{{ $formatSize(properties.size) }}</dt>
+          <dt>{{ $formatSize(Number(properties.size || 0)) }}</dt>
         </div>
         <div class="errors">
           {{ error }}
@@ -106,13 +106,14 @@
 </template>
 
 <script lang="ts">
-import { Vue, Component, Watch } from 'vue-property-decorator';
-import ModelImage from '@/components/UI/Image/ModelImage.vue';
+import eventBus from '@/eventBus';
+import { Vue, Component } from 'vue-property-decorator';
+import ModelImageLocal from '@/components/UI/ModelImage/ModelImageLocal.vue';
 import { ValidationObserver, ValidationProvider } from 'vee-validate';
 
 @Component({
   components: {
-    ModelImage,
+    ModelImageLocal,
     ValidationObserver,
     ValidationProvider
   }
@@ -216,12 +217,7 @@ export default class EditPropertiesModal extends Vue {
         this.$store.commit('incrementImageRandomizer');
         this.$updateItemInDatabase(this.$route.params.database, models[0]);
 
-        const result = await this.$ipcInvoke('get-integration-models', {
-          type: 'local',
-          title: this.$route.params.database
-        });
-
-        this.$store.commit('setLoadedData', result);
+        eventBus.emit('filters-updated');
         this.$emit('close');
       } catch (err) {
         this.error = err.name + ': ' + err.message;
@@ -232,24 +228,14 @@ export default class EditPropertiesModal extends Vue {
 
         this.$updateItemInDatabase(this.$route.params.database, models[0]);
 
-        const result = await this.$ipcInvoke('get-integration-models', {
-          type: 'local',
-          title: this.$route.params.database
-        });
-
-        this.$store.commit('setLoadedData', result);
+        eventBus.emit('filters-updated');
       }
     } else {
       models[0].image = this.properties.image;
 
       this.$updateItemInDatabase(this.$route.params.database, models[0]);
 
-      const result = await this.$ipcInvoke('get-integration-models', {
-        type: 'local',
-        title: this.$route.params.database
-      });
-
-      this.$store.commit('setLoadedData', result);
+      eventBus.emit('filters-updated');
       this.$emit('close');
     }
     this.busy = false;

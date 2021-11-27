@@ -139,7 +139,7 @@ export default class MainMenuDropdown extends Vue {
   }
 
   get currentOS(): string {
-    return window.ipc.sendSync('get-os');
+    return this.$store.getters.currentOS;
   }
 
   get showDevTools(): boolean {

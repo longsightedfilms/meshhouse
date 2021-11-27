@@ -2,7 +2,7 @@
   <img
     v-bind="$attrs"
     :class="iconClass"
-    :src="retrieveImage(icon)"
+    :src="iconLink"
   >
 </template>
 <style src="./Icon.sass" lang="sass"></style>

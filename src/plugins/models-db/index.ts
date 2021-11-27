@@ -20,10 +20,8 @@ export function ModelsDB(Vue: typeof _Vue): void {
     return slugify(str);
   };
 
-  Vue.prototype.$returnHumanLikeExtension = function(
-    extension: string
-  ): string {
-    return EXTENSIONS[extension].title ?? '';
+  Vue.prototype.$returnHumanLikeExtension = function(extension: string): string {
+    return EXTENSIONS[extension]?.title ?? '';
   };
 
   Vue.prototype.$forceReloadImage = function(image: string): string {

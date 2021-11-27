@@ -1,15 +1,15 @@
 <template>
   <div
     class="model-card"
-    @dblclick="handleDblClick"
+    @dblclick="$openItem(model.path)"
     @contextmenu.prevent="onRightClick"
     @dragstart="onDrag"
   >
-    <model-image-remote
+    <model-image-local
       :model="model"
     />
     <div class="model-card__title">
-      <p>{{ model.title }}</p>
+      <p>{{ model.name }}</p>
     </div>
     <div class="model-card__properties">
       <p class="size">
@@ -25,4 +25,4 @@
   </div>
 </template>
 <style src="./ModelCard.sass" lang="sass"></style>
-<script src="./ModelCardRemote.ts" lang="ts"></script>
+<script src="./ModelCardLocal.ts" lang="ts"></script>

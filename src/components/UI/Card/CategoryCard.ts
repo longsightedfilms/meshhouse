@@ -1,11 +1,9 @@
 import { Vue, Component, Prop } from 'vue-property-decorator';
 import VueContext from 'vue-context';
-import ModelImage from '@/components/UI/Image/ModelImage.vue';
 import AddCategoryModal from '@/views/Modals/AddCategoryModal.vue';
 
 @Component({
   components: {
-    ModelImage,
     VueContext
   }
 })

@@ -137,6 +137,8 @@ export default function(): void {
   });
 
   ipcMain.handle('get-integration-models', async(event, params) => {
+    const start = process.hrtime();
+
     let db;
     const {
       type,
@@ -151,6 +153,8 @@ export default function(): void {
     }
 
     const models = await db.fetchItemsFromDatabase(query, category);
+    const end = process.hrtime(start);
+    logger.verbose(`get-integration-models takes ${((end[0] / 1000) + (end[1] / 1000000) / 1000)} seconds`);
     return models;
   });
 

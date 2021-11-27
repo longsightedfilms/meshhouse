@@ -36,6 +36,7 @@ export default class SettingsStore extends VuexModule {
   @Mutation
   setThumbnailSize(size: number): void {
     this.thumbnailSize = size;
+    document.documentElement.style.setProperty('--thumbnail-size', size + 'px');
   }
 
   @Mutation

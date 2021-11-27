@@ -113,6 +113,7 @@ export default class Local extends Integration {
 
   async fetchItemsFromDatabase(query?: string, category?: number): Promise<Model[] | Error> {
     logger.info(`Fetching items from local database "${this.name}"`);
+    const start = process.hrtime();
     sendVuexCommit('setLoadingStatus', false);
 
     const params: FiltersState = await getVuexState('state.filters');
@@ -140,8 +141,12 @@ export default class Local extends Integration {
     return new Promise((resolve, reject): void => {
       this.db.all(dbQuery as string, (err, rows) => {
         if (err) {
+          const end = process.hrtime(start);
+          logger.verbose(`Fetching items from local database "${this.name}" takes ${((end[0] / 1000) + (end[1] / 1000000) / 1000)} seconds`);
           reject(err);
         } else {
+          const end = process.hrtime(start);
+          logger.verbose(`Fetching items from local database "${this.name}" takes ${((end[0] / 1000) + (end[1] / 1000000) / 1000)} seconds`);
           resolve(rows);
         }
       });

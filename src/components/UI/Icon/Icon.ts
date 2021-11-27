@@ -1,9 +1,10 @@
 import {
   Vue,
   Component,
-  Prop,
-  Watch
+  Prop
 } from 'vue-property-decorator';
+import { getModule } from 'vuex-module-decorators';
+import SettingsStore from '@/store/modules/settings';
 
 @Component({})
 export default class Icon extends Vue {
@@ -23,13 +24,12 @@ export default class Icon extends Vue {
     default: false
   }) readonly static!: boolean;
 
-  useInvertedIcon = this.$store.state.settings.systemDarkTheme === true
-    || this.$store.state.settings.theme === 'dark'
+  get useInvertedIcon(): boolean {
+    return this.settingsStore.systemDarkTheme === true || this.settingsStore.theme === 'dark';
+  }
 
-  @Watch('$store.state.settings.theme')
-  onThemeChanged(val: string): void {
-    this.useInvertedIcon = this.$store.state.settings.systemDarkTheme === true
-    || val === 'dark';
+  get settingsStore(): SettingsStore {
+    return getModule(SettingsStore, this.$store);
   }
 
   get iconClass(): string {
@@ -39,7 +39,7 @@ export default class Icon extends Vue {
     return 'icon';
   }
 
-  retrieveImage(icon: string): string {
-    return `/assets/icons/${icon !== '' ? icon : 'edit'}.${this.$props.raster ? 'png' : 'svg'}`;
+  get iconLink(): string {
+    return `/assets/icons/${this.icon !== '' ? this.icon : 'edit'}.${this.raster ? 'png' : 'svg'}`;
   }
 }

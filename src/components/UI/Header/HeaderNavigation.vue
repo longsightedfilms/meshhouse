@@ -159,14 +159,10 @@ export default class HeaderNavigation extends Vue {
     this.$store.commit('setCompleted', false);
   }
 
-  updateItems(): void {
-    eventBus.emit('filters-updated');
-  }
-
   handleChangeOrder(): void {
     const order = this.$store.state.filters.order;
     this.$store.commit('setFilterOrder', order === 'ASC' ? 'DESC' : 'ASC');
-    this.updateItems();
+    eventBus.emit('filters-updated');
   }
 
   handleSearchField(event: KeyboardEvent): void {
@@ -174,7 +170,7 @@ export default class HeaderNavigation extends Vue {
       field: 'search',
       value: (event.target as HTMLInputElement).value
     });
-    this.updateItems();
+    eventBus.emit('filters-updated');
   }
 
   handleSearchInput(event: KeyboardEvent): void {
@@ -189,7 +185,7 @@ export default class HeaderNavigation extends Vue {
       field: 'search',
       value: ''
     });
-    this.updateItems();
+    eventBus.emit('filters-updated');
   }
 }
 </script>

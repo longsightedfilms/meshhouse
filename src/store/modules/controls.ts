@@ -1,4 +1,4 @@
-import { Module, Mutation, VuexModule } from 'vuex-module-decorators';
+import { Module, Mutation, MutationAction, VuexModule } from 'vuex-module-decorators';
 
 @Module({ name: 'controls' })
 export default class ControlsStore extends VuexModule {
@@ -9,10 +9,15 @@ export default class ControlsStore extends VuexModule {
   isModalVisible = false
   properties: ImageProperties | object = {}
   title = 'Meshhouse'
+  os = 'win32'
   downloadLinks: SFMLabLink[] = []
   updates = {
     downloading: false,
     downloaded: false
+  }
+
+  get currentOS(): string {
+    return this.os;
   }
 
   @Mutation
@@ -63,5 +68,11 @@ export default class ControlsStore extends VuexModule {
   @Mutation
   setDownloadLinks(payload: SFMLabLink[]): void {
     this.downloadLinks = payload;
+  }
+
+  @MutationAction
+  async getOS(): Promise<{ os: string }> {
+    const os = await window.ipc.invoke('get-os');
+    return { os };
   }
 }

@@ -32,8 +32,6 @@ import { INTEGRATIONS } from '@/constants';
         }
       });
 
-      console.log(data);
-
       next((vm: ModelPage) => {
         vm.model = data;
         vm.favorite = isFavorite;
@@ -54,8 +52,6 @@ import { INTEGRATIONS } from '@/constants';
           id: to.params.id
         }
       });
-
-      console.log(data);
 
       this.model = data;
       this.favorite = isFavorite;

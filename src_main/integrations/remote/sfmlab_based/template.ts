@@ -108,6 +108,7 @@ export default class SFMLabBaseIntegration extends Integration {
   }
 
   async fetchItemsFromDatabase(page?: string): Promise<SFMLabFetch | Error> {
+    const start = process.hrtime();
     try {
       const filters: FiltersState = await getVuexState('state.filters');
       const params: SFMLabParams = {
@@ -188,6 +189,8 @@ export default class SFMLabBaseIntegration extends Integration {
       };
     } finally {
       logger.verbose(`HTTP GET ${`${this.slug}/models`} completed`);
+      const end = process.hrtime(start);
+      logger.verbose(`HTTP GET ${`${this.slug}/models`} takes ${((end[0] / 1000) + (end[1] / 1000000) / 1000)} seconds`);
       sendVuexCommit('setLoadingStatus', true);
     }
   }

@@ -1,10 +1,10 @@
 <template>
-  <router-link
-    :to="routerLink"
+  <a
+    :href="routerLink.path"
     :style="{'--color': navlink.color}"
     :disabled="navlink.disabled"
-    class="sidebar_link"
-    @click="onClick"
+    :class="getRouteClass"
+    @click.prevent="onClick"
   >
     <div
       class="avatar"
@@ -40,13 +40,13 @@
         :value="progress"
       />
       <p class="count">
-        {{ $tc('views.catalog.sidebar.model', navlink.count) }}
+        {{ $tc('views.catalog.sidebar.model', Number(navlink.count || 0)) }}
         <span class="badge">
-          {{ $formatSize(navlink.totalsize) }}
+          {{ $formatSize(Number(navlink.totalsize || 0)) }}
         </span>
       </p>
     </div>
-  </router-link>
+  </a>
 </template>
 
 <script lang="ts">
@@ -70,9 +70,12 @@ export default class SidebarLink extends Vue {
       disabled: false
     }
   }) readonly navlink!: DatabaseItem;
-  @Prop({ type: Number, required: true }) readonly progress!: number;
+  @Prop({
+    type: Number,
+    required: true
+  }) readonly progress!: number;
 
-  get routerLink(): object {
+  get routerLink(): {path: string; meta: object} {
     return {
       path: `/db/${this.navlink.localDB ? 'local' : 'remote' }/${this.navlink.url}`,
       meta: {
@@ -80,6 +83,20 @@ export default class SidebarLink extends Vue {
         localDB: this.navlink.localDB
       }
     };
+  }
+
+  get routeName(): string {
+    return this.navlink.localDB ? 'LocalDatabase' : 'RemoteDatabase';
+  }
+
+  get getRouteClass(): string {
+    let baseClass = 'sidebar_link';
+
+    if (this.$route.name === this.routeName && this.$route.params.database === this.navlink.url) {
+      baseClass += ' router-link-active';
+    }
+
+    return baseClass;
   }
 
   get avatarTextColorClass(): string {

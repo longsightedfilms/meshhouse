@@ -54,6 +54,7 @@ export default class App extends Vue {
 
   @Watch('$store.state.controls.fullscreen')
   @Watch('$store.state.settings.theme')
+  @Watch('$store.state.settings.systemDarkTheme')
   async updateApplicationClass(): Promise<void> {
     await this.handleApplicationClass();
   }
@@ -62,20 +63,20 @@ export default class App extends Vue {
     let bodyClass = 'application';
     let cssTheme = '';
 
-    const theme = await this.$ipcInvoke<Theme>('get-application-setting', 'theme');
+    const theme = this.$store.state.settings.theme;
+    const os = this.$store.getters.currentOS;
     const isFullScreen = await this.$ipcInvoke<boolean>('is-fullscreen');
-
-    const systemThemeDark = await this.$ipcInvoke<boolean>('should-use-dark-theme');
-    this.$store.commit('setSystemDarkTheme', systemThemeDark);
-    const os = await this.$ipcInvoke<string>('get-os');
 
     this.$ipcInvoke<void>('set-theme-source', theme);
     this.$ipcInvoke<void>('set-window-vibrance', theme);
 
+    const systemDarkTheme = await this.$ipcInvoke<boolean>('should-use-dark-theme');
+    this.$store.commit('setSystemDarkTheme', systemDarkTheme);
+
     if (theme !== 'system') {
       cssTheme = this.$store.state.settings.theme === 'light' ? 'theme--light' : 'theme--dark';
     } else {
-      cssTheme = systemThemeDark ? 'theme--dark' : 'theme--light';
+      cssTheme = systemDarkTheme ? 'theme--dark' : 'theme--light';
     }
 
     switch(os) {
@@ -99,16 +100,8 @@ export default class App extends Vue {
     this.bodyClass = `${bodyClass} ${cssTheme}`;
   }
 
-  async mounted(): Promise<void> {
-    await this.loadStartupSettings();
-
-    window.ipc.on('theme-updated', () => {
-      this.handleApplicationClass();
-    });
-  }
-
-  beforeDestroy(): void {
-    window.ipc.removeAllListeners('theme-updated');
+  created(): void {
+    this.loadStartupSettings();
   }
 
   get contentClass(): string {
@@ -121,24 +114,37 @@ export default class App extends Vue {
   }
 
   async loadStartupSettings(): Promise<void> {
-    this.$i18n.locale = await this.$ipcInvoke<string>('get-application-setting', 'language');
-    const settings = await this.$ipcInvoke<ApplicationSettings>('get-all-settings');
+    this.$ipcInvoke<void>('watch-databases');
 
-    this.$store.commit('setApplicationSettings', settings);
-    const currentDevice = await this.$ipcInvoke<any>('get-machine-info');
-    this.$store.commit('setCurrentDevice', currentDevice);
+    const promises = [
+      this.handleApplicationClass(),
+      this.$store.dispatch('getOS'),
+      this.$ipcInvoke<ApplicationSettings>('get-all-settings')
+        .then(async(settings) => {
+          this.$i18n.locale = settings.language;
+          this.$store.commit('setApplicationSettings', settings);
 
-    await this.handleApplicationClass();
-    await this.$ipcInvoke<void>('watch-databases');
-    if (settings.lastPage === 'lastCatalog') {
-      if (this.$route.fullPath !== settings.applicationWindow.lastOpened) {
-        await this.$router.push(settings.applicationWindow.lastOpened);
-      }
-    } else {
-      await this.$router.push('/library');
+          if (settings.lastPage === 'lastCatalog') {
+            if (this.$route.fullPath !== settings.applicationWindow.lastOpened) {
+              await this.$router.push(settings.applicationWindow.lastOpened);
+            }
+          } else {
+            await this.$router.push('/library');
+          }
+        })
+    ];
+    // Get machine info in unblocking way
+    this.$ipcInvoke<any>('get-machine-info').then((currentDevice) => {
+      this.$store.commit('setCurrentDevice', currentDevice);
+    });
+
+    await Promise.allSettled(promises);
+
+    try {
+      await this.$ipcInvoke('app-loaded');
+    } catch (err) {
+      console.warn(err);
     }
-
-    await this.$ipcInvoke('app-loaded');
   }
 }
 </script>

@@ -33,6 +33,11 @@ window.ipc.answerMain('router-push', (path: string) => {
   return true;
 });
 
+window.ipc.answerMain('theme-updated', (shouldUseDarkColors: boolean) => {
+  store.commit('setSystemDarkTheme', shouldUseDarkColors);
+  return true;
+});
+
 emitter.on('download-started', () => {
   store.commit('setStarted', true);
 });
